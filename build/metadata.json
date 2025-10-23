@@ -1,0 +1,6 @@
+{
+  "name": "demo-v2",
+  "identifier": "com.domain.app.demov2",
+  "version": "1.0.0",
+  "icon": "./static/icon.png"
+}
