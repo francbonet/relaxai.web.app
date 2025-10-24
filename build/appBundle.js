@@ -3,7 +3,7 @@
  * SDK version: 5.5.5
  * CLI version: 2.14.2
  *
- * Generated: Fri, 24 Oct 2025 13:46:41 GMT
+ * Generated: Fri, 24 Oct 2025 14:09:23 GMT
  */
 
 var APP_com_domain_app_demov2 = (function () {
@@ -7166,6 +7166,16 @@ var APP_com_domain_app_demov2 = (function () {
     get poster() {
       return this.tag('Poster');
     }
+    get posterImg() {
+      var _a;
+      return (_a = this.poster) === null || _a === void 0 ? void 0 : _a.tag('PosterImg');
+    }
+    setRandomPoster() {
+      const bust = Math.random().toString(36).slice(2);
+      this.posterImg.patch({
+        src: "https://picsum.photos/300/170?random=".concat(bust)
+      });
+    }
     static _template() {
       return {
         w: 300,
@@ -7174,8 +7184,20 @@ var APP_com_domain_app_demov2 = (function () {
         Poster: {
           w: w => w,
           h: h => h,
-          color: Theme.colors.tileunfocus,
-          rect: true
+          // Capa 1: fondo “skeleton” (siempre visible)
+          PosterBg: {
+            rect: true,
+            w: w => w,
+            h: h => h,
+            color: Theme.colors.tileunfocus
+          },
+          // Capa 2: imagen por encima
+          PosterImg: {
+            w: w => w,
+            h: h => h
+            // src lo pones en _init o cuando toque
+            // resizeMode opcional
+          }
         },
         Title: {
           y: 176,
@@ -7193,6 +7215,9 @@ var APP_com_domain_app_demov2 = (function () {
           color: 0x00ffffff
         }
       };
+    }
+    _init() {
+      this.setRandomPoster();
     }
     _focus() {
       // this.scale = 1.0
@@ -7235,14 +7260,12 @@ var APP_com_domain_app_demov2 = (function () {
             fontSize: 32
           }
         },
-        // Viewport amb clipping perquè no es vegi el que surt fora
         Viewport: {
           x: 0,
           y: 62,
           w: VIEW_W + LEFT_PAD,
           h: 270,
           clipping: true,
-          // Contenidor que desplacem en X
           Row: {
             x: LEFT_PAD,
             y: 0,
@@ -7295,13 +7318,11 @@ var APP_com_domain_app_demov2 = (function () {
       this.signal('focusNext');
       return true;
     }
-    // Manté l’element enfocat dins del viewport (ancorat al centre quan es pugui)
     _scrollToIndex() {
       const row = this.tag('Viewport.Row');
       const viewW = VIEW_W;
       const targetItemX = this._index * STEP;
       const desiredCenter = targetItemX + STEP / 2;
-      // límits de scroll (en píxels)
       const maxScroll = Math.max(0, this._totalW - viewW);
       const scroll = Math.min(Math.max(desiredCenter - viewW / 2, 0), maxScroll);
       row.setSmooth('x', LEFT_PAD - scroll);
