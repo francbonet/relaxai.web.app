@@ -43,10 +43,10 @@ export class Tile
       },
       Title: { y: 176, text: { text: '', fontSize: 22 } },
       FocusRing: {
-        x: -6,
-        y: -6,
-        w: (w: number) => w + 12,
-        h: (h: number) => h + 12,
+        x: -8,
+        y: -8,
+        w: (w: number) => w + 16,
+        h: (h: number) => h + 16,
         rect: true,
         color: 0x00ffffff,
       },
@@ -60,8 +60,8 @@ export class Tile
     poster.patch({
       shader: {
         type: L.shaders.Outline,
-        thickness: 4,
-        color: 0xffffffff,
+        thickness: 8,
+        color: Theme.colors.accent,
       },
     })
   }

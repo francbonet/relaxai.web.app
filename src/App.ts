@@ -1,9 +1,10 @@
 // src/App.ts
-import { Lightning as L, Router } from '@lightningjs/sdk'
+import { Lightning as L, Router, Utils } from '@lightningjs/sdk'
 import { Theme } from './core/theme'
-import Home from './pages/Home'
+import HomeSection from './pages/Home'
 import Player from './pages/Player'
-import New from './pages/New'
+import SuggestSection from './pages/New'
+import Template from './pages/Template'
 
 // 👇 clau: heretar del Router.App (usa (Router as any) per compat versions)
 export default class App extends (Router as any).App {
@@ -13,9 +14,21 @@ export default class App extends (Router as any).App {
       h: Theme.h,
       color: Theme.colors.bg,
       rect: true,
-      Pages: {}, // requerit pel Router
-      Widgets: {}, // requerit pel Router
+      Pages: {},
+      Widgets: {},
     }
+  }
+
+  static getFonts() {
+    return [
+      { family: 'RelaxAI-SoraBold', url: Utils.asset('fonts/Sora-Bold.ttf') as string },
+      { family: 'RelaxAI-SoraSemiBold', url: Utils.asset('fonts/Sora-SemiBold.ttf') as string },
+      { family: 'RelaxAI-SoraRegular', url: Utils.asset('fonts/Sora-Regular.ttf') as string },
+      { family: 'RelaxAI-SoraMedium', url: Utils.asset('fonts/Sora-Medium.ttf') as string },
+      { family: 'RelaxAI-SoraLight', url: Utils.asset('fonts/Sora-Light.ttf') as string },
+      { family: 'RelaxAI-Manrope', url: Utils.asset('fonts/Manrope-Regular.ttf') as string },
+      { family: 'RelaxAI-ManropeMed', url: Utils.asset('fonts/Manrope-Medium.ttf') as string },
+    ]
   }
 
   _setup() {
@@ -23,9 +36,12 @@ export default class App extends (Router as any).App {
       appInstance: this, // ja és un Router.App
       root: 'home',
       routes: [
-        { path: 'home', component: Home as any },
+        { path: 'home', component: HomeSection as any },
         { path: 'player', component: Player as any },
-        { path: 'new', component: New as any },
+        { path: 'suggest', component: SuggestSection as any },
+        { path: 'breathe', component: Template as any },
+        { path: 'longform', component: Template as any },
+        { path: 'search', component: Template as any },
         { path: '*', redirect: 'home' },
       ],
     })

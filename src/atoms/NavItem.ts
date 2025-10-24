@@ -1,6 +1,6 @@
 // atoms/NavItem.ts
 import { Lightning as L } from '@lightningjs/sdk'
-import { Theme } from '../core/theme'
+import { Theme, Typography } from '../core/theme'
 
 export interface NavItemSpec extends L.Component.TemplateSpec {
   Label: L.Component
@@ -20,9 +20,25 @@ export default class NavItem extends L.Component<NavItemSpec> {
       h: 60,
       rect: true,
       color: 0x00000000,
-      Indicator: { x: 0, y: 58, w: (w: number) => w, h: 8, rect: true, color: 0x00000000 },
-      Label: { y: 34, x: 6, text: { text: '', fontSize: 26 } },
+      Indicator: { x: 0, y: 58, w: (w: number) => w, h: 6, rect: true, color: 0x00000000 },
+      Label: {
+        y: 0,
+        x: 0,
+        text: {
+          text: '',
+          fontFace: Typography.nav.face,
+          fontSize: Typography.nav.size,
+          textColor: Theme.colors.text,
+        },
+      },
     }
+  }
+
+  set labelText(v: string) {
+    this.patch({ Label: { text: { text: v } } })
+  }
+  get labelText() {
+    return (this.tag('Label') as L.Component)?.text?.text || ''
   }
 
   override _init() {
@@ -30,6 +46,7 @@ export default class NavItem extends L.Component<NavItemSpec> {
     if (this._pendingIndicatorColor !== null) {
       const ind = this.tag('Indicator') as L.Component | undefined
       ind?.patch({ color: this._pendingIndicatorColor })
+
       this._pendingIndicatorColor = null
     } else {
       this._renderIndicator()
@@ -59,13 +76,14 @@ export default class NavItem extends L.Component<NavItemSpec> {
 
   private _renderIndicator() {
     const ind = this.tag('Indicator') as L.Component | undefined
-
+    const la = this.tag('Label') as L.Component | undefined
     const focused = this.hasFocus()
-    const RED = Theme.colors.accent ?? 0xffff0000
-    const WHITE = 0xffffffff
-    const TRANSPARENT = 0x00000000
+    const SELECTED = Theme.colors.accent ?? 0xffff0000
+    const UNSELECTED = 0xffffffff
+    const UNFOCUS = 0x00000000
 
-    const color = focused ? RED : this._routeActive ? WHITE : TRANSPARENT
+    const color = focused ? SELECTED : this._routeActive ? UNSELECTED : UNFOCUS
+    la?.patch({ text: { textColor: focused ? SELECTED : UNSELECTED } })
 
     if (ind) {
       ind.patch({ color })

@@ -2,23 +2,47 @@
 import { Lightning as L } from '@lightningjs/sdk'
 import Logo from '../atoms/Logo'
 import NavItem, { NavItemRef } from '../atoms/NavItem'
+import { Theme, Typography } from '../core/theme'
 
+export const _val = 230
 export default class Header extends L.Component {
   private _focusIdx = 0
   private _currentIdx = 0
-  private _routes = ['home', 'new']
+  private _routes = ['home', 'suggest', 'breathe', 'longform', 'search']
 
   static override _template(): L.Component.Template<any> {
     return {
       w: 1920,
       h: 100,
-      Logo: { x: 40, y: 90, mountY: 1, type: Logo, label: 'Napflix' },
+      Logo: { x: 40, y: 90, mountY: 1, type: Logo },
       Nav: {
         x: 40,
         y: 120,
         mountY: 1,
-        Home: { type: NavItem, Label: { text: { text: 'Home' } } },
-        New: { x: 220, type: NavItem, Label: { text: { text: 'New' } } },
+        Home: {
+          type: NavItem,
+          labelText: 'Home',
+        },
+        New: {
+          x: _val,
+          type: NavItem,
+          labelText: 'Suggest',
+        },
+        Movies: {
+          x: _val * 2,
+          type: NavItem,
+          labelText: 'Breathe',
+        },
+        Series: {
+          x: _val * 3,
+          type: NavItem,
+          labelText: 'Longform',
+        },
+        Search: {
+          x: _val * 4,
+          type: NavItem,
+          labelText: 'Search',
+        },
       },
     }
   }

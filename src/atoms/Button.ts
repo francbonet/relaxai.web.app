@@ -1,5 +1,5 @@
 import { Lightning as L } from '@lightningjs/sdk'
-import { Theme } from '../core/theme'
+import { Theme, Typography } from '../core/theme'
 
 export interface ButtonSpec extends L.Component.TemplateSpec {
   Label: L.Component
@@ -10,6 +10,7 @@ export class Button
   implements L.Component.ImplementTemplateSpec<ButtonSpec>
 {
   private _label = ''
+
   get label() {
     return this._label
   }
@@ -18,23 +19,35 @@ export class Button
   }
 
   // helper per evitar que TS es queixi si 'Tools' no està tipat
-  private static rr(w = 240, h = 64) {
+  private static rr(w = 300, h = 80) {
     const Tools = (L as any).Tools
-    return Tools?.getRoundRect(w, h, 8, 2, 0x22ffffff, Theme.colors.accent)
+    return Tools?.getRoundRect(w, h, 8, 2, 0xffffff, 0xffffff)
   }
 
   static override _template(): L.Component.Template<ButtonSpec> {
     return {
-      w: 240,
-      h: 64,
-      texture: Button.rr(240, 64), // 👈 Lightning.Tools.getRoundRect
-      Label: { x: 120, y: 34, mount: 0.5, text: { text: '', fontSize: 28 } },
-      transitions: { scale: { duration: 0.2 } },
+      mount: 0,
+      w: 300,
+      h: 80,
+      texture: Button.rr(300, 80),
+      color: Theme.colors.text,
+      Label: {
+        x: 25,
+        y: 15,
+        mountX: 0,
+        mountY: 0,
+        text: {
+          text: '',
+          fontFace: Typography.button.face,
+          fontSize: Typography.button.size,
+          textColor: Theme.colors.bg,
+        },
+      },
     }
   }
 
   override _focus() {
-    this.scale = 1.05
+    this.scale = 1
   }
   override _unfocus() {
     this.scale = 1

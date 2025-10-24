@@ -14,7 +14,7 @@ const CAROUSSEL_H = 0
 const RAIL_H = 230
 const EXTRA_BOTTOM = 120 // margen inferior (respirar al final)
 
-export default class New extends L.Component {
+export default class SuggestSection extends L.Component {
   // -1 = Header, 0 = Carussel, 1 = TopSearches, 2 = NextWatch, 3 = Retro
   private _section = -1
 
@@ -94,7 +94,7 @@ export default class New extends L.Component {
   }
 
   override _active() {
-    this.tag('Viewport.Content.ContentInner.Header')?.setCurrentByRoute('new')
+    this.tag('Viewport.Content.ContentInner.Header')?.setCurrentByRoute('suggest')
   }
 
   override _setup() {

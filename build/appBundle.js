@@ -3,7 +3,7 @@
  * SDK version: 5.5.5
  * CLI version: 2.14.2
  *
- * Generated: Thu, 23 Oct 2025 14:12:29 GMT
+ * Generated: Fri, 24 Oct 2025 13:46:41 GMT
  */
 
 var APP_com_domain_app_demov2 = (function () {
@@ -6798,14 +6798,21 @@ var APP_com_domain_app_demov2 = (function () {
     w: 1920,
     h: 1080,
     colors: {
-      bg: 0xff0d0d0f,
-      text: 0xffffffff,
-      textDim: 0xffd0d0d0,
-      accent: 0xff02fe9e,
-      tile: 0xff222326,
-      focus: 0xffffffff,
-      tilefocus: 0x66ffffff,
-      tileunfocus: 0xff444444
+      bg: 0xff0b1220,
+      // azul noche profundo
+      text: 0xfff3f7fa,
+      // blanco suave, sin deslumbrar
+      textDim: 0xffb8c7d3,
+      // gris azulado calmado
+      accent: 0xff6bd3c3,
+      // aqua/teal relajante
+      tile: 0xff131b2a,
+      // un paso sobre el fondo para tarjetas
+      focus: 0xffe9f6ff,
+      // halo claro suave (no blanco puro)
+      tilefocus: 0x66a6e7de,
+      // overlay translúcido aqua (≈40% alpha)
+      tileunfocus: 0xff2a3647 // contorno/estado sin foco sutil
     },
     spacing: {
       xs: 8,
@@ -6822,24 +6829,60 @@ var APP_com_domain_app_demov2 = (function () {
       tiny: 20
     }
   };
+  const Typography = {
+    heading: {
+      face: 'RelaxAI-SoraSemiBold',
+      size: 48
+    },
+    nav: {
+      face: 'RelaxAI-SoraLight',
+      size: 36
+    },
+    title: {
+      face: 'RelaxAI-SoraMedium',
+      size: 60
+    },
+    body: {
+      face: 'RelaxAI-SoraLight',
+      size: 36
+    },
+    small: {
+      face: 'RelaxAI-Manrope',
+      size: 22
+    },
+    button: {
+      face: 'RelaxAI-SoraSemiBold',
+      size: 36
+    }
+  };
 
   class Logo extends Lightning$1.Component {
     constructor() {
       super(...arguments);
-      this._label = 'Napflix';
+      this._left = 'Relax';
+      this._right = 'AI';
+      this._spacing = 6; // px entre “Relax” y “AI”
+    }
+    // Si quieres mantener compat con `label`, lo dividimos
+    set label(v) {
+      var _a, _b;
+      // por ejemplo si pasas "Relax AI"
+      const parts = v.split(/\s+/);
+      this._left = (_a = parts[0]) !== null && _a !== void 0 ? _a : 'Relax';
+      this._right = (_b = parts[1]) !== null && _b !== void 0 ? _b : 'AI';
+      this._updateWordmark();
     }
     get label() {
-      return this._label;
+      return "".concat(this._left, " ").concat(this._right);
     }
-    set label(v) {
-      this._label = v;
-      this.patch({
-        Label: {
-          text: {
-            text: v
-          }
-        }
-      });
+    get Wordmark() {
+      return this.tag('Wordmark');
+    }
+    get LabelRelax() {
+      return this.tag('Wordmark').tag('LabelRelax');
+    }
+    get LabelAI() {
+      return this.tag('Wordmark').tag('LabelAI');
     }
     static _template() {
       return {
@@ -6847,17 +6890,48 @@ var APP_com_domain_app_demov2 = (function () {
         h: 72,
         rect: true,
         color: 0x00000000,
-        Label: {
-          y: 40,
+        Wordmark: {
+          x: 0,
           mountY: 0.5,
-          text: {
-            fontSize: Theme.typography.h1,
-            fontStyle: 'bold',
-            textColor: Theme.colors.accent,
-            fontFace: 'sans-serif'
+          LabelRelax: {
+            text: {
+              text: 'Relax',
+              fontFace: Typography.heading.face,
+              fontSize: Typography.heading.size,
+              textColor: Theme.colors.text
+            }
+          },
+          LabelAI: {
+            x: 135,
+            // se actualiza dinámicamente
+            text: {
+              text: 'AI',
+              fontFace: Typography.heading.face,
+              fontSize: Typography.heading.size,
+              textColor: Theme.colors.accent
+            }
           }
         }
       };
+    }
+    _init() {
+      this._updateWordmark();
+    }
+    _updateWordmark() {
+      this.patch({
+        Wordmark: {
+          LabelRelax: {
+            text: {
+              text: this._left
+            }
+          },
+          LabelAI: {
+            text: {
+              text: this._right
+            }
+          }
+        }
+      });
     }
   }
 
@@ -6879,19 +6953,34 @@ var APP_com_domain_app_demov2 = (function () {
           x: 0,
           y: 58,
           w: w => w,
-          h: 8,
+          h: 6,
           rect: true,
           color: 0x00000000
         },
         Label: {
-          y: 34,
-          x: 6,
+          y: 0,
+          x: 0,
           text: {
             text: '',
-            fontSize: 26
+            fontFace: Typography.nav.face,
+            fontSize: Typography.nav.size,
+            textColor: Theme.colors.text
           }
         }
       };
+    }
+    set labelText(v) {
+      this.patch({
+        Label: {
+          text: {
+            text: v
+          }
+        }
+      });
+    }
+    get labelText() {
+      var _a, _b;
+      return ((_b = (_a = this.tag('Label')) === null || _a === void 0 ? void 0 : _a.text) === null || _b === void 0 ? void 0 : _b.text) || '';
     }
     _init() {
       // si hi havia un color pendent d'abans que existís l'Indicator, l'apliquem
@@ -6926,11 +7015,17 @@ var APP_com_domain_app_demov2 = (function () {
     _renderIndicator() {
       var _a;
       const ind = this.tag('Indicator');
+      const la = this.tag('Label');
       const focused = this.hasFocus();
-      const RED = (_a = Theme.colors.accent) !== null && _a !== void 0 ? _a : 0xffff0000;
-      const WHITE = 0xffffffff;
-      const TRANSPARENT = 0x00000000;
-      const color = focused ? RED : this._routeActive ? WHITE : TRANSPARENT;
+      const SELECTED = (_a = Theme.colors.accent) !== null && _a !== void 0 ? _a : 0xffff0000;
+      const UNSELECTED = 0xffffffff;
+      const UNFOCUS = 0x00000000;
+      const color = focused ? SELECTED : this._routeActive ? UNSELECTED : UNFOCUS;
+      la === null || la === void 0 ? void 0 : la.patch({
+        text: {
+          textColor: focused ? SELECTED : UNSELECTED
+        }
+      });
       if (ind) {
         ind.patch({
           color
@@ -6944,12 +7039,13 @@ var APP_com_domain_app_demov2 = (function () {
   }
 
   // molecules/Header.ts
+  const _val = 230;
   class Header extends Lightning$1.Component {
     constructor() {
       super(...arguments);
       this._focusIdx = 0;
       this._currentIdx = 0;
-      this._routes = ['home', 'new'];
+      this._routes = ['home', 'suggest', 'breathe', 'longform', 'search'];
     }
     static _template() {
       return {
@@ -6959,8 +7055,7 @@ var APP_com_domain_app_demov2 = (function () {
           x: 40,
           y: 90,
           mountY: 1,
-          type: Logo,
-          label: 'Napflix'
+          type: Logo
         },
         Nav: {
           x: 40,
@@ -6968,20 +7063,27 @@ var APP_com_domain_app_demov2 = (function () {
           mountY: 1,
           Home: {
             type: NavItem,
-            Label: {
-              text: {
-                text: 'Home'
-              }
-            }
+            labelText: 'Home'
           },
           New: {
-            x: 220,
+            x: _val,
             type: NavItem,
-            Label: {
-              text: {
-                text: 'New'
-              }
-            }
+            labelText: 'Suggest'
+          },
+          Movies: {
+            x: _val * 2,
+            type: NavItem,
+            labelText: 'Breathe'
+          },
+          Series: {
+            x: _val * 3,
+            type: NavItem,
+            labelText: 'Longform'
+          },
+          Search: {
+            x: _val * 4,
+            type: NavItem,
+            labelText: 'Search'
           }
         }
       };
@@ -7083,10 +7185,10 @@ var APP_com_domain_app_demov2 = (function () {
           }
         },
         FocusRing: {
-          x: -6,
-          y: -6,
-          w: w => w + 12,
-          h: h => h + 12,
+          x: -8,
+          y: -8,
+          w: w => w + 16,
+          h: h => h + 16,
           rect: true,
           color: 0x00ffffff
         }
@@ -7099,8 +7201,8 @@ var APP_com_domain_app_demov2 = (function () {
       poster.patch({
         shader: {
           type: Lightning$1.shaders.Outline,
-          thickness: 4,
-          color: 0xffffffff
+          thickness: 8,
+          color: Theme.colors.accent
         }
       });
     }
@@ -7114,24 +7216,43 @@ var APP_com_domain_app_demov2 = (function () {
     }
   }
 
+  const STEP = 330; // amplada targeta + gap (300 + 30)
+  const VIEW_W = 1840; // amplada visible del rail (ajusta-ho al teu layout)
+  const LEFT_PAD = 40; // padding esquerre (coincideix amb x del Row)
   class Rail extends Lightning$1.Component {
     constructor() {
       super(...arguments);
       this._index = 0;
+      this._totalW = 0;
     }
     static _template() {
       return {
         Title: {
-          x: 32,
+          x: LEFT_PAD,
           y: 0,
           text: {
             text: '',
             fontSize: 32
           }
         },
-        Row: {
-          x: 32,
-          y: 62
+        // Viewport amb clipping perquè no es vegi el que surt fora
+        Viewport: {
+          x: 0,
+          y: 62,
+          w: VIEW_W + LEFT_PAD,
+          h: 270,
+          clipping: true,
+          // Contenidor que desplacem en X
+          Row: {
+            x: LEFT_PAD,
+            y: 0,
+            transitions: {
+              x: {
+                duration: 0.25,
+                timingFunction: 'ease-out'
+              }
+            }
+          }
         }
       };
     }
@@ -7139,25 +7260,31 @@ var APP_com_domain_app_demov2 = (function () {
       this.tag('Title').text.text = v;
     }
     set items(v) {
-      this.tag('Row').children = v.map((it, i) => ({
+      this.tag('Viewport.Row').children = v.map((it, i) => ({
         type: Tile,
         title: it.title,
-        x: i * 330
+        x: i * STEP
       }));
-    }
-    _init() {
+      this._totalW = v.length * STEP;
       this._index = 0;
+      this._scrollToIndex();
     }
     _getFocused() {
-      return this.tag('Row').children[this._index];
+      return this.tag('Viewport.Row').children[this._index];
     }
     _handleLeft() {
-      if (this._index > 0) this._index--;
+      if (this._index > 0) {
+        this._index--;
+        this._scrollToIndex();
+      }
       return true;
     }
     _handleRight() {
-      const max = this.tag('Row').children.length - 1;
-      if (this._index < max) this._index++;
+      const max = this.tag('Viewport.Row').children.length - 1;
+      if (this._index < max) {
+        this._index++;
+        this._scrollToIndex();
+      }
       return true;
     }
     _handleUp() {
@@ -7167,6 +7294,69 @@ var APP_com_domain_app_demov2 = (function () {
     _handleDown() {
       this.signal('focusNext');
       return true;
+    }
+    // Manté l’element enfocat dins del viewport (ancorat al centre quan es pugui)
+    _scrollToIndex() {
+      const row = this.tag('Viewport.Row');
+      const viewW = VIEW_W;
+      const targetItemX = this._index * STEP;
+      const desiredCenter = targetItemX + STEP / 2;
+      // límits de scroll (en píxels)
+      const maxScroll = Math.max(0, this._totalW - viewW);
+      const scroll = Math.min(Math.max(desiredCenter - viewW / 2, 0), maxScroll);
+      row.setSmooth('x', LEFT_PAD - scroll);
+    }
+  }
+
+  class Button extends Lightning$1.Component {
+    constructor() {
+      super(...arguments);
+      this._label = '';
+    }
+    get label() {
+      return this._label;
+    }
+    set label(v) {
+      var _a;
+      (_a = this.tag('Label')) === null || _a === void 0 ? void 0 : _a.patch({
+        text: {
+          text: v
+        }
+      });
+    }
+    // helper per evitar que TS es queixi si 'Tools' no està tipat
+    static rr() {
+      let w = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 300;
+      let h = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 80;
+      const Tools = Lightning$1.Tools;
+      return Tools === null || Tools === void 0 ? void 0 : Tools.getRoundRect(w, h, 8, 2, 0xffffff, 0xffffff);
+    }
+    static _template() {
+      return {
+        mount: 0,
+        w: 300,
+        h: 80,
+        texture: Button.rr(300, 80),
+        color: Theme.colors.text,
+        Label: {
+          x: 25,
+          y: 15,
+          mountX: 0,
+          mountY: 0,
+          text: {
+            text: '',
+            fontFace: Typography.button.face,
+            fontSize: Typography.button.size,
+            textColor: Theme.colors.bg
+          }
+        }
+      };
+    }
+    _focus() {
+      this.scale = 1;
+    }
+    _unfocus() {
+      this.scale = 1;
     }
   }
 
@@ -7181,51 +7371,56 @@ var APP_com_domain_app_demov2 = (function () {
           y: 0,
           w: 1920 - 80,
           h: 600,
+          alpha: 0.7,
           texture: Img(Utils.asset('videos/posters/AB-007.jpg')).cover(1920 - 80, 600)
         },
         TitleMetadata: {
           mount: 0,
-          y: 600 - 200,
-          x: 80,
+          y: 300,
+          x: 60,
           text: {
             text: 'Lorem ipsum',
-            fontSize: Theme.typography.h1
+            fontFace: Typography.heading.face,
+            fontSize: Typography.heading.size,
+            textColor: Theme.colors.text
           }
         },
         SubTitleMetadata: {
           mount: 0,
-          y: 600 - 120,
-          x: 80,
+          y: 360,
+          x: 60,
           text: {
             text: 'Lorem ipsum',
-            fontSize: Theme.typography.body
+            fontFace: Typography.body.face,
+            fontSize: Typography.body.size,
+            textColor: Theme.colors.text
           }
         },
-        padding: 4
+        CTA: {
+          y: 440,
+          x: 60,
+          type: Button,
+          label: 'WATCH NOW'
+        },
+        padding: 8
       };
-    }
-    _firstActive() {
-      // const imageSrc = Utils.asset('videos/posters/AB-007.jpg')
-      // if (imageSrc) {
-      //   this.tag('Poster').patch({
-      //     texture: Img(imageSrc).cover(500, 300),
-      //   })
-      // }
     }
     _focus() {
       const poster = this.tag('Poster');
       poster.patch({
         shader: {
           type: Lightning$1.shaders.Outline,
-          thickness: 4,
-          color: 0xffffffff
-        }
+          thickness: 8,
+          color: Theme.colors.accent
+        },
+        alpha: 1
       });
     }
     _unfocus() {
       const poster = this.tag('Poster');
       poster.patch({
-        shader: null
+        shader: null,
+        alpha: 0.7
       });
     }
     _handleUp() {
@@ -7240,11 +7435,11 @@ var APP_com_domain_app_demov2 = (function () {
 
   const GAP2$1 = 30;
   const GAP$1 = 60;
-  const HEADER_H$1 = 200;
+  const HEADER_H$2 = 200;
   const CAROUSSEL_H$1 = 600;
-  const RAIL_H$1 = 230;
-  const EXTRA_BOTTOM$1 = 120; // margen inferior (respirar al final)
-  class Home extends Lightning$1.Component {
+  const RAIL_H$2 = 230;
+  const EXTRA_BOTTOM$2 = 120; // margen inferior (respirar al final)
+  class HomeSection extends Lightning$1.Component {
     constructor() {
       super(...arguments);
       // -1 = Header, 0 = Carussel, 1 = TopSearches, 2 = NextWatch, 3 = Retro
@@ -7284,7 +7479,7 @@ var APP_com_domain_app_demov2 = (function () {
               y: 0,
               Header: {
                 type: Header,
-                h: HEADER_H$1,
+                h: HEADER_H$2,
                 signals: {
                   navigate: true,
                   focusNext: true
@@ -7292,7 +7487,7 @@ var APP_com_domain_app_demov2 = (function () {
               },
               // Carussel 40px debajo del Header
               Carussel: {
-                y: HEADER_H$1 + GAP2$1,
+                y: HEADER_H$2 + GAP2$1,
                 // 200 + 40 = 240
                 h: CAROUSSEL_H$1,
                 type: Carousell,
@@ -7303,9 +7498,9 @@ var APP_com_domain_app_demov2 = (function () {
               },
               // TopSearches 40px debajo del Carussel
               TopSearches: {
-                y: HEADER_H$1 + GAP2$1 + CAROUSSEL_H$1 + GAP2$1,
+                y: HEADER_H$2 + GAP2$1 + CAROUSSEL_H$1 + GAP2$1,
                 // 200+40+600+40 = 880
-                h: RAIL_H$1,
+                h: RAIL_H$2,
                 type: Rail,
                 signals: {
                   focusPrev: true,
@@ -7314,9 +7509,9 @@ var APP_com_domain_app_demov2 = (function () {
               },
               // NextWatch 40px debajo del TopSearches
               NextWatch: {
-                y: HEADER_H$1 + GAP2$1 + CAROUSSEL_H$1 + GAP2$1 + RAIL_H$1 + GAP$1,
+                y: HEADER_H$2 + GAP2$1 + CAROUSSEL_H$1 + GAP2$1 + RAIL_H$2 + GAP$1,
                 // 1140
-                h: RAIL_H$1,
+                h: RAIL_H$2,
                 type: Rail,
                 signals: {
                   focusPrev: true,
@@ -7325,9 +7520,9 @@ var APP_com_domain_app_demov2 = (function () {
               },
               // Retro 40px debajo del NextWatch
               Retro: {
-                y: HEADER_H$1 + GAP2$1 + CAROUSSEL_H$1 + GAP2$1 + RAIL_H$1 + GAP$1 + RAIL_H$1 + GAP$1,
+                y: HEADER_H$2 + GAP2$1 + CAROUSSEL_H$1 + GAP2$1 + RAIL_H$2 + GAP$1 + RAIL_H$2 + GAP$1,
                 // 1400
-                h: RAIL_H$1,
+                h: RAIL_H$2,
                 type: Rail,
                 signals: {
                   focusPrev: true,
@@ -7387,8 +7582,8 @@ var APP_com_domain_app_demov2 = (function () {
       this._offsets.NextWatch = innerY + zy(next);
       this._offsets.Retro = innerY + zy(retro);
       // altura total (bottom más profundo) + EXTRA_BOTTOM para “respirar”
-      const bottoms = [innerY + zy(header) + zh(header, HEADER_H$1), innerY + zy(car) + zh(car, CAROUSSEL_H$1), innerY + zy(top) + zh(top, RAIL_H$1), innerY + zy(next) + zh(next, RAIL_H$1), innerY + zy(retro) + zh(retro, RAIL_H$1)];
-      const totalH = Math.max(...bottoms) + EXTRA_BOTTOM$1;
+      const bottoms = [innerY + zy(header) + zh(header, HEADER_H$2), innerY + zy(car) + zh(car, CAROUSSEL_H$1), innerY + zy(top) + zh(top, RAIL_H$2), innerY + zy(next) + zh(next, RAIL_H$2), innerY + zy(retro) + zh(retro, RAIL_H$2)];
+      const totalH = Math.max(...bottoms) + EXTRA_BOTTOM$2;
       const viewportH = Theme.h;
       this._maxY = 0;
       this._minY = Math.min(0, viewportH - totalH); // negativo si hay overflow
@@ -7438,6 +7633,7 @@ var APP_com_domain_app_demov2 = (function () {
       return Math.max(this._minY, Math.min(y, this._maxY));
     }
     navigate(path) {
+      console.log('navigate------> path:', path);
       Router.navigate(path);
     }
     // Teclas del mando (snap por secciones)
@@ -7457,59 +7653,6 @@ var APP_com_domain_app_demov2 = (function () {
       id: String(i),
       title: "Item ".concat(i + 1)
     }));
-  }
-
-  class Button extends Lightning$1.Component {
-    constructor() {
-      super(...arguments);
-      this._label = '';
-    }
-    get label() {
-      return this._label;
-    }
-    set label(v) {
-      var _a;
-      (_a = this.tag('Label')) === null || _a === void 0 ? void 0 : _a.patch({
-        text: {
-          text: v
-        }
-      });
-    }
-    // helper per evitar que TS es queixi si 'Tools' no està tipat
-    static rr() {
-      let w = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 240;
-      let h = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 64;
-      const Tools = Lightning$1.Tools;
-      return Tools === null || Tools === void 0 ? void 0 : Tools.getRoundRect(w, h, 8, 2, 0x22ffffff, Theme.colors.accent);
-    }
-    static _template() {
-      return {
-        w: 240,
-        h: 64,
-        texture: Button.rr(240, 64),
-        // 👈 Lightning.Tools.getRoundRect
-        Label: {
-          x: 120,
-          y: 34,
-          mount: 0.5,
-          text: {
-            text: '',
-            fontSize: 28
-          }
-        },
-        transitions: {
-          scale: {
-            duration: 0.2
-          }
-        }
-      };
-    }
-    _focus() {
-      this.scale = 1.05;
-    }
-    _unfocus() {
-      this.scale = 1;
-    }
   }
 
   // src/pages/Player.ts
@@ -7577,11 +7720,11 @@ var APP_com_domain_app_demov2 = (function () {
 
   const GAP2 = 30;
   const GAP = 60;
-  const HEADER_H = 200;
+  const HEADER_H$1 = 200;
   const CAROUSSEL_H = 0;
-  const RAIL_H = 230;
-  const EXTRA_BOTTOM = 120; // margen inferior (respirar al final)
-  class New extends Lightning$1.Component {
+  const RAIL_H$1 = 230;
+  const EXTRA_BOTTOM$1 = 120; // margen inferior (respirar al final)
+  class SuggestSection extends Lightning$1.Component {
     constructor() {
       super(...arguments);
       // -1 = Header, 0 = Carussel, 1 = TopSearches, 2 = NextWatch, 3 = Retro
@@ -7620,7 +7763,7 @@ var APP_com_domain_app_demov2 = (function () {
               y: 0,
               Header: {
                 type: Header,
-                h: HEADER_H,
+                h: HEADER_H$1,
                 signals: {
                   navigate: true,
                   focusNext: true
@@ -7635,9 +7778,9 @@ var APP_com_domain_app_demov2 = (function () {
               // },
               // TopSearches 40px debajo del Carussel
               TopSearches: {
-                y: HEADER_H + GAP2 + CAROUSSEL_H + GAP2,
+                y: HEADER_H$1 + GAP2 + CAROUSSEL_H + GAP2,
                 // 200+40+600+40 = 880
-                h: RAIL_H,
+                h: RAIL_H$1,
                 type: Rail,
                 signals: {
                   focusPrev: true,
@@ -7646,9 +7789,9 @@ var APP_com_domain_app_demov2 = (function () {
               },
               // NextWatch 40px debajo del TopSearches
               NextWatch: {
-                y: HEADER_H + GAP2 + CAROUSSEL_H + GAP2 + RAIL_H + GAP,
+                y: HEADER_H$1 + GAP2 + CAROUSSEL_H + GAP2 + RAIL_H$1 + GAP,
                 // 1140
-                h: RAIL_H,
+                h: RAIL_H$1,
                 type: Rail,
                 signals: {
                   focusPrev: true,
@@ -7657,9 +7800,9 @@ var APP_com_domain_app_demov2 = (function () {
               },
               // Retro 40px debajo del NextWatch
               Retro: {
-                y: HEADER_H + GAP2 + CAROUSSEL_H + GAP2 + RAIL_H + GAP + RAIL_H + GAP,
+                y: HEADER_H$1 + GAP2 + CAROUSSEL_H + GAP2 + RAIL_H$1 + GAP + RAIL_H$1 + GAP,
                 // 1400
-                h: RAIL_H,
+                h: RAIL_H$1,
                 type: Rail,
                 signals: {
                   focusPrev: true,
@@ -7673,7 +7816,7 @@ var APP_com_domain_app_demov2 = (function () {
     }
     _active() {
       var _a;
-      (_a = this.tag('Viewport.Content.ContentInner.Header')) === null || _a === void 0 ? void 0 : _a.setCurrentByRoute('new');
+      (_a = this.tag('Viewport.Content.ContentInner.Header')) === null || _a === void 0 ? void 0 : _a.setCurrentByRoute('suggest');
     }
     _setup() {
       var _a, _b, _c;
@@ -7717,8 +7860,8 @@ var APP_com_domain_app_demov2 = (function () {
       this._offsets.NextWatch = innerY + zy(next);
       this._offsets.Retro = innerY + zy(retro);
       // altura total (bottom más profundo) + EXTRA_BOTTOM para “respirar”
-      const bottoms = [innerY + zy(header) + zh(header, HEADER_H), innerY + zy(top) + zh(top, RAIL_H), innerY + zy(next) + zh(next, RAIL_H), innerY + zy(retro) + zh(retro, RAIL_H)];
-      const totalH = Math.max(...bottoms) + EXTRA_BOTTOM;
+      const bottoms = [innerY + zy(header) + zh(header, HEADER_H$1), innerY + zy(top) + zh(top, RAIL_H$1), innerY + zy(next) + zh(next, RAIL_H$1), innerY + zy(retro) + zh(retro, RAIL_H$1)];
+      const totalH = Math.max(...bottoms) + EXTRA_BOTTOM$1;
       const viewportH = Theme.h;
       this._maxY = 0;
       this._minY = Math.min(0, viewportH - totalH); // negativo si hay overflow
@@ -7789,6 +7932,144 @@ var APP_com_domain_app_demov2 = (function () {
     }));
   }
 
+  const HEADER_H = 200;
+  const RAIL_H = 230;
+  const EXTRA_BOTTOM = 120; // margen inferior (respirar al final)
+  class Template extends Lightning$1.Component {
+    constructor() {
+      super(...arguments);
+      // -1 = Header, 0 = Carussel, 1 = TopSearches, 2 = NextWatch, 3 = Retro
+      this._section = -1;
+      // offsets (y absolutos dentro de Viewport.Content)
+      this._offsets = {
+        Header: 0
+      };
+      this._minY = 0; // límite inferior para Content.y (negativo)
+      this._maxY = 0; // límite superior (0)
+    }
+    static _template() {
+      return {
+        w: Theme.w,
+        h: Theme.h,
+        rect: true,
+        color: Theme.colors.bg,
+        Viewport: {
+          w: Theme.w,
+          h: Theme.h,
+          clipping: true,
+          // desplazamos este nodo
+          Content: {
+            y: 0,
+            transitions: {
+              y: {
+                duration: 0.25,
+                timingFunction: 'ease-out'
+              }
+            },
+            // Todo el layout dentro
+            ContentInner: {
+              y: 0,
+              Header: {
+                type: Header,
+                h: HEADER_H,
+                signals: {
+                  navigate: true,
+                  focusNext: true
+                }
+              }
+            }
+          }
+        }
+      };
+    }
+    _active() {
+      var _a;
+      (_a = this.tag('Viewport.Content.ContentInner.Header')) === null || _a === void 0 ? void 0 : _a.setCurrentByRoute('breathe');
+    }
+    _setup() {
+      // esperar 1 frame por si cambian alturas internas
+      setTimeout(() => this._computeMetrics(), 0);
+    }
+    _attach() {
+      this._computeMetrics();
+    }
+    _computeMetrics() {
+      const content = this.tag('Viewport.Content');
+      const inner = this.tag('Viewport.Content.ContentInner');
+      const get = name => inner === null || inner === void 0 ? void 0 : inner.tag(name);
+      this.stage.update();
+      const zy = n => (n === null || n === void 0 ? void 0 : n.y) || 0;
+      const zh = function (n) {
+        let fb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+        return (n === null || n === void 0 ? void 0 : n.h) || fb;
+      };
+      const header = get('Header');
+      const innerY = zy(inner);
+      // offsets para alinear top de cada sección con top del viewport
+      this._offsets.Header = innerY + zy(header);
+      // altura total (bottom más profundo) + EXTRA_BOTTOM para “respirar”
+      const bottoms = [innerY + zy(header) + zh(header, HEADER_H), innerY + zy(top) + zh(top, RAIL_H)];
+      const totalH = Math.max(...bottoms) + EXTRA_BOTTOM;
+      const viewportH = Theme.h;
+      this._maxY = 0;
+      this._minY = Math.min(0, viewportH - totalH); // negativo si hay overflow
+      // clamp por si ya hay y previa
+      content.y = this._clamp(content.y);
+    }
+    _getFocused() {
+      // devolvemos el nodo que debe recibir focus real
+      return this.tag('Viewport.Content.ContentInner.Header');
+    }
+    _nameFor(idx) {
+      // 0..3 → Carussel, TopSearches, NextWatch, Retro
+      const arr = [];
+      const i = Math.max(0, Math.min(idx, arr.length - 1));
+      return arr[i];
+    }
+    // ↓ pasa a la siguiente sección
+    focusNext() {
+      const max = 0; // Carussel(0), TopSearches(1), NextWatch(2), Retro(3)
+      this._section = Math.min(this._section + 1, max);
+      this._applyScrollForSection(this._section);
+    }
+    // ↑ sube sección (hasta Header)
+    focusPrev() {
+      this._section = Math.max(this._section - 1, -1);
+      this._applyScrollForSection(this._section);
+    }
+    // REGLA: solo scrollea a partir de TopSearches (>=1).
+    // Si vuelves a Carussel (0) o Header (-1) → scroll 0.
+    _applyScrollForSection(index) {
+      const content = this.tag('Viewport.Content');
+      if (index <= 0) {
+        // Header o Carussel → resetea scroll
+        content.setSmooth('y', this._clamp(0));
+        this._refocus();
+        return;
+      }
+      // A partir de TopSearches → scrollea y alinea la sección al top
+      const key = this._nameFor(index);
+      const targetY = -(this._offsets[key] || 0);
+      content.setSmooth('y', this._clamp(targetY));
+      this._refocus();
+    }
+    _clamp(y) {
+      return Math.max(this._minY, Math.min(y, this._maxY));
+    }
+    navigate(path) {
+      Router.navigate(path);
+    }
+    // Teclas del mando (snap por secciones)
+    _handleDown() {
+      this.focusNext();
+      return true;
+    }
+    _handleUp() {
+      this.focusPrev();
+      return true;
+    }
+  }
+
   // src/App.ts
   // 👇 clau: heretar del Router.App (usa (Router as any) per compat versions)
   class App extends Router.App {
@@ -7799,9 +8080,32 @@ var APP_com_domain_app_demov2 = (function () {
         color: Theme.colors.bg,
         rect: true,
         Pages: {},
-        // requerit pel Router
-        Widgets: {} // requerit pel Router
+        Widgets: {}
       };
+    }
+    static getFonts() {
+      return [{
+        family: 'RelaxAI-SoraBold',
+        url: Utils.asset('fonts/Sora-Bold.ttf')
+      }, {
+        family: 'RelaxAI-SoraSemiBold',
+        url: Utils.asset('fonts/Sora-SemiBold.ttf')
+      }, {
+        family: 'RelaxAI-SoraRegular',
+        url: Utils.asset('fonts/Sora-Regular.ttf')
+      }, {
+        family: 'RelaxAI-SoraMedium',
+        url: Utils.asset('fonts/Sora-Medium.ttf')
+      }, {
+        family: 'RelaxAI-SoraLight',
+        url: Utils.asset('fonts/Sora-Light.ttf')
+      }, {
+        family: 'RelaxAI-Manrope',
+        url: Utils.asset('fonts/Manrope-Regular.ttf')
+      }, {
+        family: 'RelaxAI-ManropeMed',
+        url: Utils.asset('fonts/Manrope-Medium.ttf')
+      }];
     }
     _setup() {
       Router.startRouter({
@@ -7810,13 +8114,22 @@ var APP_com_domain_app_demov2 = (function () {
         root: 'home',
         routes: [{
           path: 'home',
-          component: Home
+          component: HomeSection
         }, {
           path: 'player',
           component: Player
         }, {
-          path: 'new',
-          component: New
+          path: 'suggest',
+          component: SuggestSection
+        }, {
+          path: 'breathe',
+          component: Template
+        }, {
+          path: 'longform',
+          component: Template
+        }, {
+          path: 'search',
+          component: Template
         }, {
           path: '*',
           redirect: 'home'

@@ -1,30 +1,20 @@
 import { Lightning as L, Router } from '@lightningjs/sdk'
 import Header from '../molecules/Header'
-import { Rail } from '../molecules/Rail'
 import { Theme } from '../core/theme'
-import { Carousell } from '../molecules/Carousell'
 
-type SectionKey = 'Header' | 'Carussel' | 'TopSearches' | 'NextWatch' | 'Retro'
-const SECTIONS: SectionKey[] = ['Header', 'Carussel', 'TopSearches', 'NextWatch', 'Retro']
+type SectionKey = 'Header'
 
-const GAP2 = 30
-const GAP = 60
 const HEADER_H = 200
-const CAROUSSEL_H = 600
 const RAIL_H = 230
 const EXTRA_BOTTOM = 120 // margen inferior (respirar al final)
 
-export default class HomeSection extends L.Component {
+export default class Template extends L.Component {
   // -1 = Header, 0 = Carussel, 1 = TopSearches, 2 = NextWatch, 3 = Retro
   private _section = -1
 
   // offsets (y absolutos dentro de Viewport.Content)
   private _offsets: Record<SectionKey, number> = {
     Header: 0,
-    Carussel: 0,
-    TopSearches: 0,
-    NextWatch: 0,
-    Retro: 0,
   }
 
   private _minY = 0 // límite inferior para Content.y (negativo)
@@ -50,43 +40,10 @@ export default class HomeSection extends L.Component {
           // Todo el layout dentro
           ContentInner: {
             y: 0,
-
             Header: {
               type: Header,
               h: HEADER_H,
               signals: { navigate: true, focusNext: true },
-            },
-
-            // Carussel 40px debajo del Header
-            Carussel: {
-              y: HEADER_H + GAP2, // 200 + 40 = 240
-              h: CAROUSSEL_H,
-              type: Carousell,
-              signals: { focusPrev: true, focusNext: true },
-            },
-
-            // TopSearches 40px debajo del Carussel
-            TopSearches: {
-              y: HEADER_H + GAP2 + CAROUSSEL_H + GAP2, // 200+40+600+40 = 880
-              h: RAIL_H,
-              type: Rail,
-              signals: { focusPrev: true, focusNext: true },
-            },
-
-            // NextWatch 40px debajo del TopSearches
-            NextWatch: {
-              y: HEADER_H + GAP2 + CAROUSSEL_H + GAP2 + RAIL_H + GAP, // 1140
-              h: RAIL_H,
-              type: Rail,
-              signals: { focusPrev: true, focusNext: true },
-            },
-
-            // Retro 40px debajo del NextWatch
-            Retro: {
-              y: HEADER_H + GAP2 + CAROUSSEL_H + GAP2 + RAIL_H + GAP + RAIL_H + GAP, // 1400
-              h: RAIL_H,
-              type: Rail,
-              signals: { focusPrev: true, focusNext: true },
             },
           },
         },
@@ -95,15 +52,10 @@ export default class HomeSection extends L.Component {
   }
 
   override _active() {
-    this.tag('Viewport.Content.ContentInner.Header')?.setCurrentByRoute('home')
+    this.tag('Viewport.Content.ContentInner.Header')?.setCurrentByRoute('breathe')
   }
 
   override _setup() {
-    const inner = 'Viewport.Content.ContentInner'
-    this.tag(`${inner}.TopSearches`)?.patch({ title: 'Top searches', items: dummy(10) })
-    this.tag(`${inner}.NextWatch`)?.patch({ title: 'Your next watch', items: dummy(10) })
-    this.tag(`${inner}.Retro`)?.patch({ title: 'Retro TV', items: dummy(10) })
-
     // esperar 1 frame por si cambian alturas internas
     setTimeout(() => this._computeMetrics(), 0)
   }
@@ -122,28 +74,14 @@ export default class HomeSection extends L.Component {
     const zh = (n?: any, fb = 0) => (n?.h as number) || fb
 
     const header = get('Header')
-    const car = get('Carussel')
-    const top = get('TopSearches')
-    const next = get('NextWatch')
-    const retro = get('Retro')
 
     const innerY = zy(inner)
 
     // offsets para alinear top de cada sección con top del viewport
     this._offsets.Header = innerY + zy(header)
-    this._offsets.Carussel = innerY + zy(car)
-    this._offsets.TopSearches = innerY + zy(top)
-    this._offsets.NextWatch = innerY + zy(next)
-    this._offsets.Retro = innerY + zy(retro)
 
     // altura total (bottom más profundo) + EXTRA_BOTTOM para “respirar”
-    const bottoms = [
-      innerY + zy(header) + zh(header, HEADER_H),
-      innerY + zy(car) + zh(car, CAROUSSEL_H),
-      innerY + zy(top) + zh(top, RAIL_H),
-      innerY + zy(next) + zh(next, RAIL_H),
-      innerY + zy(retro) + zh(retro, RAIL_H),
-    ]
+    const bottoms = [innerY + zy(header) + zh(header, HEADER_H), innerY + zy(top) + zh(top, RAIL_H)]
     const totalH = Math.max(...bottoms) + EXTRA_BOTTOM
 
     const viewportH = Theme.h
@@ -156,21 +94,19 @@ export default class HomeSection extends L.Component {
 
   override _getFocused() {
     // devolvemos el nodo que debe recibir focus real
-    if (this._section === -1) return this.tag('Viewport.Content.ContentInner.Header')
-    const name = this._nameFor(this._section)
-    return this.tag(`Viewport.Content.ContentInner.${name}`)
+    return this.tag('Viewport.Content.ContentInner.Header')
   }
 
   private _nameFor(idx: number): Exclude<SectionKey, 'Header'> {
     // 0..3 → Carussel, TopSearches, NextWatch, Retro
-    const arr: Exclude<SectionKey, 'Header'>[] = ['Carussel', 'TopSearches', 'NextWatch', 'Retro']
+    const arr: Exclude<SectionKey, 'Header'>[] = []
     const i = Math.max(0, Math.min(idx, arr.length - 1))
     return arr[i]!
   }
 
   // ↓ pasa a la siguiente sección
   focusNext() {
-    const max = 3 // Carussel(0), TopSearches(1), NextWatch(2), Retro(3)
+    const max = 0 // Carussel(0), TopSearches(1), NextWatch(2), Retro(3)
     this._section = Math.min(this._section + 1, max)
     this._applyScrollForSection(this._section)
   }
@@ -205,7 +141,6 @@ export default class HomeSection extends L.Component {
   }
 
   navigate(path: string) {
-    console.log('navigate------> path:', path)
     ;(Router as any).navigate(path)
   }
 
@@ -218,8 +153,4 @@ export default class HomeSection extends L.Component {
     this.focusPrev()
     return true
   }
-}
-
-function dummy(n: number) {
-  return Array.from({ length: n }, (_, i) => ({ id: String(i), title: `Item ${i + 1}` }))
 }
