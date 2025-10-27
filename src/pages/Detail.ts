@@ -30,8 +30,13 @@ export default class Detail extends BasePage {
     return { Header: HEADER_H }
   }
   protected override get sections() {
+    // Pots afegir rails aquí quan els tinguis: ['Hero','Rail1','Rail2',...]
     return ['Hero']
-  } // 0 = Hero ( -1 = Header )
+  }
+  /** No volem persistir el Header a l’històric. */
+  protected override get persistHeaderInHistory() {
+    return false
+  }
 
   // ===== Template =====
   static override _template() {
@@ -137,6 +142,10 @@ export default class Detail extends BasePage {
   // ===== Hidratació per Router/hash =====
   override _onUrlParams(params: any) {
     this._hydrateFromParams(params)
+    // Si NO s’ha restaurat des d’history → focus per defecte a PlayBtn
+    if (!this.wasRestoredFromHistory) {
+      this.focusHeroBtn('PlayBtn')
+    }
   }
 
   private _hydrateFromParams(params: any) {
@@ -175,8 +184,20 @@ export default class Detail extends BasePage {
   // ===== Focus management =====
 
   override _setup() {
-    ;(this as any)._section = 0
+    // Quan carreguem de nou (sense restore), assegurem focus per defecte.
+    if (!this.wasRestoredFromHistory) {
+      this.focusHeroBtn('PlayBtn')
+    }
+  }
+
+  /** Força el focus a un botó de l'Hero i situa la secció a Hero. */
+  public focusHeroBtn(key: 'PlayBtn' | 'AddBtn' | 'LikeBtn' = 'PlayBtn') {
+    const idx = this._btnOrder.indexOf(key)
+    if (idx < 0) return
+    this._btnIndex = idx
+    ;(this as any)._section = 0 // Hero
     this['_applyScrollForSection']?.(0)
+    this._refocus()
   }
 
   getFocusIndex() {

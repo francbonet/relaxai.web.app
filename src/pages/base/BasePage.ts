@@ -17,7 +17,7 @@ export abstract class BasePage extends L.Component {
   protected get hasHeader(): boolean {
     return true
   }
-  /** Ordre de seccions (excloent 'Header'). Ex.: ['Carussel','TopSearches','NextWatch','Retro'] */
+  /** Ordre de seccions (excloent 'Header'). Ex.: ['Hero','RailX','RailY'] */
   protected get sections(): SectionKey[] {
     return []
   }
@@ -41,9 +41,18 @@ export abstract class BasePage extends L.Component {
   protected get innerPath(): string {
     return 'Viewport.Content.ContentInner'
   }
+  /** Si `false`, no persistim mai el Header (-1) a l'history. */
+  protected get persistHeaderInHistory(): boolean {
+    return false
+  }
 
   // ======== ESTAT COMÚ ========
   protected _section: number = this.hasHeader ? -1 : 0
+  protected _restoredFromHistory = false
+  protected get wasRestoredFromHistory() {
+    return this._restoredFromHistory
+  }
+
   private _offsets: Record<string, number> = {}
   private _minY = 0
   private _maxY = 0
@@ -76,7 +85,10 @@ export abstract class BasePage extends L.Component {
 
     if (params) {
       // POP → restaura
-      this._section = params.section ?? (this.hasHeader ? -1 : 0)
+      this._restoredFromHistory = true
+      const restoredSection = params.section ?? (this.hasHeader ? -1 : 0)
+      this._section = !this.persistHeaderInHistory && restoredSection < 0 ? 0 : restoredSection
+
       const wantedY = -(params.scrollY ?? 0)
       content.patch({ y: this._clamp(wantedY) })
 
@@ -88,9 +100,11 @@ export abstract class BasePage extends L.Component {
       return
     }
 
-    // PUSH → desa
+    // PUSH → desa (si estaves al Header i no el volem persistir, guarda 0)
+    const sectionToSave = !this.persistHeaderInHistory && this._section < 0 ? 0 : this._section
+
     const snap: HistorySnapshot = {
-      section: this._section,
+      section: sectionToSave,
       scrollY: Math.abs((content.y as number) || 0),
       focus: {},
     }
@@ -222,8 +236,12 @@ export abstract class BasePage extends L.Component {
     this._lastSync = now
 
     const content = this.tag('Viewport.Content') as L.Component
+
+    // no persistim -1 si així ho demanem
+    const sectionToSave = !this.persistHeaderInHistory && this._section < 0 ? 0 : this._section
+
     const state: HistorySnapshot = {
-      section: this._section,
+      section: sectionToSave,
       scrollY: Math.abs((content.y as number) || 0),
       focus: {},
     }

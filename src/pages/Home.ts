@@ -71,6 +71,8 @@ export default class HomeSection extends BasePage {
     this.tag('Viewport.Content.ContentInner.Header')?.setCurrentByRoute?.(name)
   }
 
+  // protected get persistHeaderInHistory() { return true } // permetre persistir Header en aquella pàgina
+
   override _setup() {
     const inner = 'Viewport.Content.ContentInner'
     this.tag(`${inner}.TopSearches`)?.patch({ title: 'Top searches', items: data.slice(0, 10) })
