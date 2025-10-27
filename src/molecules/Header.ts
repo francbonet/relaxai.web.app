@@ -82,7 +82,7 @@ export default class Header extends L.Component {
     this._applyCurrentByIndex(this._focusIdx)
     const path = this._routes[this._currentIdx]
     // Exemple: navegar a '#/home' o '#/suggest'
-    this.signal('navigate', path)
+    this.signal('navigate', path, { source: 'header' })
     return true
   }
 
