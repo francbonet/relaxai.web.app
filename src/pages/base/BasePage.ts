@@ -12,6 +12,12 @@ export type HistorySnapshot = {
 }
 
 export abstract class BasePage extends L.Component {
+  // dins class BasePage
+  private _pendingRestoreY: number | null = null
+  private _restoreTries = 0
+  private _restoreMaxTries = 6 // 6 frames (~100ms) acostuma a sobrar
+  private _pendingEpsilon = 1 // tolerància de 1px
+
   // ======== CONFIGURACIÓ PER PÀGINA (override a la subclasse) ========
   /** Si tens capçalera al top (tag 'Header' a ContentInner). */
   protected get hasHeader(): boolean {
@@ -88,13 +94,26 @@ export abstract class BasePage extends L.Component {
     const content = this.tag('Viewport.Content') as L.Component
 
     if (params) {
-      // POP → restaura
+      // POP → restaura (però aplicarem el y després de layout)
       this._restoredFromHistory = true
       const restoredSection = params.section ?? (this.hasHeader ? -1 : 0)
       this._section = !this.persistHeaderInHistory && restoredSection < 0 ? 0 : restoredSection
 
-      const wantedY = -(params.scrollY ?? 0)
-      content.patch({ y: this._clamp(wantedY) })
+      // 👇 No toquem encara content.y; només guardem el valor
+      this._pendingRestoreY = params.scrollY ?? 0
+
+      // 🔍 Log de diagnosi
+      console.log('%c[BasePage] RESTORE (historyState)', 'color: #ff9800; font-weight: bold;', {
+        restoredSection,
+        pendingRestoreY: this._pendingRestoreY,
+        focus: params.focus,
+      })
+
+      const test = this._pendingRestoreY
+      setTimeout(() => {
+        const content = this.tag('Viewport.Content') as L.Component
+        content.setSmooth('y', -test)
+      }, 100)
 
       for (const key of this.sections) {
         const idx = params.focus?.[key]
@@ -123,7 +142,17 @@ export abstract class BasePage extends L.Component {
   protected computeAfterLayout() {
     setTimeout(() => {
       this._computeMetrics()
-      this._maybeInitFocus()
+
+      // 👇 Si venim de POP, apliquem ara el scroll exacte amb els límits ja calculats
+      if (this._pendingRestoreY !== null) {
+        const content = this.tag('Viewport.Content') as L.Component
+        const wantedY = -this._pendingRestoreY
+        content.patch({ y: this._clamp(wantedY) })
+        this._pendingRestoreY = null
+        this._refocus()
+      } else {
+        this._maybeInitFocus()
+      }
     }, 0)
   }
 
@@ -237,20 +266,22 @@ export abstract class BasePage extends L.Component {
   }
 
   // ======== HISTORY SNAPSHOT (throttle) ========
-  protected _syncHistorySnapshot() {
+  protected _syncHistorySnapshot(force = false) {
     if (!this.enableHistory) return
     const now = Date.now()
-    if (now - this._lastSync < 120) return
+    if (!force && now - this._lastSync < 120) return
     this._lastSync = now
 
     const content = this.tag('Viewport.Content') as L.Component
 
-    // no persistim -1 si així ho demanem
     const sectionToSave = !this.persistHeaderInHistory && this._section < 0 ? 0 : this._section
+    const scrollY = Math.abs((content.y as number) || 0)
+
+    console.log('%c[BasePage] SAVE', 'color: #00bfa5', { section: sectionToSave, scrollY })
 
     const state: HistorySnapshot = {
       section: sectionToSave,
-      scrollY: Math.abs((content.y as number) || 0),
+      scrollY,
       focus: {},
     }
     for (const key of this.sections) {
@@ -295,6 +326,7 @@ export abstract class BasePage extends L.Component {
 
   // ======== NAVEGAR util ========
   protected navigate(path: string, params?: Record<string, any>) {
+    this._syncHistorySnapshot?.(true) // 💾
     const base = path.replace(/^#?\/?/, '').toLowerCase()
     const target = params?.id ? `${base}/${encodeURIComponent(params.id)}` : base
     ;(Router as any).navigate(target)

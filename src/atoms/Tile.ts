@@ -120,13 +120,8 @@ export class Tile
 
   override _handleEnter() {
     if (!this._data) return true
-
     const section = this._getCurrentSection().toLowerCase() || 'home'
-    const id = encodeURIComponent(String(this._data.id))
-
-    // ✅ Construeix el path real (sense placeholder)
-    Router.navigate(`${section}/detail/${id}`)
-
+    this.signal('navigate', `${section}/detail`, { id: this._data?.id })
     return true
   }
 }
