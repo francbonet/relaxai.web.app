@@ -1,177 +1,225 @@
-import { Lightning as L, Router } from '@lightningjs/sdk'
+// src/pages/Detail.ts
+import { Img, Lightning as L, Router, Utils } from '@lightningjs/sdk'
 import Header from '../molecules/Header'
+import { BasePage } from './base/BasePage'
 import { Theme } from '../core/theme'
-
-type SectionKey = 'Header'
+import type { TileData } from '../atoms/Tile'
+import { data } from '../data/data'
+import { Button } from '../atoms/Button'
 
 const HEADER_H = 200
-const RAIL_H = 230
-const EXTRA_BOTTOM = 120 // margen inferior (respirar al final)
+const HERO_H = 650
+const CONTENT_Y = HEADER_H
+const SIDE_MARGIN = 100
 
-export default class Detail extends L.Component {
-  // -1 = Header, 0 = Carussel, 1 = TopSearches, 2 = NextWatch, 3 = Retro
-  private _section = -1
+export default class Detail extends BasePage {
+  private _data: TileData | null = null
 
-  // offsets (y absolutos dentro de Viewport.Content)
-  private _offsets: Record<SectionKey, number> = {
-    Header: 0,
+  // índex horitzontal de botons dins de Hero
+  private _btnIndex = 0
+  private _btnOrder: Array<'PlayBtn' | 'AddBtn' | 'LikeBtn'> = ['PlayBtn', 'AddBtn', 'LikeBtn']
+
+  // ===== Config pàgina (BasePage) =====
+  protected override get hasHeader() {
+    return true
   }
+  protected override get enableScrollSnap() {
+    return true
+  } // Header <-> Hero
+  protected override get defaultHeights() {
+    return { Header: HEADER_H }
+  }
+  protected override get sections() {
+    return ['Hero']
+  } // 0 = Hero ( -1 = Header )
 
-  private _minY = 0
-  private _maxY = 0
+  // ===== Template =====
+  static override _template() {
+    return BasePage.chrome({
+      Header: {
+        type: Header,
+        h: HEADER_H,
+        signals: { navigate: true, focusNext: true },
+      },
 
-  static override _template(): L.Component.Template<any> {
-    return {
-      w: Theme.w,
-      h: Theme.h,
-      rect: true,
-      color: Theme.colors.bg,
-
-      Viewport: {
+      Hero: {
+        y: CONTENT_Y,
         w: Theme.w,
-        h: Theme.h,
-        clipping: true,
+        h: HERO_H,
 
-        // desplazamos este nodo
-        Content: {
-          y: 0,
-          transitions: { y: { duration: 0.25, timingFunction: 'ease-out' } },
+        Poster: { w: Theme.w, h: HERO_H, texture: null },
 
-          // Todo el layout dentro
-          ContentInner: {
-            y: 0,
-            Header: {
-              type: Header,
-              h: HEADER_H,
-              signals: { navigate: true, focusNext: true },
+        Overlay: {
+          w: Theme.w,
+          h: HERO_H,
+          rect: true,
+          colorTop: 0x00000000,
+          colorBottom: 0xe0000000,
+        },
+
+        Info: {
+          x: SIDE_MARGIN,
+          y: HERO_H - 260,
+
+          Title: {
+            text: {
+              text: '',
+              fontSize: 72,
+              fontFace: 'RelaxAI-SoraBold',
+              textColor: Theme.colors.text,
+            },
+          },
+
+          Meta: {
+            y: 90,
+            text: { text: '', fontSize: 30, textColor: Theme.colors.textDim },
+          },
+
+          Buttons: {
+            y: 150,
+
+            PlayBtn: {
+              type: Button,
+              x: 0,
+              w: 260,
+              label: 'WATCH NOW',
             },
 
-            Text: {
-              x: 100,
-              y: 400,
-              text: { text: 'Detail' },
+            AddBtn: {
+              type: Button,
+              x: 270,
+              w: 80,
+              h: 80,
+              shader: { type: L.shaders.RoundedRectangle, radius: 40 },
+              label: '',
+              Icon: {
+                mount: 0.5,
+                x: 40,
+                y: 40,
+                text: { text: '+', textColor: Theme.colors.bg, fontSize: 40 },
+              },
+            },
+
+            LikeBtn: {
+              type: Button,
+              x: 355,
+              w: 80,
+              h: 80,
+              shader: { type: L.shaders.RoundedRectangle, radius: 40 },
+              label: '',
+              Icon: {
+                mount: 0.5,
+                x: 40,
+                y: 40,
+                text: { text: '👍', textColor: Theme.colors.bg, fontSize: 40 },
+              },
             },
           },
         },
       },
-    }
+
+      DescBox: {
+        y: CONTENT_Y + HERO_H + 40,
+        x: SIDE_MARGIN,
+        w: Theme.w - SIDE_MARGIN * 2,
+        text: {
+          text: '',
+          wordWrap: true,
+          maxLines: 5,
+          fontSize: 28,
+          lineHeight: 40,
+          textColor: Theme.colors.textDim,
+        },
+      },
+    })
   }
 
-  override _active() {
-    // NOTE mantiene la ruta ultima.
-    // this.tag('Viewport.Content.ContentInner.Header')?.setCurrentByRoute('breathe')
-    this.$onRoute()
+  // ===== Hidratació per Router/hash =====
+  override _onUrlParams(params: any) {
+    this._hydrateFromParams(params)
   }
 
-  // Quan la ruta canvia a #detail/2 el Router crida aquest hook
-  $onRoute() {
+  private _hydrateFromParams(params: any) {
     const id =
-      (this as any).params?.id ||
-      (this as any).location?.params?.id ||
-      (this as any).query?.id ||
-      (this as any).location?.query?.id
+      params?.id ?? (typeof window !== 'undefined' ? window.location.hash.split('/')[1] : null)
 
-    // 👉 parcheja el node correcte: ContentInner.Text
-    const textNode = this.tag('Viewport.Content.ContentInner.Text') as L.Component
-    textNode?.patch({ text: { text: `Detail -> ${id ?? '—'}` } })
+    const found = data.find((d) => String(d.id) === String(id)) || params?.item || null
+    this.data = found
   }
+
+  set data(v: TileData | null) {
+    this._data = v
+    if (!v) return
+
+    // Hero image (cover)
+    const src = (v as any).posterSrc || v.imageSrc
+    if (src) {
+      this.tag('Hero.Poster').patch({
+        texture: Img(Utils.asset(src)).cover(Theme.w, HERO_H),
+      })
+    }
+
+    // Title + Meta
+    this.tag('Hero.Info.Title').patch({ text: { text: v.title ?? '' } })
+
+    const genres = Array.isArray((v as any).genres)
+      ? (v as any).genres.join(', ')
+      : (v as any).genres || ''
+    const meta = [v.year, genres, v.duration].filter(Boolean).join(' • ')
+    this.tag('Hero.Info.Meta').patch({ text: { text: meta } })
+
+    // Description
+    this.tag('DescBox').patch({ text: { text: v.description ?? '' } })
+  }
+
+  // ===== Focus management =====
 
   override _setup() {
-    // esperar 1 frame por si cambian alturas internas
-    setTimeout(() => this._computeMetrics(), 0)
+    ;(this as any)._section = 0
+    this['_applyScrollForSection']?.(0)
   }
 
-  override _attach() {
-    this._computeMetrics()
+  getFocusIndex() {
+    return this._btnIndex
   }
-
-  private _computeMetrics() {
-    const content = this.tag('Viewport.Content') as L.Component
-    const inner = this.tag('Viewport.Content.ContentInner') as L.Component
-    const get = (name: SectionKey) => inner?.tag(name) as L.Component | undefined
-    this.stage.update()
-
-    const zy = (n?: any) => (n?.y as number) || 0
-    const zh = (n?: any, fb = 0) => (n?.h as number) || fb
-
-    const header = get('Header')
-
-    const innerY = zy(inner)
-
-    // offsets para alinear top de cada sección con top del viewport
-    this._offsets.Header = innerY + zy(header)
-
-    // altura total (bottom más profundo) + EXTRA_BOTTOM para “respirar”
-    const bottoms = [innerY + zy(header) + zh(header, HEADER_H), innerY + zy(top) + zh(top, RAIL_H)]
-    const totalH = Math.max(...bottoms) + EXTRA_BOTTOM
-
-    const viewportH = Theme.h
-    this._maxY = 0
-    this._minY = Math.min(0, viewportH - totalH) // negativo si hay overflow
-
-    // clamp por si ya hay y previa
-    content.y = this._clamp(content.y as number)
+  setFocusIndex(i: number) {
+    this._btnIndex = Math.max(0, Math.min(i, this._btnOrder.length - 1))
   }
 
   override _getFocused() {
-    // devolvemos el nodo que debe recibir focus real
-    return this.tag('Viewport.Content.ContentInner.Header')
-  }
-
-  private _nameFor(idx: number): Exclude<SectionKey, 'Header'> {
-    // 0..3 → Carussel, TopSearches, NextWatch, Retro
-    const arr: Exclude<SectionKey, 'Header'>[] = []
-    const i = Math.max(0, Math.min(idx, arr.length - 1))
-    return arr[i]!
-  }
-
-  // ↓ pasa a la siguiente sección
-  focusNext() {
-    const max = 0 // Carussel(0), TopSearches(1), NextWatch(2), Retro(3)
-    this._section = Math.min(this._section + 1, max)
-    this._applyScrollForSection(this._section)
-  }
-
-  // ↑ sube sección (hasta Header)
-  focusPrev() {
-    this._section = Math.max(this._section - 1, -1)
-    this._applyScrollForSection(this._section)
-  }
-
-  // REGLA: solo scrollea a partir de TopSearches (>=1).
-  // Si vuelves a Carussel (0) o Header (-1) → scroll 0.
-  private _applyScrollForSection(index: number) {
-    const content = this.tag('Viewport.Content') as L.Component
-
-    if (index <= 0) {
-      // Header o Carussel → resetea scroll
-      content.setSmooth('y', this._clamp(0))
-      this._refocus()
-      return
+    if (this.hasHeader && (this as any)._section === -1) {
+      return this.tag('Viewport.Content.ContentInner.Header')
     }
+    const key = this._btnOrder[this._btnIndex]
+    return this.tag(`Viewport.Content.ContentInner.Hero.Info.Buttons.${key}`)
+  }
 
-    // A partir de TopSearches → scrollea y alinea la sección al top
-    const key = this._nameFor(index)
-    const targetY = -(this._offsets[key] || 0)
-    content.setSmooth('y', this._clamp(targetY))
+  override _handleRight() {
+    this.setFocusIndex(this._btnIndex + 1)
     this._refocus()
+    return true
+  }
+  override _handleLeft() {
+    this.setFocusIndex(this._btnIndex - 1)
+    this._refocus()
+    return true
   }
 
-  private _clamp(y: number) {
-    return Math.max(this._minY, Math.min(y, this._maxY))
-  }
-
-  navigate(path: string) {
-    ;(Router as any).navigate(path)
-  }
-
-  // Teclas del mando (snap por secciones)
   override _handleDown() {
-    this.focusNext()
+    this['focusNext']?.()
     return true
   }
   override _handleUp() {
-    this.focusPrev()
+    this['focusPrev']?.()
+    return true
+  }
+
+  // ===== Acció Enter =====
+  override _handleEnter() {
+    const key = this._btnOrder[this._btnIndex]
+    if (key === 'PlayBtn') {
+      this['navigate']?.('player', { id: this._data?.id })
+    }
     return true
   }
 }

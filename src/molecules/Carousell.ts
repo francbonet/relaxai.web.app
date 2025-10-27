@@ -41,6 +41,7 @@ export class Carousell extends L.Component {
       CTA: {
         y: 440,
         x: 60,
+        w: 260,
         type: Button,
         label: 'WATCH NOW',
       },

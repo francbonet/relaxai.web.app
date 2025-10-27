@@ -16,7 +16,10 @@ export interface TileData {
   year: number
   author: string
   imageSrc: string
+  posterSrc?: string
   videoSrc: string
+  genres?: string[]
+  maturity?: string
 }
 
 export class Tile
@@ -109,8 +112,7 @@ export class Tile
 
   override _handleEnter() {
     if (this._data) {
-      // 🔸 Enviem la ruta + params cap amunt
-      this.signal('navigate', 'detail', { id: this._data.id, item: this._data })
+      this.signal('navigate', 'detail', { id: this._data.id })
     }
     return true
   }

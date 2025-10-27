@@ -33,5 +33,5 @@ export const Typography = {
   title: { face: 'RelaxAI-SoraMedium', size: 60 },
   body: { face: 'RelaxAI-SoraLight', size: 36 },
   small: { face: 'RelaxAI-Manrope', size: 22 },
-  button: { face: 'RelaxAI-SoraSemiBold', size: 36 },
+  button: { face: 'RelaxAI-SoraMedium', size: 30 },
 } as const

@@ -1,12 +1,11 @@
 import { BasePage } from './base/BasePage'
 import { Theme } from '../core/theme'
 import Header from '../molecules/Header'
-import { Router } from '@lightningjs/sdk'
 import { getActiveRouteName } from '../utils/routerUtils'
 
 const HEADER_H = 200
 
-export default class Template extends BasePage {
+export default class SuggestSection extends BasePage {
   protected override get hasHeader() {
     return true
   }
@@ -27,11 +26,11 @@ export default class Template extends BasePage {
         h: HEADER_H,
         signals: { navigate: true, focusNext: true },
       },
-      CenterBox: {
+      Container: {
         x: Theme.w / 2,
         y: Theme.h / 2,
         mount: 0.5,
-        text: { text: 'Template', fontSize: 64 },
+        text: { text: 'Suggestions', fontSize: 64 },
       },
     })
   }

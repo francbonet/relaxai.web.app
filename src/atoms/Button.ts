@@ -1,5 +1,9 @@
+// atoms/Button.ts
 import { Lightning as L } from '@lightningjs/sdk'
 import { Theme, Typography } from '../core/theme'
+
+const PAD_X = 24
+const RADIUS = 8
 
 export interface ButtonSpec extends L.Component.TemplateSpec {
   Label: L.Component
@@ -11,31 +15,17 @@ export class Button
 {
   private _label = ''
 
-  get label() {
-    return this._label
-  }
-  set label(v: string) {
-    this.tag('Label')?.patch({ text: { text: v } })
-  }
-
-  // helper per evitar que TS es queixi si 'Tools' no està tipat
-  private static rr(w = 300, h = 80) {
-    const Tools = (L as any).Tools
-    return Tools?.getRoundRect(w, h, 8, 2, 0xffffff, 0xffffff)
-  }
-
   static override _template(): L.Component.Template<ButtonSpec> {
     return {
-      mount: 0,
       w: 300,
       h: 80,
-      texture: Button.rr(300, 80),
+      rect: true,
       color: Theme.colors.text,
+      shader: { type: L.shaders.RoundedRectangle, radius: RADIUS },
       Label: {
-        x: 25,
-        y: 15,
-        mountX: 0,
-        mountY: 0,
+        mountY: 0.5,
+        x: PAD_X,
+        y: (h: number) => h / 2,
         text: {
           text: '',
           fontFace: Typography.button.face,
@@ -46,10 +36,21 @@ export class Button
     }
   }
 
-  override _focus() {
-    this.scale = 1
+  get label() {
+    return this._label
   }
+  set label(v: string) {
+    this._label = v
+    this.tag('Label')?.patch({ text: { text: v } })
+  }
+
+  override _focus() {
+    this.color = Theme.colors.accent
+    this.tag('Label')?.patch({ text: { textColor: Theme.colors.bg } })
+  }
+
   override _unfocus() {
-    this.scale = 1
+    this.color = Theme.colors.text
+    this.tag('Label')?.patch({ text: { textColor: Theme.colors.bg } })
   }
 }

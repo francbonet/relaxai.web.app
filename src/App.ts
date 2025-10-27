@@ -3,7 +3,7 @@ import { Lightning as L, Router, Utils } from '@lightningjs/sdk'
 import { Theme } from './core/theme'
 import HomeSection from './pages/Home'
 import Player from './pages/Player'
-import SuggestSection from './pages/New'
+import SuggestSection from './pages/SuggestSection'
 import Template from './pages/Template'
 import Detail from './pages/Detail'
 
@@ -38,7 +38,7 @@ export default class App extends (Router as any).App {
       root: 'home',
       routes: [
         { path: 'home', component: HomeSection as any },
-        { path: 'player', component: Player as any },
+        { path: 'player/:id', component: Player as any },
         { path: 'suggest', component: SuggestSection as any },
         { path: 'breathe', component: Template as any },
         { path: 'longform', component: Template as any },
