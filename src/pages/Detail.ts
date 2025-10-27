@@ -159,27 +159,29 @@ export default class Detail extends BasePage {
 
   // ===== Hidratació per Router (params: { section, id }) =====
   override _onUrlParams(params: any) {
-    // 1) llegim la secció d’origen des de la ruta
     this._fromRoute = this._sanitizeSection(params?.section)
 
-    // 2) id i reset de focus si canvia l’element
     const newId = params?.id ? String(params.id) : this._extractIdFromHash()
+    const cameFromRail = params?.focus === 'rail' || params?.section === 'search' // <-- ajusta-ho si envies aquesta info
+
     if (newId && newId !== this._lastId) {
       this._lastId = newId
-      // és una entrada “nova” a un altre detail → focus ferm al PlayBtn
       ;(this as any)._restoredFromHistory = false
-      this._forceFocusPlayBtn()
+
+      if (cameFromRail) {
+        this._focusRailOnEnter() // 👉 si véns d’un rail, prepara secció 1
+      } else {
+        this._forceFocusPlayBtn() // default: Hero
+      }
     }
 
-    // 3) hidratar dades
     this._hydrateFromId(newId)
 
-    // 4) en entrada nova (no POP), focus per defecte
     if (!this.wasRestoredFromHistory) {
-      this._forceFocusPlayBtn()
+      if (cameFromRail) this._focusRailOnEnter()
+      else this._forceFocusPlayBtn()
     }
 
-    // 5) marcar la secció al Header (selected, no focus)
     this._applyHeaderSelected()
   }
 
@@ -278,7 +280,8 @@ export default class Detail extends BasePage {
 
   override _setup() {
     if (!this.wasRestoredFromHistory) {
-      this._forceFocusPlayBtn()
+      // Pot ser que _onUrlParams hagi posat secció=1 (rail) o 0 (hero)
+      // No fem res aquí; ho fixem després de layout
     }
     this._applyHeaderSelected()
 
@@ -362,6 +365,12 @@ export default class Detail extends BasePage {
     const cur = (this as any)._section ?? 0
     ;(this as any)._section = Math.max(-1, cur - 1) // permet -1 (Header)
     this._scrollToSection((this as any)._section)
+    this._refocus()
+  }
+
+  private _focusRailOnEnter = () => {
+    ;(this as any)._section = 1
+    this._scrollToSection(1)
     this._refocus()
   }
 
