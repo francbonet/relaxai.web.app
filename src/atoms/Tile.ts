@@ -1,13 +1,22 @@
-import { Lightning as L } from '@lightningjs/sdk'
+import { Lightning as L, Utils } from '@lightningjs/sdk'
 import { Theme } from '../core/theme'
 
 export interface TileSpec extends L.Component.TemplateSpec {
-  Poster: {
-    PosterBg: L.Component
-    PosterImg: L.Component
-  }
+  Poster: { PosterBg: L.Component; PosterImg: L.Component }
   Title: L.Component
   FocusRing: L.Component
+}
+
+export interface TileData {
+  id: string
+  title: string
+  text: string
+  description: string
+  duration: string
+  year: number
+  author: string
+  imageSrc: string
+  videoSrc: string
 }
 
 export class Tile
@@ -15,13 +24,18 @@ export class Tile
   implements L.Component.ImplementTemplateSpec<TileSpec>
 {
   private _title = ''
+  private _videoSrc = ''
+  private _imageSrc = ''
+  private _data?: TileData
 
   get titleElement() {
     return this.tag('Title')
   }
-
-  get title() {
-    return this._title
+  get poster() {
+    return this.tag('Poster')
+  }
+  get posterImg() {
+    return this.poster?.tag('PosterImg') as L.Element
   }
 
   set title(v: string) {
@@ -29,19 +43,31 @@ export class Tile
     this.titleElement?.patch({ text: { text: v } })
   }
 
-  get poster() {
-    return this.tag('Poster')
+  set imageSrc(v: string) {
+    this._imageSrc = v
+    this.posterImg.patch({ src: Utils.asset(v || '/assets/images/placeholder.png') })
+  }
+  get imageSrc() {
+    return this._imageSrc
   }
 
-  get posterImg() {
-    return this.poster?.tag('PosterImg') as L.Element
+  set videoSrc(v: string) {
+    this._videoSrc = v
+  }
+  get videoSrc() {
+    return this._videoSrc
   }
 
-  setRandomPoster() {
-    const bust = Math.random().toString(36).slice(2)
-    this.posterImg.patch({
-      src: `https://picsum.photos/300/170?random=${bust}`,
-    })
+  // 🔹 setter per injectar totes les dades d’un cop
+  set data(d: TileData) {
+    this._data = d
+    this.title = d.title
+    this.imageSrc = d.imageSrc
+    this.videoSrc = d.videoSrc
+  }
+
+  get data() {
+    return this._data!
   }
 
   static override _template(): L.Component.Template<TileSpec> {
@@ -52,20 +78,13 @@ export class Tile
       Poster: {
         w: (w: number) => w,
         h: (h: number) => h,
-        // Capa 1: fondo “skeleton” (siempre visible)
         PosterBg: {
           rect: true,
           w: (w: number) => w,
           h: (h: number) => h,
           color: Theme.colors.tileunfocus,
         },
-        // Capa 2: imagen por encima
-        PosterImg: {
-          w: (w: number) => w,
-          h: (h: number) => h,
-          // src lo pones en _init o cuando toque
-          // resizeMode opcional
-        },
+        PosterImg: { w: (w: number) => w, h: (h: number) => h },
       },
       Title: { y: 176, text: { text: '', fontSize: 22 } },
       FocusRing: {
@@ -79,26 +98,20 @@ export class Tile
     }
   }
 
-  override _init() {
-    this.setRandomPoster()
-  }
-
   override _focus() {
-    // this.scale = 1.0
-    // this.poster?.patch({ color: Theme.colors.tilefocus })
-    const poster = this.tag('Poster') as L.Element
-    poster.patch({
-      shader: {
-        type: L.shaders.Outline,
-        thickness: 8,
-        color: Theme.colors.accent,
-      },
+    ;(this.tag('Poster') as L.Element).patch({
+      shader: { type: L.shaders.Outline, thickness: 8, color: Theme.colors.accent },
     })
   }
   override _unfocus() {
-    // this.scale = 1.0
-    // this.poster?.patch({ color: Theme.colors.tileunfocus })
-    const poster = this.tag('Poster') as L.Element
-    poster.patch({ shader: null })
+    ;(this.tag('Poster') as L.Element).patch({ shader: null })
+  }
+
+  override _handleEnter() {
+    if (this._data) {
+      // 🔸 Enviem la ruta + params cap amunt
+      this.signal('navigate', 'detail', { id: this._data.id, item: this._data })
+    }
+    return true
   }
 }

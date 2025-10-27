@@ -1,5 +1,5 @@
 import { Lightning as L } from '@lightningjs/sdk'
-import { Tile } from '../atoms/Tile'
+import { Tile, TileData } from '../atoms/Tile'
 
 const STEP = 330 // amplada targeta + gap (300 + 30)
 const VIEW_W = 1840 // amplada visible del rail (ajusta-ho al teu layout)
@@ -31,15 +31,22 @@ export class Rail extends L.Component {
     this.tag('Title').text.text = v
   }
 
-  set items(v: Array<{ title: string }>) {
+  set items(v: TileData[]) {
     this.tag('Viewport.Row').children = v.map((it, i) => ({
       type: Tile,
-      title: it.title,
       x: i * STEP,
+      signals: { navigate: 'onChildNavigate' },
+      data: it,
     }))
+
     this._totalW = v.length * STEP
     this._index = 0
     this._scrollToIndex()
+  }
+
+  // Bubble cap amunt perquè Home el rebi
+  onChildNavigate(path: string, params?: any) {
+    this.signal('navigate', path, params)
   }
 
   override _getFocused() {

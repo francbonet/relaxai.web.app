@@ -5,6 +5,7 @@ import HomeSection from './pages/Home'
 import Player from './pages/Player'
 import SuggestSection from './pages/New'
 import Template from './pages/Template'
+import Detail from './pages/Detail'
 
 // 👇 clau: heretar del Router.App (usa (Router as any) per compat versions)
 export default class App extends (Router as any).App {
@@ -42,6 +43,7 @@ export default class App extends (Router as any).App {
         { path: 'breathe', component: Template as any },
         { path: 'longform', component: Template as any },
         { path: 'search', component: Template as any },
+        { path: 'detail/:id', component: Detail as any },
         { path: '*', redirect: 'home' },
       ],
     })

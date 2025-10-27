@@ -3,9 +3,22 @@ import Header from '../molecules/Header'
 import { Rail } from '../molecules/Rail'
 import { Theme } from '../core/theme'
 import { Carousell } from '../molecules/Carousell'
+import { data } from '../data/data'
 
 type SectionKey = 'Header' | 'Carussel' | 'TopSearches' | 'NextWatch' | 'Retro'
-const SECTIONS: SectionKey[] = ['Header', 'Carussel', 'TopSearches', 'NextWatch', 'Retro']
+
+// ★ Estat a persistir al history
+type HomeHistoryState = {
+  section: number // -1..3
+  scrollY: number // Content.y en positiu (0..)
+  // Opcional per si vols recordar focus intern dels rails / carrousel
+  focus?: {
+    car?: number
+    top?: number
+    next?: number
+    retro?: number
+  }
+}
 
 const GAP2 = 30
 const GAP = 60
@@ -62,7 +75,7 @@ export default class HomeSection extends L.Component {
               y: HEADER_H + GAP2, // 200 + 40 = 240
               h: CAROUSSEL_H,
               type: Carousell,
-              signals: { focusPrev: true, focusNext: true },
+              signals: { focusPrev: true, focusNext: true, navigate: true },
             },
 
             // TopSearches 40px debajo del Carussel
@@ -70,7 +83,7 @@ export default class HomeSection extends L.Component {
               y: HEADER_H + GAP2 + CAROUSSEL_H + GAP2, // 200+40+600+40 = 880
               h: RAIL_H,
               type: Rail,
-              signals: { focusPrev: true, focusNext: true },
+              signals: { focusPrev: true, focusNext: true, navigate: true },
             },
 
             // NextWatch 40px debajo del TopSearches
@@ -78,7 +91,7 @@ export default class HomeSection extends L.Component {
               y: HEADER_H + GAP2 + CAROUSSEL_H + GAP2 + RAIL_H + GAP, // 1140
               h: RAIL_H,
               type: Rail,
-              signals: { focusPrev: true, focusNext: true },
+              signals: { focusPrev: true, focusNext: true, navigate: true },
             },
 
             // Retro 40px debajo del NextWatch
@@ -86,7 +99,7 @@ export default class HomeSection extends L.Component {
               y: HEADER_H + GAP2 + CAROUSSEL_H + GAP2 + RAIL_H + GAP + RAIL_H + GAP, // 1400
               h: RAIL_H,
               type: Rail,
-              signals: { focusPrev: true, focusNext: true },
+              signals: { focusPrev: true, focusNext: true, navigate: true },
             },
           },
         },
@@ -94,15 +107,54 @@ export default class HomeSection extends L.Component {
     }
   }
 
+  // ---------- HISTORYSTATE ----------
+  // El Router cridarà:
+  // - en sortir (PUSH): sense params → retornem l'estat a guardar
+  // - en entrar des d'historial (POP): amb params → restaurem
+  override historyState(params?: HomeHistoryState) {
+    const content = this.tag('Viewport.Content') as L.Component
+
+    if (params) {
+      // POP → Restaura
+      this._section = params.section ?? -1
+      const wantedY = -(params.scrollY ?? 0)
+      content.patch({ y: this._clamp(wantedY) })
+
+      // Si tens índexos de focus guardats i els components ho suporten:
+      this._setChildFocusIndex('Carussel', params.focus?.car)
+      this._setChildFocusIndex('TopSearches', params.focus?.top)
+      this._setChildFocusIndex('NextWatch', params.focus?.next)
+      this._setChildFocusIndex('Retro', params.focus?.retro)
+
+      // Refocus al target actual
+      this._refocus()
+      return
+    }
+
+    // PUSH → Desa snapshot
+    const state: HomeHistoryState = {
+      section: this._section,
+      scrollY: Math.abs((content.y as number) || 0),
+      focus: {
+        car: this._getChildFocusIndex('Carussel'),
+        top: this._getChildFocusIndex('TopSearches'),
+        next: this._getChildFocusIndex('NextWatch'),
+        retro: this._getChildFocusIndex('Retro'),
+      },
+    }
+    return state
+  }
+  // ----------------------------------
+
   override _active() {
     this.tag('Viewport.Content.ContentInner.Header')?.setCurrentByRoute('home')
   }
 
   override _setup() {
     const inner = 'Viewport.Content.ContentInner'
-    this.tag(`${inner}.TopSearches`)?.patch({ title: 'Top searches', items: dummy(10) })
-    this.tag(`${inner}.NextWatch`)?.patch({ title: 'Your next watch', items: dummy(10) })
-    this.tag(`${inner}.Retro`)?.patch({ title: 'Retro TV', items: dummy(10) })
+    this.tag(`${inner}.TopSearches`)?.patch({ title: 'Top searches', items: data.slice(0, 10) })
+    this.tag(`${inner}.NextWatch`)?.patch({ title: 'Your next watch', items: data.slice(0, 10) })
+    this.tag(`${inner}.Retro`)?.patch({ title: 'Retro TV', items: data.slice(0, 10) })
 
     // esperar 1 frame por si cambian alturas internas
     setTimeout(() => this._computeMetrics(), 0)
@@ -204,9 +256,10 @@ export default class HomeSection extends L.Component {
     return Math.max(this._minY, Math.min(y, this._maxY))
   }
 
-  navigate(path: string) {
-    console.log('navigate------> path:', path)
-    ;(Router as any).navigate(path)
+  navigate(path: string, params?: { id?: string }) {
+    const base = path.replace(/^#?\/?/, '').toLowerCase() // "detail"
+    const target = params?.id ? `${base}/${encodeURIComponent(params.id)}` : base
+    ;(Router as any).navigate(target)
   }
 
   // Teclas del mando (snap por secciones)
@@ -218,8 +271,49 @@ export default class HomeSection extends L.Component {
     this.focusPrev()
     return true
   }
-}
 
-function dummy(n: number) {
-  return Array.from({ length: n }, (_, i) => ({ id: String(i), title: `Item ${i + 1}` }))
+  // ---------- Helpers focus intern opcional ----------
+  private _getChildFocusIndex(name: Exclude<SectionKey, 'Header'>): number | undefined {
+    const node = this.tag(`Viewport.Content.ContentInner.${name}`) as any
+    try {
+      if (node?.getFocusIndex) return node.getFocusIndex()
+      if (node?._focusIndex !== undefined) return node._focusIndex
+    } catch {
+      /* empty */
+    }
+    return undefined
+  }
+
+  private _setChildFocusIndex(name: Exclude<SectionKey, 'Header'>, idx?: number) {
+    if (idx === undefined) return
+    const node = this.tag(`Viewport.Content.ContentInner.${name}`) as any
+    try {
+      if (node?.setFocusIndex) node.setFocusIndex(idx)
+      else if (node) node._focusIndex = idx
+    } catch {
+      /* empty */
+    }
+  }
+  // ---------------------------------------------------
+
+  // Escriu un snapshot “fresc” a l’entrada d’historial (throttle suau)
+  private _lastSync = 0
+  private _syncHistorySnapshot() {
+    const now = Date.now()
+    if (now - this._lastSync < 120) return
+    this._lastSync = now
+
+    const content = this.tag('Viewport.Content') as L.Component
+    const state: HomeHistoryState = {
+      section: this._section,
+      scrollY: Math.abs((content.y as number) || 0),
+      focus: {
+        car: this._getChildFocusIndex('Carussel'),
+        top: this._getChildFocusIndex('TopSearches'),
+        next: this._getChildFocusIndex('NextWatch'),
+        retro: this._getChildFocusIndex('Retro'),
+      },
+    }
+    Router.replaceHistoryState?.(state)
+  }
 }
