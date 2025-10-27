@@ -45,6 +45,10 @@ export abstract class BasePage extends L.Component {
   protected get persistHeaderInHistory(): boolean {
     return false
   }
+  /** Si `true`, s’aplica focus inicial intel·ligent en entrada “nova”. */
+  protected get autoInitialFocus(): boolean {
+    return true
+  }
 
   // ======== ESTAT COMÚ ========
   protected _section: number = this.hasHeader ? -1 : 0
@@ -117,11 +121,15 @@ export abstract class BasePage extends L.Component {
 
   // ======== LAYOUT ========
   protected computeAfterLayout() {
-    setTimeout(() => this._computeMetrics(), 0)
+    setTimeout(() => {
+      this._computeMetrics()
+      this._maybeInitFocus()
+    }, 0)
   }
 
   override _attach() {
     this._computeMetrics()
+    this._maybeInitFocus()
   }
 
   protected _computeMetrics() {
@@ -290,5 +298,60 @@ export abstract class BasePage extends L.Component {
     const base = path.replace(/^#?\/?/, '').toLowerCase()
     const target = params?.id ? `${base}/${encodeURIComponent(params.id)}` : base
     ;(Router as any).navigate(target)
+  }
+
+  // ======== FOCUS INICIAL INTEL·LIGENT ========
+  /** Decideix i aplica la secció inicial quan no venim d’history POP. */
+  private _maybeInitFocus() {
+    if (!this.autoInitialFocus) return
+    if (this.wasRestoredFromHistory) return
+    if (!this.sections.length) return
+
+    const desired = this._determineInitialSectionIndex()
+
+    // Evita deixar el Header (-1) com a focus inicial per defecte
+    const safeIndex = Math.max(0, desired)
+
+    if (safeIndex !== this._section) {
+      this._section = safeIndex
+      this._applyScrollForSection(this._section)
+    } else {
+      this._refocus()
+    }
+  }
+
+  /**
+   * Troba la millor secció inicial segons:
+   * prev focus > Carussel > Hero > primera.
+   * Nota: comprovem que el tag existeix i que el nom és a `sections`.
+   */
+  private _determineInitialSectionIndex(): number {
+    // 1) si algun fill té focus previ (getFocusIndex/_focusIndex)
+    const withPrev = this.sections.findIndex((name) => {
+      const idx = this._getChildFocusIndex(name)
+      return idx !== undefined && idx !== null
+    })
+    if (withPrev >= 0) return withPrev
+
+    // 2) Carussel explícit
+    const carusselIdx = this._hasInnerTag('Carussel') ? this.sections.indexOf('Carussel') : -1
+    if (carusselIdx >= 0) return carusselIdx
+
+    // 3) Hero
+    const heroIdx = this._hasInnerTag('Hero') ? this.sections.indexOf('Hero') : -1
+    if (heroIdx >= 0) return heroIdx
+
+    // 4) fallback: primera secció
+    return 0
+  }
+
+  /** Comprova si existeix un tag sota ContentInner amb aquest nom. */
+  private _hasInnerTag(name: string): boolean {
+    try {
+      const node = this.tag(`${this.innerPath}.${name}`) as L.Component | undefined
+      return !!node
+    } catch {
+      return false
+    }
   }
 }

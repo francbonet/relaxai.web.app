@@ -1,4 +1,5 @@
-import { Lightning as L, Utils } from '@lightningjs/sdk'
+// src/atoms/Tile.ts
+import { Lightning as L, Router, Utils } from '@lightningjs/sdk'
 import { Theme } from '../core/theme'
 
 export interface TileSpec extends L.Component.TemplateSpec {
@@ -110,10 +111,22 @@ export class Tile
     ;(this.tag('Poster') as L.Element).patch({ shader: null })
   }
 
+  /** Extreu la secció actual del hash: #/home/..., #/suggest/..., etc. */
+  private _getCurrentSection(): string {
+    if (typeof window === 'undefined') return 'home'
+    const seg = (window.location.hash || '').replace(/^#\/?/, '').split('/')[0] || 'home'
+    return seg.toLowerCase()
+  }
+
   override _handleEnter() {
-    if (this._data) {
-      this.signal('navigate', 'detail', { id: this._data.id })
-    }
+    if (!this._data) return true
+
+    const section = this._getCurrentSection().toLowerCase() || 'home'
+    const id = encodeURIComponent(String(this._data.id))
+
+    // ✅ Construeix el path real (sense placeholder)
+    Router.navigate(`${section}/detail/${id}`)
+
     return true
   }
 }

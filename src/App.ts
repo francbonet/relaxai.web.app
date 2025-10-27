@@ -43,7 +43,7 @@ export default class App extends (Router as any).App {
         { path: 'breathe', component: Template as any },
         { path: 'longform', component: Template as any },
         { path: 'search', component: Template as any },
-        { path: 'detail/:id', component: Detail as any },
+        { path: 'home/detail/:id', component: Detail as any },
         { path: '*', redirect: 'home' },
       ],
     })
