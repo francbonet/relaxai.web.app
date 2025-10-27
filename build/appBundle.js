@@ -3,7 +3,7 @@
  * SDK version: 5.5.5
  * CLI version: 2.14.2
  *
- * Generated: Fri, 24 Oct 2025 14:09:23 GMT
+ * Generated: Mon, 27 Oct 2025 07:50:13 GMT
  */
 
 var APP_com_domain_app_demov2 = (function () {
