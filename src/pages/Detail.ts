@@ -303,6 +303,7 @@ export default class Detail extends BasePage {
   getFocusIndex() {
     return this._btnIndex
   }
+
   setFocusIndex(i: number) {
     this._btnIndex = Math.max(0, Math.min(i, this._btnOrder.length - 1))
   }
@@ -324,6 +325,7 @@ export default class Detail extends BasePage {
     this._refocus()
     return true
   }
+
   override _handleLeft() {
     this.setFocusIndex(this._btnIndex - 1)
     this._refocus()
