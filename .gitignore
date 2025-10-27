@@ -42,3 +42,8 @@ jest-temp/
 # Archivos de lock (opcional según política)
 # package-lock.json
 # yarn.lock
+
+dist
+releases
+.tmp
+build
