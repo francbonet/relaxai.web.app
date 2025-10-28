@@ -1,12 +1,12 @@
 // src/pages/Detail.ts
-import { Img, Lightning as L, Utils } from '@lightningjs/sdk'
-import Header from '../molecules/Header'
-import { BasePage } from './base/BasePage'
-import { Theme } from '../core/theme'
-import type { TileData } from '../atoms/Tile'
-import { data } from '../data/data'
-import { Button } from '../atoms/Button'
-import { Rail } from '../molecules/Rail'
+import { Img, Lightning as L, Utils } from "@lightningjs/sdk";
+import Header from "../molecules/Header";
+import { BasePage } from "./base/BasePage";
+import { Theme } from "../core/theme";
+import type { TileData } from "../atoms/Tile";
+import { data } from "../data/data";
+import { Button } from "../atoms/Button";
+import { Rail } from "../molecules/Rail";
 
 // Helpers (sense dependència de `data`)
 import {
@@ -14,46 +14,55 @@ import {
   forceFocusPlayBtn,
   applyHeaderSelected,
   patchDetailData,
-} from '../utils/detailHelpers'
-import { SectionRoute, sanitizeSection, extractIdFromHash, resolveById } from '../utils/routerUtils'
+} from "../utils/detailHelpers";
+import {
+  SectionRoute,
+  sanitizeSection,
+  extractIdFromHash,
+  resolveById,
+} from "../utils/routerUtils";
 
-const HEADER_H = 200
-const HERO_H = 650
-const CONTENT_Y = HEADER_H
-const SIDE_MARGIN = 100
-const RAIL_H = 230
+const HEADER_H = 200;
+const HERO_H = 650;
+const CONTENT_Y = HEADER_H;
+const SIDE_MARGIN = 100;
+const RAIL_H = 230;
 
 export default class Detail extends BasePage {
-  private _data: TileData | null = null
+  private _data: TileData | null = null;
 
   // índex horitzontal de botons dins de Hero
-  private _btnIndex = 0
-  private _btnOrder: Array<'PlayBtn' | 'AddBtn' | 'LikeBtn'> = ['PlayBtn', 'AddBtn', 'LikeBtn']
+  private _btnIndex = 0;
+  private _btnOrder: Array<"PlayBtn" | "AddBtn" | "LikeBtn"> = [
+    "PlayBtn",
+    "AddBtn",
+    "LikeBtn",
+  ];
 
   // secció d’origen (ve de params.section)
-  private _fromRoute: SectionRoute | null = null
+  private _fromRoute: SectionRoute | null = null;
 
   // id anterior per detectar re-entrades amb altre ítem
-  private _lastId: string | null = null
+  private _lastId: string | null = null;
 
   // ===== Config pàgina (BasePage) =====
   protected override get hasHeader() {
-    return true
+    return true;
   }
   protected override get enableScrollSnap() {
-    return true
+    return true;
   } // Header <-> Hero
   protected override get defaultHeights() {
     // Nota: TopSearches només per info (scroll-snap)
-    return { Header: HEADER_H, Hero: HERO_H, TopSearches: RAIL_H }
+    return { Header: HEADER_H, Hero: HERO_H, TopSearches: RAIL_H };
   }
   protected override get sections() {
     // -1 (Header) és virtual; 0 = Hero; 1 = TopSearches
-    return ['Hero', 'TopSearches']
+    return ["Hero", "TopSearches"];
   }
   /** No volem persistir el Header a l’històric. */
   protected override get persistHeaderInHistory() {
-    return false
+    return false;
   }
 
   // ===== Template =====
@@ -82,30 +91,43 @@ export default class Detail extends BasePage {
 
         Info: {
           x: SIDE_MARGIN,
-          y: HERO_H - 260,
+          y: HERO_H - 460,
 
           Title: {
             text: {
-              text: '',
+              text: "",
               fontSize: 72,
-              fontFace: 'RelaxAI-SoraBold',
+              fontFace: "RelaxAI-SoraBold",
               textColor: Theme.colors.text,
             },
           },
 
           Meta: {
             y: 90,
-            text: { text: '', fontSize: 30, textColor: Theme.colors.textDim },
+            text: { text: "", fontSize: 30, textColor: Theme.colors.textDim },
+          },
+
+          DescBox: {
+            y: 150,
+            x: 0,
+            w: Theme.w - SIDE_MARGIN * 2,
+            text: {
+              text: "",
+              wordWrap: true,
+              maxLines: 5,
+              fontSize: 30,
+              lineHeight: 40,
+              textColor: Theme.colors.textDim,
+            },
           },
 
           Buttons: {
-            y: 150,
-
+            y: 230,
             PlayBtn: {
               type: Button,
               x: 0,
               w: 260,
-              label: 'WATCH NOW',
+              label: "WATCH NOW",
             },
 
             AddBtn: {
@@ -114,12 +136,12 @@ export default class Detail extends BasePage {
               w: 80,
               h: 80,
               shader: { type: L.shaders.RoundedRectangle, radius: 40 },
-              label: '',
+              label: "",
               Icon: {
                 mount: 0.5,
                 x: 40,
                 y: 40,
-                text: { text: '+', textColor: Theme.colors.bg, fontSize: 40 },
+                text: { text: "+", textColor: Theme.colors.bg, fontSize: 40 },
               },
             },
 
@@ -129,87 +151,74 @@ export default class Detail extends BasePage {
               w: 80,
               h: 80,
               shader: { type: L.shaders.RoundedRectangle, radius: 40 },
-              label: '',
+              label: "",
               Icon: {
                 mount: 0.5,
                 x: 40,
                 y: 40,
-                text: { text: '👍', textColor: Theme.colors.bg, fontSize: 40 },
+                text: { text: "👍", textColor: Theme.colors.bg, fontSize: 40 },
               },
             },
           },
         },
       },
 
-      DescBox: {
-        y: CONTENT_Y + HERO_H + 40,
-        x: SIDE_MARGIN,
-        w: Theme.w - SIDE_MARGIN * 2,
-        text: {
-          text: '',
-          wordWrap: true,
-          maxLines: 5,
-          fontSize: 28,
-          lineHeight: 40,
-          textColor: Theme.colors.textDim,
-        },
-      },
-
       TopSearches: {
-        y: CONTENT_Y + HERO_H + 130,
+        y: CONTENT_Y + HERO_H + 40,
         h: RAIL_H,
         type: Rail,
         signals: { focusPrev: true, focusNext: true, navigate: true },
       },
-    })
+    });
   }
 
   // ===== Hidratació per Router (params: { section, id }) =====
   override _onUrlParams(params: any) {
-    this._fromRoute = sanitizeSection(params?.section)
+    this._fromRoute = sanitizeSection(params?.section);
 
-    const newId = params?.id ? String(params.id) : extractIdFromHash()
-    const cameFromRail = params?.focus === 'rail' || params?.section === 'search'
+    const newId = params?.id ? String(params.id) : extractIdFromHash();
+    const cameFromRail =
+      params?.focus === "rail" || params?.section === "search";
 
     if (newId && newId !== this._lastId) {
-      this._lastId = newId
-      ;(this as any)._restoredFromHistory = false
+      this._lastId = newId;
+      (this as any)._restoredFromHistory = false;
 
       if (cameFromRail) {
-        this._focusRailOnEnter()
+        this._focusRailOnEnter();
       } else {
-        forceFocusPlayBtn(this)
+        forceFocusPlayBtn(this);
       }
     }
 
     // Hidratació sense que els helpers coneguin `data`
-    this.data = resolveById<TileData>(newId, data, (d) => (d as any).id)
+    this.data = resolveById<TileData>(newId, data, (d) => (d as any).id);
 
     if (!this.wasRestoredFromHistory) {
-      if (cameFromRail) this._focusRailOnEnter()
-      else forceFocusPlayBtn(this)
+      if (cameFromRail) this._focusRailOnEnter();
+      else forceFocusPlayBtn(this);
     }
 
-    applyHeaderSelected(this, this._fromRoute)
+    applyHeaderSelected(this, this._fromRoute);
   }
 
   // ===== HistoryState: inclou/recupera fromRoute i respecta POP =====
   override historyState(params?: any) {
     if (params) {
       // POP: restaura fromRoute i deixa BasePage restaurar scroll/section/focus
-      this._fromRoute = sanitizeSection(params.fromRoute) ?? this._fromRoute
-      applyHeaderSelected(this, this._fromRoute)
-      return super.historyState(params)
+      this._fromRoute = sanitizeSection(params.fromRoute) ?? this._fromRoute;
+      applyHeaderSelected(this, this._fromRoute);
+      return super.historyState(params);
     }
-    const snap = super.historyState() as any
-    if (snap) snap.fromRoute = this._fromRoute || undefined
-    return snap
+    const snap = super.historyState() as any;
+    if (snap) snap.fromRoute = this._fromRoute || undefined;
+    return snap;
   }
 
   // ===== Data setter =====
   set data(v: TileData | null) {
-    this._data = v
-    patchDetailData(this, v)
+    this._data = v;
+    patchDetailData(this, v);
   }
 
   // ===== Focus management =====
@@ -218,109 +227,112 @@ export default class Detail extends BasePage {
       // _onUrlParams pot haver posat secció=1 (rail) o 0 (hero)
       // No fem res aquí; ho fixem després de layout
     }
-    applyHeaderSelected(this, this._fromRoute)
+    applyHeaderSelected(this, this._fromRoute);
 
-    const inner = 'Viewport.Content.ContentInner'
-    this.tag(`${inner}.TopSearches`)?.patch({ title: 'Related', items: data.slice(0, 10) })
-    this.computeAfterLayout()
+    const inner = "Viewport.Content.ContentInner";
+    this.tag(`${inner}.TopSearches`)?.patch({
+      title: "Related",
+      items: data.slice(0, 10),
+    });
+    this.computeAfterLayout();
   }
 
   /** Força el focus a un botó de l'Hero i situa la secció a Hero. */
-  public focusHeroBtn(key: 'PlayBtn' | 'AddBtn' | 'LikeBtn' = 'PlayBtn') {
-    const idx = this._btnOrder.indexOf(key)
-    if (idx < 0) return
-    this._btnIndex = idx
-    ;(this as any)._section = 0 // Hero
-    scrollToSection(this, 0)
-    this._refocus()
+  public focusHeroBtn(key: "PlayBtn" | "AddBtn" | "LikeBtn" = "PlayBtn") {
+    const idx = this._btnOrder.indexOf(key);
+    if (idx < 0) return;
+    this._btnIndex = idx;
+    (this as any)._section = 0; // Hero
+    scrollToSection(this, 0);
+    this._refocus();
   }
 
   getFocusIndex() {
-    return this._btnIndex
+    return this._btnIndex;
   }
 
   setFocusIndex(i: number) {
-    this._btnIndex = Math.max(0, Math.min(i, this._btnOrder.length - 1))
+    this._btnIndex = Math.max(0, Math.min(i, this._btnOrder.length - 1));
   }
 
   override _getFocused() {
     if (this.hasHeader && (this as any)._section === -1) {
-      return this.tag('Viewport.Content.ContentInner.Header')
+      return this.tag("Viewport.Content.ContentInner.Header");
     }
     if ((this as any)._section === 0) {
-      const key = this._btnOrder[this._btnIndex]
-      return this.tag(`Viewport.Content.ContentInner.Hero.Info.Buttons.${key}`)
+      const key = this._btnOrder[this._btnIndex];
+      return this.tag(`Viewport.Content.ContentInner.Hero.Info.Buttons.${key}`);
     }
     // secció 1: TopSearches
-    return this.tag('Viewport.Content.ContentInner.TopSearches')
+    return this.tag("Viewport.Content.ContentInner.TopSearches");
   }
 
   override _handleRight() {
-    this.setFocusIndex(this._btnIndex + 1)
-    this._refocus()
-    return true
+    this.setFocusIndex(this._btnIndex + 1);
+    this._refocus();
+    return true;
   }
 
   override _handleLeft() {
-    this.setFocusIndex(this._btnIndex - 1)
-    this._refocus()
-    return true
+    this.setFocusIndex(this._btnIndex - 1);
+    this._refocus();
+    return true;
   }
 
   override _handleDown() {
     // Si som al Header (-1), baixa al Hero (0) directament
     if ((this as any)._section === -1) {
-      ;(this as any)._section = 0
-      scrollToSection(this, 0)
-      this._refocus()
-      return true
+      (this as any)._section = 0;
+      scrollToSection(this, 0);
+      this._refocus();
+      return true;
     }
-    ;(this as any)['focusNext']?.()
-    return true
+    (this as any)["focusNext"]?.();
+    return true;
   }
 
   override _handleUp() {
     // Si estàs al Hero (0), puja al Header (-1)
     if ((this as any)._section === 0) {
-      ;(this as any)._section = -1
-      scrollToSection(this, -1)
-      this._refocus()
-      return true
+      (this as any)._section = -1;
+      scrollToSection(this, -1);
+      this._refocus();
+      return true;
     }
-    ;(this as any)['focusPrev']?.()
-    return true
+    (this as any)["focusPrev"]?.();
+    return true;
   }
 
   public override focusNext() {
-    const max = 1 // Hero(0), TopSearches(1)
-    ;(this as any)._section = Math.min(max, ((this as any)._section ?? 0) + 1)
-    scrollToSection(this, (this as any)._section)
-    this._refocus()
+    const max = 1; // Hero(0), TopSearches(1)
+    (this as any)._section = Math.min(max, ((this as any)._section ?? 0) + 1);
+    scrollToSection(this, (this as any)._section);
+    this._refocus();
   }
 
   public override focusPrev() {
-    const cur = (this as any)._section ?? 0
-    ;(this as any)._section = Math.max(-1, cur - 1) // permet -1 (Header)
-    scrollToSection(this, (this as any)._section)
-    this._refocus()
+    const cur = (this as any)._section ?? 0;
+    (this as any)._section = Math.max(-1, cur - 1); // permet -1 (Header)
+    scrollToSection(this, (this as any)._section);
+    this._refocus();
   }
 
   private _focusRailOnEnter = () => {
-    ;(this as any)._section = 1
-    scrollToSection(this, 1)
-    this._refocus()
-  }
+    (this as any)._section = 1;
+    scrollToSection(this, 1);
+    this._refocus();
+  };
 
   // ===== Acció Enter =====
   override _handleEnter() {
-    const key = this._btnOrder[this._btnIndex]
-    if (key === 'PlayBtn') {
+    const key = this._btnOrder[this._btnIndex];
+    if (key === "PlayBtn") {
       // si vols propagar la secció fins al player per coherència visual
-      ;(this as any)['navigate']?.('player', {
+      (this as any)["navigate"]?.("player", {
         id: this._data?.id,
-        section: this._fromRoute || 'home',
-      })
+        section: this._fromRoute || "home",
+      });
     }
-    return true
+    return true;
   }
 }

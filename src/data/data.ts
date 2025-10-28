@@ -12,7 +12,7 @@ export const data = [
     maturity: 'PG',
     imageSrc: 'assets/images/1.png',
     posterSrc: 'assets/images/1.png',
-    videoSrc: 'assets/videos/video1.mp4',
+    videoSrc: 'videos/video1.mp4',
   },
   {
     id: '2',
@@ -26,7 +26,7 @@ export const data = [
     maturity: 'G',
     imageSrc: 'assets/images/2.png',
     posterSrc: 'assets/images/2.png',
-    videoSrc: 'assets/videos/video2.mp4',
+    videoSrc: 'videos/video1.mp4',
   },
   {
     id: '3',
@@ -40,7 +40,7 @@ export const data = [
     maturity: 'PG-13',
     imageSrc: 'assets/images/3.png',
     posterSrc: 'assets/images/3.png',
-    videoSrc: 'assets/videos/video3.mp4',
+    videoSrc: 'videos/video1.mp4',
   },
   {
     id: '4',
@@ -54,7 +54,7 @@ export const data = [
     maturity: 'G',
     imageSrc: 'assets/images/4.png',
     posterSrc: 'assets/images/4.png',
-    videoSrc: 'assets/videos/video4.mp4',
+    videoSrc: 'videos/video1.mp4',
   },
   {
     id: '5',
@@ -68,7 +68,7 @@ export const data = [
     maturity: 'G',
     imageSrc: 'assets/images/5.png',
     posterSrc: 'assets/images/5.png',
-    videoSrc: 'assets/videos/video5.mp4',
+    videoSrc: 'videos/video1.mp4',
   },
   {
     id: '6',
@@ -82,7 +82,7 @@ export const data = [
     maturity: 'PG',
     imageSrc: 'assets/images/6.png',
     posterSrc: 'assets/images/6.png',
-    videoSrc: 'assets/videos/video6.mp4',
+    videoSrc: 'videos/video1.mp4',
   },
   {
     id: '7',
@@ -96,7 +96,7 @@ export const data = [
     maturity: 'PG',
     imageSrc: 'assets/images/7.png',
     posterSrc: 'assets/images/7.png',
-    videoSrc: 'assets/videos/video7.mp4',
+    videoSrc: 'videos/video1.mp4',
   },
   {
     id: '8',
@@ -110,7 +110,7 @@ export const data = [
     maturity: 'G',
     imageSrc: 'assets/images/8.png',
     posterSrc: 'assets/images/8.png',
-    videoSrc: 'assets/videos/video8.mp4',
+    videoSrc: 'videos/video1.mp4',
   },
   {
     id: '9',
@@ -124,7 +124,7 @@ export const data = [
     maturity: 'PG',
     imageSrc: 'assets/images/9.png',
     posterSrc: 'assets/images/9.png',
-    videoSrc: 'assets/videos/video9.mp4',
+    videoSrc: 'videos/video1.mp4',
   },
   {
     id: '10',
@@ -138,6 +138,6 @@ export const data = [
     maturity: 'PG-13',
     imageSrc: 'assets/images/10.png',
     posterSrc: 'assets/images/10.png',
-    videoSrc: 'assets/videos/video10.mp4',
+    videoSrc: 'videos/video1.mp4',
   },
 ]
