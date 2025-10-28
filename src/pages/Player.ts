@@ -18,13 +18,22 @@ export default class Player extends BasePage {
     })
   }
 
+  // ===== Hidratació per Router (params: { section, id }) =====
+  override _onUrlParams(params: any) {
+    // this._fromRoute = sanitizeSection(params?.section)
+    // const id = params?.id ? String(params.id) : extractIdFromHash()
+    // console.log('[Player] onUrlParams id ->', id)
+  }
+
   // Exemples de tecles específiques
   _handlePlay() {
     /* play */ return true
   }
+
   _handlePause() {
     /* pause */ return true
   }
+
   override _handleBack() {
     /* tancar player o Router.back() */ return false
   }

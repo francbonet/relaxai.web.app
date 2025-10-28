@@ -2,7 +2,9 @@
   "name": "com.domain.app.demov2",
   "description": "demo-v2",
   "scripts": {
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "start": "lng dev",
+    "build": "lng build"
   },
   "dependencies": {
     "@lightningjs/core": "2.15.0",
