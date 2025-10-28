@@ -48,5 +48,5 @@ export function patchDetailData(ctx: any, v: TileData | null) {
     : (v as any).genres || "";
   const meta = [v.year, genres, v.duration].filter(Boolean).join(" • ");
   ctx.tag("Hero.Info.Meta").patch({ text: { text: meta } });
-  ctx.tag("DescBox").patch({ text: { text: v.description ?? "" } });
+  ctx.tag("Hero.Info.DescBox").patch({ text: { text: v.description ?? "" } });
 }

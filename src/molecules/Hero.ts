@@ -33,7 +33,7 @@ export class Hero extends L.Component<L.Component.TemplateSpecLoose> {
 
       Info: {
         x: SIDE_MARGIN,
-        y: HERO_H - 380,
+        y: HERO_H - 450,
         Title: {
           text: {
             text: "",
@@ -46,12 +46,27 @@ export class Hero extends L.Component<L.Component.TemplateSpecLoose> {
           y: 90,
           text: { text: "", fontSize: 30, textColor: Theme.colors.textDim },
         },
+
+        DescBox: {
+          y: 140,
+          x: 0,
+          w: Theme.w - SIDE_MARGIN * 2,
+          text: {
+            text: "",
+            wordWrap: true,
+            maxLines: 5,
+            fontSize: 36,
+            lineHeight: 40,
+            textColor: Theme.colors.textDim,
+          },
+        },
+
         Buttons: {
-          y: 150,
+          y: 250,
           PlayBtn: { type: Button, x: 0, w: 260, label: "WATCH NOW" },
           AddBtn: {
             type: Button,
-            x: 280,
+            x: 275,
             w: 80,
             h: 80,
             shader: { type: L.shaders.RoundedRectangle, radius: 40 },

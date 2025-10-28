@@ -1,5 +1,5 @@
 // src/pages/Detail.ts
-import { Img, Lightning as L, Utils } from "@lightningjs/sdk";
+import { Img, Lightning as L, Router, Utils } from "@lightningjs/sdk";
 import Header from "../molecules/Header";
 import { BasePage } from "./base/BasePage";
 import { Theme } from "../core/theme";
@@ -21,6 +21,7 @@ import {
   extractIdFromHash,
   resolveById,
 } from "../utils/routerUtils";
+import { Hero } from "../molecules/Hero";
 
 const HEADER_H = 200;
 const HERO_H = 650;
@@ -75,92 +76,11 @@ export default class Detail extends BasePage {
       },
 
       Hero: {
+        type: Hero,
         y: CONTENT_Y,
         w: Theme.w,
         h: HERO_H,
-
-        Poster: { w: Theme.w, h: HERO_H, texture: null },
-
-        Overlay: {
-          w: Theme.w,
-          h: HERO_H,
-          rect: true,
-          colorTop: 0x00000000,
-          colorBottom: 0xe0000000,
-        },
-
-        Info: {
-          x: SIDE_MARGIN,
-          y: HERO_H - 460,
-
-          Title: {
-            text: {
-              text: "",
-              fontSize: 72,
-              fontFace: "RelaxAI-SoraBold",
-              textColor: Theme.colors.text,
-            },
-          },
-
-          Meta: {
-            y: 90,
-            text: { text: "", fontSize: 30, textColor: Theme.colors.textDim },
-          },
-
-          DescBox: {
-            y: 150,
-            x: 0,
-            w: Theme.w - SIDE_MARGIN * 2,
-            text: {
-              text: "",
-              wordWrap: true,
-              maxLines: 5,
-              fontSize: 30,
-              lineHeight: 40,
-              textColor: Theme.colors.textDim,
-            },
-          },
-
-          Buttons: {
-            y: 230,
-            PlayBtn: {
-              type: Button,
-              x: 0,
-              w: 260,
-              label: "WATCH NOW",
-            },
-
-            AddBtn: {
-              type: Button,
-              x: 270,
-              w: 80,
-              h: 80,
-              shader: { type: L.shaders.RoundedRectangle, radius: 40 },
-              label: "",
-              Icon: {
-                mount: 0.5,
-                x: 40,
-                y: 40,
-                text: { text: "+", textColor: Theme.colors.bg, fontSize: 40 },
-              },
-            },
-
-            LikeBtn: {
-              type: Button,
-              x: 355,
-              w: 80,
-              h: 80,
-              shader: { type: L.shaders.RoundedRectangle, radius: 40 },
-              label: "",
-              Icon: {
-                mount: 0.5,
-                x: 40,
-                y: 40,
-                text: { text: "👍", textColor: Theme.colors.bg, fontSize: 40 },
-              },
-            },
-          },
-        },
+        signals: { navigate: "_handleEnter", focusPrev: true, focusNext: true },
       },
 
       TopSearches: {
@@ -261,7 +181,7 @@ export default class Detail extends BasePage {
     }
     if ((this as any)._section === 0) {
       const key = this._btnOrder[this._btnIndex];
-      return this.tag(`Viewport.Content.ContentInner.Hero.Info.Buttons.${key}`);
+      return this.tag(`Viewport.Content.ContentInner.Hero`);
     }
     // secció 1: TopSearches
     return this.tag("Viewport.Content.ContentInner.TopSearches");
@@ -334,5 +254,15 @@ export default class Detail extends BasePage {
       });
     }
     return true;
+  }
+
+  override navigate(path: string, params?: Record<string, any>) {
+    console.log("[Detail] ->", { path, params });
+    this._syncHistorySnapshot?.(true); // 💾
+    const base = path.replace(/^#?\/?/, "").toLowerCase();
+    const target = params?.id
+      ? `${base}/${encodeURIComponent(params.id)}`
+      : base;
+    (Router as any).navigate(target);
   }
 }
