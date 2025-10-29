@@ -39,7 +39,7 @@ export class Player extends Lightning.Component {
 
   static override _template() {
     const SIDE_PAD = 60;
-    const BTN_W = 180;
+    const BTN_W = 80;
     const BTN_H = 80;
     const BTN_GAP = 30;
 
@@ -87,7 +87,7 @@ export class Player extends Lightning.Component {
         PlayPause: {
           type: ControlButton,
           x: SIDE_PAD,
-          y: 840,
+          y: 920,
           w: BTN_W,
           h: BTN_H,
           label: "Play",
@@ -96,7 +96,7 @@ export class Player extends Lightning.Component {
         Back30: {
           type: ControlButton,
           x: SIDE_PAD + BTN_W + BTN_GAP,
-          y: 840,
+          y: 920,
           w: BTN_W,
           h: BTN_H,
           label: "-30s",
@@ -105,7 +105,7 @@ export class Player extends Lightning.Component {
         Fwd30: {
           type: ControlButton,
           x: SIDE_PAD + (BTN_W + BTN_GAP) * 2,
-          y: 840,
+          y: 920,
           w: BTN_W,
           h: BTN_H,
           label: "+30s",
@@ -113,11 +113,11 @@ export class Player extends Lightning.Component {
 
         // ── Barra de progreso (debajo de los botones)
         Progress: {
-          x: SIDE_PAD,
-          y: 940,
+          x: SIDE_PAD + 350,
+          y: 950,
           Track: {
             rect: true,
-            w: 1920 - SIDE_PAD * 2,
+            w: 1520 - SIDE_PAD * 2,
             h: 8,
             color: 0x44ffffff,
           },
@@ -263,6 +263,7 @@ export class Player extends Lightning.Component {
   }
 
   private _exitPlayer() {
+    console.log("[Player] Exiting player...");
     this._clearTimers();
     try {
       (VideoPlayer as any).stop?.();
@@ -297,22 +298,26 @@ export class Player extends Lightning.Component {
 
   // ── Events player ────────────────────────────────────────────────────────
   $videoPlayerPlaying() {
+    (this.PlayPause as any).setVariant("play");
     this.Poster.visible = false;
     this._autoHideSoon();
   }
   $videoPlayerPause() {
+    (this.PlayPause as any).setVariant("pause");
     this._showControls();
   }
   $videoPlayerWaiting() {
     this._showControls();
   }
   $videoPlayerStop() {
+    (this.PlayPause as any).setVariant("pause");
     this.Poster.visible = true;
     this._showControls();
   }
   $videoPlayerEnded() {
     this.Poster.visible = true;
     this._showControls();
+    this._exitPlayer();
   }
   $videoPlayerError() {
     this.Poster.visible = true;
@@ -591,7 +596,7 @@ export class Player extends Lightning.Component {
     }
 
     const playing = !!(VideoPlayer as any).playing;
-    this.PlayPause.tag("Label").text = { text: playing ? "Pause" : "Play" };
+    (this.PlayPause as any).setVariant(playing ? "pause" : "play");
   }
 
   // ── Helpers ──────────────────────────────────────────────────────────────
