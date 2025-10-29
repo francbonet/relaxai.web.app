@@ -1,5 +1,4 @@
 import {
-  Img,
   Lightning,
   Router,
   Settings,
@@ -10,8 +9,6 @@ import { Button } from "../../atoms/Button";
 import { TileData } from "../../atoms/Tile";
 import { data } from "../../data/data";
 import { extractIdFromHash, resolveById } from "../../utils/routerUtils";
-import { Theme } from "../../core/theme";
-import ControlButton from "../../atoms/ControlButton";
 
 type Ms = number;
 type FocusKey = "BackBtn" | "PlayPause" | "Progress";
@@ -52,7 +49,6 @@ export class Player extends Lightning.Component {
           alpha: 0.45,
           color: 0xff000000,
         },
-
         BackBtn: {
           type: Button,
           x: 60,
@@ -66,14 +62,12 @@ export class Player extends Lightning.Component {
         Metadata: { x: 60, y: 180, text: { text: "", fontSize: 48 } },
 
         PlayPause: {
-          type: ControlButton,
+          type: Button,
           x: 60,
           y: 950,
-          src: "videos/controls/play.png",
-          size: 80,
-          radius: 8,
-          iconScale: 1,
-          signals: { select: "_onPlayPauseSelect" },
+          w: 150,
+          h: 80,
+          label: "Play",
         },
 
         Progress: {
@@ -168,6 +162,7 @@ export class Player extends Lightning.Component {
     const key = FOCUS_ORDER[this._focusIndex];
     if (key === "BackBtn") return this.BackBtn;
     if (key === "PlayPause") return this.PlayPause;
+    // Progress no és un Button; el gestiona el mateix Player
     return this;
   }
   override _focus() {
@@ -257,9 +252,6 @@ export class Player extends Lightning.Component {
   $videoPlayerError() {
     this.Poster.visible = true;
     this._showControls();
-  }
-  $videoPlayerLoadedMetadata() {
-    this._updateProgressUI();
   }
 
   // ── Tecles ───────────────────────────────────────────────────────────────
@@ -371,6 +363,7 @@ export class Player extends Lightning.Component {
   // ── Focus visual ─────────────────────────────────────────────────────────
   private _applyItemFocus() {
     this._styleProgress(false);
+
     const key = FOCUS_ORDER[this._focusIndex];
     if (key === "Progress") this._styleProgress(true);
   }
@@ -379,7 +372,7 @@ export class Player extends Lightning.Component {
     this.ProgressTrack.setSmooth("h", on ? 10 : 8, { duration: 0.12 });
     this.ProgressFill.setSmooth("h", on ? 10 : 8, { duration: 0.12 });
     this.ProgressTrack.color = on ? 0x66ffffff : 0x44ffffff;
-    this.ProgressFill.color = on ? 0xff6bd3c3 : 0xcc6bd3c3;
+    this.ProgressFill.color = on ? 0xffffffff : 0xccffffff;
 
     // ✅ Cambiamos solo la propiedad pública, sin spread
     this.ProgressTimes.patch({
@@ -399,26 +392,23 @@ export class Player extends Lightning.Component {
     this._wasPlayingBeforeScrub = !!(VideoPlayer as any).playing;
     if (this._wasPlayingBeforeScrub) VideoPlayer.pause();
 
-    const dur = this._num(this._vpGet<number>("duration", 0));
-    const cur = this._num(this._vpGet<number>("currentTime", 0));
+    const dur = Math.max(0, this._vpGet<number>("duration", 0));
+    const cur = Math.max(0, this._vpGet<number>("currentTime", 0));
     this._scrubPct = dur > 0 ? cur / dur : 0;
-
     this._updateThumbFromPct();
     this.ProgressThumb.setSmooth("alpha", 1, { duration: 0.12 });
     this._clearAutohide();
   }
 
   private _commitScrub() {
-    const dur = this._num(this._vpGet<number>("duration", 0));
-    const target =
-      dur > 0
-        ? Math.max(0, Math.min(dur, Math.round(dur * this._scrubPct)))
-        : 0;
-    if (dur > 0) VideoPlayer.seek(target);
+    const dur = Math.max(0, this._vpGet<number>("duration", 0));
+    const target = Math.max(0, Math.min(dur, Math.round(dur * this._scrubPct)));
+    VideoPlayer.seek(target);
     if (this._wasPlayingBeforeScrub) VideoPlayer.play();
     this._scrubbing = false;
     this.ProgressThumb.setSmooth("alpha", 0, { duration: 0.12 });
     this._autoHideSoon();
+    VideoPlayer.play();
   }
 
   private _cancelScrub() {
@@ -433,12 +423,11 @@ export class Player extends Lightning.Component {
     this._scrubPct = Math.max(0, Math.min(1, this._scrubPct + dir * stepPct));
     this._updateThumbFromPct();
 
-    const dur = this._num(this._vpGet<number>("duration", 0));
-    const preview = dur > 0 ? Math.round(dur * this._scrubPct) : 0;
-    const cur = this._num(this._vpGet<number>("currentTime", 0));
-    const totalTxt = dur > 0 ? this._fmt(dur) : "--:--";
+    const dur = Math.max(0, this._vpGet<number>("duration", 0));
+    const preview = Math.round(dur * this._scrubPct);
+    const cur = Math.max(0, this._vpGet<number>("currentTime", 0));
     this.ProgressTimes.text = {
-      text: `${this._fmt(cur)}  ⟶  ${this._fmt(preview)} / ${totalTxt}`,
+      text: `${this._fmt(cur)}  ⟶  ${this._fmt(preview)} / ${this._fmt(dur)}`,
     };
   }
 
@@ -503,42 +492,31 @@ export class Player extends Lightning.Component {
   }
 
   private _updateProgressUI() {
-    const dur = this._num(this._vpGet<number>("duration", 0));
-    const cur = this._num(this._vpGet<number>("currentTime", 0));
+    const dur = Math.max(0, this._vpGet<number>("duration", 0));
+    const cur = Math.max(0, this._vpGet<number>("currentTime", 0));
+    const pct = dur > 0 ? cur / dur : 0;
     const trackW = this.ProgressTrack.w as number;
 
-    if (dur <= 0) {
-      // Aún no hay metadata o duración no disponible
-      this.ProgressFill.w = 0;
-      this.ProgressTimes.text = { text: `${this._fmt(cur)} / --:--` };
-      this.ProgressThumb.x = -Math.floor((this.ProgressThumb.w as number) / 2);
+    if (!this._scrubbing) {
+      this.ProgressFill.w = Math.max(
+        0,
+        Math.min(trackW, Math.round(trackW * pct))
+      );
+      this.ProgressTimes.text = {
+        text: `${this._fmt(cur)} / ${this._fmt(dur)}`,
+      };
+      this.ProgressThumb.x =
+        Math.round(trackW * pct) -
+        Math.floor((this.ProgressThumb.w as number) / 2);
     } else {
-      const pct = cur / dur;
-      if (!this._scrubbing) {
-        const w = Math.max(0, Math.min(trackW, Math.round(trackW * pct)));
-        this.ProgressFill.w = w;
-        this.ProgressTimes.text = {
-          text: `${this._fmt(cur)} / ${this._fmt(dur)}`,
-        };
-        this.ProgressThumb.x =
-          Math.round(trackW * pct) -
-          Math.floor((this.ProgressThumb.w as number) / 2);
-      } else {
-        this.ProgressFill.w = Math.round(trackW * this._scrubPct);
-      }
+      this.ProgressFill.w = Math.round(trackW * this._scrubPct);
     }
 
     const playing = !!(VideoPlayer as any).playing;
     this.PlayPause.tag("Label").text = { text: playing ? "Pause" : "Play" };
   }
 
-  private _num(v: any, fallback = 0): number {
-    const n = Number(v);
-    return Number.isFinite(n) ? n : fallback;
-  }
-
   private _fmt(sec: number) {
-    if (!Number.isFinite(sec) || sec < 0) return "--:--";
     const m = Math.floor(sec / 60);
     const s = Math.floor(sec % 60);
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
@@ -554,15 +532,5 @@ export class Player extends Lightning.Component {
   onParams(params?: Record<string, any>) {
     const title = params?.title ?? "Now Playing";
     this.tag("Controls.Title").text = { text: title };
-  }
-
-  $select(payload: { src?: string }) {
-    const focused = this._getFocused();
-    if (focused === this.tag("Controls.PlayPauseBtn")) {
-      const playing = !!(VideoPlayer as any).playing;
-      playing ? VideoPlayer.pause() : VideoPlayer.play();
-    } else if (focused === this.tag("Controls.BackBtn")) {
-      this._exitPlayer();
-    }
   }
 }

@@ -5,7 +5,7 @@ import HomeSection from "./pages/Home";
 import SuggestSection from "./pages/SuggestSection";
 import Template from "./pages/Template";
 import Detail from "./pages/Detail";
-import { Player } from "./molecules/Player";
+import { Player } from "./pages/player/Player";
 
 // 👇 clau: heretar del Router.App (usa (Router as any) per compat versions)
 export default class App extends (Router as any).App {
