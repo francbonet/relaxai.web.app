@@ -83,7 +83,11 @@ export class CarouselComp extends L.Component {
     this._stopAutoplay();
     const rail = this.tag("Rail") as any;
     this._timer = setInterval(() => {
-      rail._handleRight?.(); // equivalent a prémer RIGHT
+      try {
+        rail._handleRight?.(); // equivalent a prémer RIGHT
+      } catch (e) {
+        // ignorar errors (p.e. si no hi ha items)
+      }
     }, this._interval);
   }
 
