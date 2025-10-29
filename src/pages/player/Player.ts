@@ -79,7 +79,7 @@ export class Player extends Lightning.Component {
 
         Metadata: {
           x: SIDE_PAD,
-          y: 210,
+          y: 230,
           text: { text: "", fontSize: 28, textColor: 0xffd0d0d0 },
         },
 
@@ -506,7 +506,7 @@ export class Player extends Lightning.Component {
     this._scrubPct = Math.max(0, Math.min(1, this._scrubPct + dir * stepPct));
     this._updateThumbFromPct();
 
-    const dur = Math.max(0, this._vpGet<number>("duration", 0));
+    const dur = Math.max(0, this._vpGet<number>("duration", 0)) || 0;
     const preview = Math.round(dur * this._scrubPct);
     const cur = Math.max(0, this._vpGet<number>("currentTime", 0));
     this.ProgressTimes.text = {
@@ -574,32 +574,72 @@ export class Player extends Lightning.Component {
     this._clearTick();
   }
 
+  // private _updateProgressUI() {
+  //   const dur = Math.max(0, this._vpGet<number>("duration", 0));
+  //   const cur = Math.max(0, this._vpGet<number>("currentTime", 0));
+  //   const pct = dur > 0 ? cur / dur : 0;
+  //   const trackW = this.ProgressTrack.w as number;
+
+  //   if (!this._scrubbing) {
+  //     this.ProgressFill.w = Math.max(
+  //       0,
+  //       Math.min(trackW, Math.round(trackW * pct))
+  //     );
+  //     this.ProgressTimes.text = {
+  //       text: `${this._fmt(cur)} / ${this._fmt(dur)}`,
+  //     };
+  //     this.ProgressThumb.x =
+  //       Math.round(trackW * pct) -
+  //       Math.floor((this.ProgressThumb.w as number) / 2);
+  //   } else {
+  //     this.ProgressFill.w = Math.round(trackW * this._scrubPct);
+  //   }
+
+  //   const playing = !!(VideoPlayer as any).playing;
+  //   (this.PlayPause as any).setVariant(playing ? "pause" : "play");
+  // }
+
+  // ── Helpers ──────────────────────────────────────────────────────────────
+
   private _updateProgressUI() {
-    const dur = Math.max(0, this._vpGet<number>("duration", 0));
-    const cur = Math.max(0, this._vpGet<number>("currentTime", 0));
-    const pct = dur > 0 ? cur / dur : 0;
-    const trackW = this.ProgressTrack.w as number;
+    // Helpers locales para blindar números
+    const safeNum = (v: any, fb = 0) => {
+      const n = Number(v);
+      return Number.isFinite(n) && n >= 0 ? n : fb;
+    };
+    const fmtSafe = (v: any, placeholder = "00:00") =>
+      Number.isFinite(Number(v)) && Number(v) >= 0 ? this._fmt(v) : placeholder;
+
+    // Lecturas del player y ancho del track, todo saneado
+    const dur = safeNum(this._vpGet<number>("duration", 0), 0);
+    const cur = safeNum(this._vpGet<number>("currentTime", 0), 0);
+    const trackW = safeNum((this.ProgressTrack as any)?.w, 0);
+    const thumbW = safeNum((this.ProgressThumb as any)?.w, 6);
+
+    // Evita division by zero y clamp del pct
+    const pct = dur > 0 ? Math.min(1, Math.max(0, cur / dur)) : 0;
 
     if (!this._scrubbing) {
-      this.ProgressFill.w = Math.max(
-        0,
-        Math.min(trackW, Math.round(trackW * pct))
-      );
+      const fillW = Math.round(trackW * pct);
+      this.ProgressFill.w = Math.max(0, Math.min(trackW, fillW));
+
       this.ProgressTimes.text = {
-        text: `${this._fmt(cur)} / ${this._fmt(dur)}`,
+        text: `${fmtSafe(cur)} / ${fmtSafe(dur)}`,
       };
-      this.ProgressThumb.x =
-        Math.round(trackW * pct) -
-        Math.floor((this.ProgressThumb.w as number) / 2);
+
+      // Thumb centrado y dentro de [0, trackW]
+      const thumbX = Math.round(trackW * pct) - Math.floor(thumbW / 2);
+      this.ProgressThumb.x = Math.max(0, Math.min(trackW - thumbW, thumbX));
     } else {
-      this.ProgressFill.w = Math.round(trackW * this._scrubPct);
+      this.ProgressFill.w = Math.round(
+        trackW * Math.min(1, Math.max(0, this._scrubPct))
+      );
     }
 
     const playing = !!(VideoPlayer as any).playing;
     (this.PlayPause as any).setVariant(playing ? "pause" : "play");
   }
 
-  // ── Helpers ──────────────────────────────────────────────────────────────
   private _fmt(sec: number) {
     const m = Math.floor(sec / 60);
     const s = Math.floor(sec % 60);
@@ -617,9 +657,7 @@ export class Player extends Lightning.Component {
     if (!d) return "";
     // Inferimos campos comunes con fallback
     const year = (d as any).year ?? (d as any).releaseYear ?? "";
-    const durationSec =
-      (d as any).durationSec ?? (d as any).duration ?? (d as any).runtime ?? 0;
-    const duration = durationSec ? this._fmt(Number(durationSec)) : "";
+    const duration = d.duration;
     const author =
       (d as any).author ?? (d as any).director ?? (d as any).creator ?? "";
     const genre =
