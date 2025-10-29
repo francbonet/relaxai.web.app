@@ -8,6 +8,9 @@ const HERO_H = 650;
 const SIDE_MARGIN = 100;
 
 export class CarouselItem extends L.Component {
+  static width = 1920;
+  static height = 600;
+
   private _data!: TileData;
 
   static override _template() {

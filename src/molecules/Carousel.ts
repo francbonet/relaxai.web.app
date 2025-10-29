@@ -4,6 +4,9 @@ import { Carousel } from "@lightningjs/ui";
 import { CarouselItem } from "../atoms/CarouselItem";
 
 export class CarouselComp extends L.Component {
+  private _timer?: ReturnType<typeof setInterval>;
+  private _interval = 6_000; // 6 segons
+
   static override _template() {
     return {
       Rail: {
@@ -30,6 +33,8 @@ export class CarouselComp extends L.Component {
     this.tag("Rail").items.forEach((cmp: any, i: number) => {
       if (cmp) cmp.item = data[i];
     });
+
+    this._startAutoplay();
   }
 
   // Bubble cap amunt perquè Home el rebi
@@ -37,6 +42,35 @@ export class CarouselComp extends L.Component {
     console.log("[CarouselItem] _handleEnter:", { path, params });
     this.signal("navigate", path, params);
   }
+
+  private _startAutoplay() {
+    this._stopAutoplay();
+    const rail = this.tag("Rail") as any;
+
+    this._timer = setInterval(() => {
+      // 👇 això és com prémer RIGHT
+      rail._handleRight?.();
+    }, this._interval);
+  }
+
+  private _stopAutoplay() {
+    if (this._timer) clearInterval(this._timer);
+  }
+
+  private _nextSlide() {
+    const rail = this.tag("Rail") as any;
+
+    setInterval(() => {
+      rail._handleRight?.();
+    }, this._interval);
+  }
+
+  // override _focus() {
+  //   this._paused = true;
+  // }
+  // override _unfocus() {
+  //   this._paused = false;
+  // }
 
   // delega focus al Carousel intern
   override _getFocused() {
