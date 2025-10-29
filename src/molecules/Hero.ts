@@ -6,6 +6,7 @@ import type { TileData } from "../atoms/Tile";
 
 const HERO_H = 650;
 const SIDE_MARGIN = 100;
+const WIDTH = Theme.w - 80;
 
 export class Hero extends L.Component<L.Component.TemplateSpecLoose> {
   private _btnIndex = 0;
@@ -18,13 +19,14 @@ export class Hero extends L.Component<L.Component.TemplateSpecLoose> {
 
   static override _template(): L.Component.Template<any> {
     return {
-      w: Theme.w,
+      x: 40,
+      w: WIDTH,
       h: HERO_H,
 
-      Poster: { w: Theme.w, h: HERO_H, texture: null },
+      Poster: { w: WIDTH, h: HERO_H, texture: null },
 
       Overlay: {
-        w: Theme.w,
+        w: WIDTH,
         h: HERO_H,
         rect: true,
         colorTop: 0x00000000,

@@ -1,9 +1,9 @@
 import { BasePage } from "./base/BasePage";
 import Header from "../molecules/Header";
 import { Rail } from "../molecules/Rail";
-import { Carousell } from "../molecules/Carousell";
 import { data } from "../data/data";
 import { getActiveRouteName } from "../utils/routerUtils";
+import { CarouselComp } from "../molecules/Carousel";
 
 const GAP2 = 30;
 const GAP = 60;
@@ -39,7 +39,8 @@ export default class HomeSection extends BasePage {
       Carussel: {
         y: HEADER_H + GAP2,
         h: CAROUSSEL_H,
-        type: Carousell,
+        x: 40,
+        type: CarouselComp,
         signals: { focusPrev: true, focusNext: true, navigate: true },
       },
 
@@ -73,19 +74,25 @@ export default class HomeSection extends BasePage {
 
   // protected get persistHeaderInHistory() { return true } // permetre persistir Header en aquella pàgina
 
+  override _init() {
+    const dataCarousel = data.rail5.slice(10, 20);
+    (this.tag("Viewport.Content.ContentInner.Carussel") as CarouselComp).items =
+      dataCarousel;
+  }
+
   override _setup() {
     const inner = "Viewport.Content.ContentInner";
     this.tag(`${inner}.TopSearches`)?.patch({
       title: "Top searches",
-      items: data.rail1.slice(0, 20),
+      items: data.rail2.slice(0, 15),
     });
     this.tag(`${inner}.NextWatch`)?.patch({
       title: "Your next watch",
-      items: data.rail2.slice(0, 20),
+      items: data.rail3.slice(0, 15),
     });
     this.tag(`${inner}.Retro`)?.patch({
       title: "Retro TV",
-      items: data.rail3.slice(0, 20),
+      items: data.rail4.slice(0, 15),
     });
     this.computeAfterLayout();
   }

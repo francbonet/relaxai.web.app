@@ -94,14 +94,6 @@ export class Tile
         PosterImg: { w: (w: number) => w, h: (h: number) => h },
       },
       Title: { y: 176, text: { text: "", fontSize: 22 } },
-      FocusRing: {
-        x: -8,
-        y: -8,
-        w: (w: number) => w + 16,
-        h: (h: number) => h + 16,
-        rect: true,
-        color: 0x00ffffff,
-      },
     };
   }
 

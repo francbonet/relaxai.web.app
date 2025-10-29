@@ -6,7 +6,8 @@
     "moduleResolution": "node",
     "strict": true,
     "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true
+    "noImplicitOverride": true,
+    "typeRoots": ["./src/types", "./node_modules/@types"]
   },
   "include": ["src/**/*.ts"]
 }
