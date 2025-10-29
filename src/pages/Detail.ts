@@ -152,7 +152,7 @@ export default class Detail extends BasePage {
     const inner = "Viewport.Content.ContentInner";
     this.tag(`${inner}.TopSearches`)?.patch({
       title: "Related",
-      items: data.slice(0, 10),
+      items: data.rail4.slice(0, 10),
     });
     this.computeAfterLayout();
   }
