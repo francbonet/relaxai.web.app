@@ -1,3 +1,4 @@
+// atoms/ControlButton.ts
 import { Lightning as L, Img, Utils } from "@lightningjs/sdk";
 import { Theme } from "../core/theme";
 
@@ -8,47 +9,16 @@ export interface ControlButtonSpec extends L.Component.TemplateSpec {
 
 type ControlButtonTemplate = L.Component.Template<ControlButtonSpec>;
 
-// Props configurables
-type ControlButtonOpts = {
-  src?: string; // ruta del icono
-  size?: number; // tamaño (w=h)
-  radius?: number; // radio esquinas
-  iconScale?: number; // porcentaje del tamaño para el icono (0..1)
-};
-
 export class ControlButton
   extends L.Component<ControlButtonSpec>
   implements L.Component.ImplementTemplateSpec<ControlButtonSpec>
 {
-  private _src: string | null = null;
+  private _iconSrc: string | undefined;
   private _size = 80;
   private _radius = 8;
-  private _iconScale = 0.5; // 50% del tamaño
+  private _iconScale = 0.5; // 50%
 
-  // ===== API pública =====
-  // set src(v: string | null) {
-  //   this._src = v;
-  //   this._applyIcon();
-  // }
-
-  set size(v: number) {
-    if (!Number.isFinite(v) || v <= 0) return;
-    this._size = v;
-    this._applySizing();
-  }
-
-  set radius(v: number) {
-    if (!Number.isFinite(v) || v < 0) return;
-    this._radius = v;
-    this._applyRadius();
-  }
-
-  set iconScale(v: number) {
-    if (!Number.isFinite(v) || v <= 0 || v > 1) return;
-    this._iconScale = v;
-    this._applyIcon();
-  }
-
+  // Getters curts
   get Bg() {
     return this.tag("Bg");
   }
@@ -56,9 +26,7 @@ export class ControlButton
     return this.tag("Icon");
   }
 
-  // ===== Template =====
   static override _template(): ControlButtonTemplate {
-    // valores por defecto (se recalculan en _init)
     return {
       w: 80,
       h: 80,
@@ -66,56 +34,86 @@ export class ControlButton
         w: 80,
         h: 80,
         rect: true,
-        color: Theme.colors.accent, // unfocus
+        color: Theme.colors.text,
         shader: { type: L.shaders.RoundedRectangle, radius: 8 },
       },
       Icon: {
         mount: 0.5,
         x: 40,
         y: 40,
+        w: 80,
+        h: 80,
         color: 0xff000000,
         texture: undefined,
       },
     };
   }
 
-  // ===== Ciclo de vida =====
+  // ===== API pública (sense col·lidir amb Component.src) =====
+  set iconSrc(v: string | undefined) {
+    this._iconSrc = v;
+    this._applyIcon();
+  }
+  set size(v: number) {
+    if (Number.isFinite(v) && v > 0) {
+      this._size = v;
+      this._applySizing();
+    }
+  }
+  set radius(v: number) {
+    if (Number.isFinite(v) && v >= 0) {
+      this._radius = v;
+      this._applyRadius();
+    }
+  }
+  set iconScale(v: number) {
+    if (Number.isFinite(v) && v > 0 && v <= 1) {
+      this._iconScale = v;
+      this._applyIcon();
+    }
+  }
+
+  // Helper semàntic (opcional)
+  setVariant(v: "play" | "pause" | "rew" | "fwd" | "back") {
+    const map: Record<string, string> = {
+      play: "videos/controls/play.png",
+      pause: "videos/controls/pause.png",
+      rew: "videos/controls/rewind.png",
+      fwd: "videos/controls/forward.png",
+      back: "videos/controls/back.png",
+    };
+    this.iconSrc = map[v];
+    this._applyIcon();
+  }
+
   override _init() {
-    // Asegura coherencia inicial
     this._applySizing();
     this._applyRadius();
     this._applyIcon();
   }
 
-  // ===== Focus / Unfocus (cambia color de fondo) =====
   override _focus() {
-    this.Bg?.patch({ color: Theme.colors.text }); // foco
-    // pequeño feedback
+    this.Bg?.patch({ color: Theme.colors.accent });
     this.setSmooth("scale", 1.04, { duration: 0.12 });
   }
-
   override _unfocus() {
-    this.Bg?.patch({ color: Theme.colors.accent }); // sin foco
+    this.Bg?.patch({ color: Theme.colors.text });
     this.setSmooth("scale", 1.0, { duration: 0.12 });
   }
 
-  // ===== Interacción (Enter dispara signal) =====
+  // Deixem que ENTER bublegi fins al pare (Player)
   override _handleEnter() {
-    // envía señal hacia el padre; payload útil (src)
-    this.signal("select", { src: this._src });
-    return true;
+    this.signal("select", { iconSrc: this._iconSrc });
+    return false;
   }
 
-  // ===== Helpers internos =====
+  // ===== Interns =====
   private _applySizing() {
     this.w = this._size;
     this.h = this._size;
     this.Bg?.patch({ w: this._size, h: this._size });
-    this.Icon?.patch({
-      x: this._size / 2,
-      y: this._size / 2,
-    });
-    this._applyIcon(); // re-calcula contain con nuevo size
+    this.Icon?.patch({ x: this._size / 2, y: this._size / 2 });
+    this._applyIcon();
   }
 
   private _applyRadius() {
@@ -126,9 +124,9 @@ export class ControlButton
 
   private _applyIcon() {
     const iconSide = Math.round(this._size * this._iconScale);
-    if (this._src) {
+    if (this._iconSrc) {
       this.Icon?.patch({
-        texture: Img(Utils.asset(this._src)).contain(iconSide, iconSide),
+        texture: Img(Utils.asset(this._iconSrc)).contain(iconSide, iconSide),
       });
     } else {
       this.Icon?.patch({ texture: null });

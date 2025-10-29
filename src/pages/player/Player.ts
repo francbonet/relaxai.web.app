@@ -9,10 +9,18 @@ import { Button } from "../../atoms/Button";
 import { TileData } from "../../atoms/Tile";
 import { data } from "../../data/data";
 import { extractIdFromHash, resolveById } from "../../utils/routerUtils";
+import ControlButton from "../../atoms/ControlButton";
 
 type Ms = number;
-type FocusKey = "BackBtn" | "PlayPause" | "Progress";
-const FOCUS_ORDER: FocusKey[] = ["BackBtn", "PlayPause", "Progress"];
+type FocusKey = "BackBtn" | "PlayPause" | "Back30" | "Fwd30" | "Progress";
+const FOCUS_ORDER: FocusKey[] = [
+  "BackBtn",
+  "PlayPause",
+  "Back30",
+  "Fwd30",
+  "Progress",
+];
+const SKIP_SECONDS = 30;
 
 export class Player extends Lightning.Component {
   private _data: TileData | null = null;
@@ -22,14 +30,19 @@ export class Player extends Lightning.Component {
 
   // focus intern
   private _controlsVisible = false;
-  private _focusIndex = 1; // Play/Pause per defecte
+  private _focusIndex = 1; // Play/Pause por defecto
 
-  // ★ estat de “scrub mode” per a la barra
+  // Scrub mode
   private _scrubbing = false;
   private _scrubPct = 0; // 0..1
   private _wasPlayingBeforeScrub = false;
 
   static override _template() {
+    const SIDE_PAD = 60;
+    const BTN_W = 180;
+    const BTN_H = 80;
+    const BTN_GAP = 30;
+
     return {
       Poster: {
         w: 1920,
@@ -44,43 +57,77 @@ export class Player extends Lightning.Component {
           rect: true,
           w: 1920,
           h: 1080,
-          y: 0,
-          x: 0,
           alpha: 0.45,
           color: 0xff000000,
         },
+
+        // ── Header (Back + Título + Metadata)
         BackBtn: {
-          type: Button,
-          x: 60,
-          y: 60,
-          w: 120,
-          h: 80,
+          type: ControlButton,
+          x: SIDE_PAD,
+          y: 50,
+          w: 140,
+          h: BTN_H,
           label: "Back",
         },
 
-        Title: { x: 60, y: 180, text: { text: "", fontSize: 48 } },
-        Metadata: { x: 60, y: 180, text: { text: "", fontSize: 48 } },
+        Title: {
+          x: SIDE_PAD,
+          y: 150,
+          text: { text: "", fontSize: 56, wordWrap: true, wordWrapWidth: 1800 },
+        },
 
+        Metadata: {
+          x: SIDE_PAD,
+          y: 210,
+          text: { text: "", fontSize: 28, textColor: 0xffd0d0d0 },
+        },
+
+        // ── Controles inferiores
         PlayPause: {
-          type: Button,
-          x: 60,
-          y: 950,
-          w: 150,
-          h: 80,
+          type: ControlButton,
+          x: SIDE_PAD,
+          y: 840,
+          w: BTN_W,
+          h: BTN_H,
           label: "Play",
         },
 
+        Back30: {
+          type: ControlButton,
+          x: SIDE_PAD + BTN_W + BTN_GAP,
+          y: 840,
+          w: BTN_W,
+          h: BTN_H,
+          label: "-30s",
+        },
+
+        Fwd30: {
+          type: ControlButton,
+          x: SIDE_PAD + (BTN_W + BTN_GAP) * 2,
+          y: 840,
+          w: BTN_W,
+          h: BTN_H,
+          label: "+30s",
+        },
+
+        // ── Barra de progreso (debajo de los botones)
         Progress: {
-          x: 250,
-          y: 970,
-          Track: { rect: true, w: 1920 - 380, h: 8, color: 0x44ffffff },
+          x: SIDE_PAD,
+          y: 940,
+          Track: {
+            rect: true,
+            w: 1920 - SIDE_PAD * 2,
+            h: 8,
+            color: 0x44ffffff,
+          },
           Fill: { rect: true, w: 0, h: 8, color: 0xffffffff },
           Times: { x: 0, y: 14, text: { text: "00:00 / 00:00", fontSize: 28 } },
           Glow: {
             rect: true,
             x: -6,
             y: -6,
-            w: (w: number) => w - 368 + 12,
+            w: (w: number) => w - 0 + 12,
             h: 20 + 12,
             alpha: 0,
             color: 0x22ffffff,
@@ -121,6 +168,12 @@ export class Player extends Lightning.Component {
   get PlayPause() {
     return this.tag("Controls.PlayPause");
   }
+  get Back30() {
+    return this.tag("Controls.Back30");
+  }
+  get Fwd30() {
+    return this.tag("Controls.Fwd30");
+  }
   get Progress() {
     return this.tag("Controls.Progress");
   }
@@ -151,18 +204,33 @@ export class Player extends Lightning.Component {
   }
 
   override _active() {
-    this.tag("Controls.Title").text = { text: this._data?.title };
+    // Control Buttons
+    (this.PlayPause as any).setVariant("play");
+    (this.Back30 as any).setVariant("rew");
+    (this.Fwd30 as any).setVariant("fwd");
+    (this.BackBtn as any).setVariant("back");
+
+    // Título + metadata
+    const title = this._data?.title || "Now Playing";
+    this.tag("Controls.Title").text = { text: title };
+
+    const md = this._buildMetadata(this._data);
+    this.tag("Controls.Metadata").text = { text: md };
+
+    // Abre y reproduce
     this.play(
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
     );
   }
 
-  // focus de pàgina
+  // focus de página
   override _getFocused() {
     const key = FOCUS_ORDER[this._focusIndex];
     if (key === "BackBtn") return this.BackBtn;
     if (key === "PlayPause") return this.PlayPause;
-    // Progress no és un Button; el gestiona el mateix Player
+    if (key === "Back30") return this.Back30;
+    if (key === "Fwd30") return this.Fwd30;
+    // Progress no es Button; lo gestiona este Player
     return this;
   }
   override _focus() {
@@ -204,15 +272,12 @@ export class Player extends Lightning.Component {
     } catch {}
 
     const history = Router.getHistory?.() || [];
-    // ✅ cal > 1 perquè l’ítem 0 és la ruta actual
     if (history.length > 1) {
       Router.back();
     } else {
-      // si no hi ha on tornar, vés a 'home' (o Router.root() si ho prefereixes)
       const current = (Router.getActiveRoute && Router.getActiveRoute()) || "";
       if (current !== "home") Router.navigate("home");
     }
-
     this.signal("onBackFromPlayer");
   }
 
@@ -254,7 +319,7 @@ export class Player extends Lightning.Component {
     this._showControls();
   }
 
-  // ── Tecles ───────────────────────────────────────────────────────────────
+  // ── Teclas ───────────────────────────────────────────────────────────────
   private _ensureControlsShown(): boolean {
     if (!this._controlsVisible) {
       this._showControls();
@@ -275,6 +340,17 @@ export class Player extends Lightning.Component {
     if (key === "PlayPause") {
       const playing = !!(VideoPlayer as any).playing;
       playing ? VideoPlayer.pause() : VideoPlayer.play();
+      this._autoHideSoon();
+      return true;
+    }
+
+    if (key === "Back30") {
+      this._skip(-SKIP_SECONDS);
+      this._autoHideSoon();
+      return true;
+    }
+    if (key === "Fwd30") {
+      this._skip(+SKIP_SECONDS);
       this._autoHideSoon();
       return true;
     }
@@ -353,8 +429,7 @@ export class Player extends Lightning.Component {
       this._cancelScrub();
       return true;
     }
-    if (this._focusIndex === 0) this._focusIndex = 1;
-    else if (this._focusIndex === 1) this._focusIndex = 2;
+    if (this._focusIndex < FOCUS_ORDER.length - 1) this._focusIndex++;
     this._applyItemFocus();
     this._autoHideSoon();
     return true;
@@ -363,7 +438,6 @@ export class Player extends Lightning.Component {
   // ── Focus visual ─────────────────────────────────────────────────────────
   private _applyItemFocus() {
     this._styleProgress(false);
-
     const key = FOCUS_ORDER[this._focusIndex];
     if (key === "Progress") this._styleProgress(true);
   }
@@ -373,17 +447,21 @@ export class Player extends Lightning.Component {
     this.ProgressFill.setSmooth("h", on ? 10 : 8, { duration: 0.12 });
     this.ProgressTrack.color = on ? 0x66ffffff : 0x44ffffff;
     this.ProgressFill.color = on ? 0xffffffff : 0xccffffff;
-
-    // ✅ Cambiamos solo la propiedad pública, sin spread
     this.ProgressTimes.patch({
       text: { textColor: on ? 0xffffffff : 0xffd0d0d0 },
     });
-
     this.ProgressTimes.setSmooth("alpha", on ? 1 : 0.85, { duration: 0.12 });
     this.ProgressGlow.setSmooth("alpha", on ? 0.2 : 0, { duration: 0.12 });
-
     if (!this._scrubbing)
       this.ProgressThumb.setSmooth("alpha", 0, { duration: 0.12 });
+  }
+
+  // ── Skip +-30s ───────────────────────────────────────────────────────────
+  private _skip(delta: number) {
+    const dur = Math.max(0, this._vpGet<number>("duration", 0));
+    const cur = Math.max(0, this._vpGet<number>("currentTime", 0));
+    const target = Math.max(0, Math.min(dur, cur + delta));
+    VideoPlayer.seek(target);
   }
 
   // ── Scrub mode ───────────────────────────────────────────────────────────
@@ -441,7 +519,7 @@ export class Player extends Lightning.Component {
   private _showControls(init = false) {
     this._controlsVisible = true;
     this.Controls.setSmooth("alpha", 1, { duration: 0.2 });
-    if (init) this._focusIndex = 1;
+    if (init) this._focusIndex = 1; // Play/Pause al arrancar
     this._applyItemFocus();
     this._refocus();
     this._autoHideSoon();
@@ -516,6 +594,7 @@ export class Player extends Lightning.Component {
     this.PlayPause.tag("Label").text = { text: playing ? "Pause" : "Play" };
   }
 
+  // ── Helpers ──────────────────────────────────────────────────────────────
   private _fmt(sec: number) {
     const m = Math.floor(sec / 60);
     const s = Math.floor(sec % 60);
@@ -527,6 +606,32 @@ export class Player extends Lightning.Component {
     if (typeof v === "function") return v.call(VideoPlayer) as T;
     if (v === undefined || v === null) return fallback;
     return v as T;
+  }
+
+  private _buildMetadata(d: TileData | null): string {
+    if (!d) return "";
+    // Inferimos campos comunes con fallback
+    const year = (d as any).year ?? (d as any).releaseYear ?? "";
+    const durationSec =
+      (d as any).durationSec ?? (d as any).duration ?? (d as any).runtime ?? 0;
+    const duration = durationSec ? this._fmt(Number(durationSec)) : "";
+    const author =
+      (d as any).author ?? (d as any).director ?? (d as any).creator ?? "";
+    const genre =
+      (d as any).genre ??
+      (Array.isArray((d as any).genres)
+        ? (d as any).genres.join(", ")
+        : (d as any).genres) ??
+      "";
+
+    const parts = [
+      year ? `Año: ${year}` : null,
+      duration ? `Duración: ${duration}` : null,
+      author ? `Autor: ${author}` : null,
+      genre ? `Género: ${genre}` : null,
+    ].filter(Boolean);
+
+    return parts.join("  •  ");
   }
 
   onParams(params?: Record<string, any>) {
