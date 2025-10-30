@@ -75,7 +75,7 @@ export default class HomeSection extends BasePage {
   override _init() {}
 
   override async _active() {
-    const dataCarousel = DataStore.data.rail5?.slice(10, 20)!;
+    const dataCarousel = DataStore.data.rail5?.slice(5, 15)!;
     (this.tag("Viewport.Content.ContentInner.Carussel") as CarouselComp).items =
       dataCarousel;
 

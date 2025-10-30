@@ -9,6 +9,9 @@ export class CarouselComp extends L.Component {
   private _interval = 6_000; // 6 segons
   private _isFocused = false;
 
+  // ✅ focus de contenidor: per defecte true (no hi ha cap ítem amb focus)
+  private _containerFocus = true;
+
   static override _template(): L.Component.Template {
     return {
       Rail: {
@@ -19,6 +22,20 @@ export class CarouselComp extends L.Component {
         autoResize: false,
       } as any,
     };
+  }
+
+  // ===== API per BasePage (persistència de focus) =====
+  getFocusIndex(): number {
+    const rail = this.tag("Rail") as any;
+    return Number(rail?.index ?? 0);
+  }
+
+  setFocusIndex(i: number) {
+    const rail = this.tag("Rail") as any;
+    const max = Math.max(0, (rail?.children?.length || 1) - 1);
+    rail.index = Math.max(0, Math.min(i ?? 0, max));
+    this._containerFocus = false;
+    this._refocus();
   }
 
   set items(data: Array<{ title: string; src?: string }>) {
@@ -36,6 +53,9 @@ export class CarouselComp extends L.Component {
     rail.items.forEach((cmp: any, i: number) => {
       if (cmp) cmp.item = data[i];
     });
+
+    const max = Math.max(0, (rail?.children?.length || 1) - 1);
+    rail.index = Math.max(0, Math.min(Number(rail?.index ?? 0), max));
 
     // Si ja té focus i no hi ha autoplay actiu, arrenca
     if (this._isFocused && !this._timer) this._startAutoplay();
