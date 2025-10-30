@@ -451,10 +451,10 @@ export class Player extends Lightning.Component {
   }
 
   private _styleProgress(on: boolean) {
-    this.ProgressTrack.setSmooth("h", on ? 10 : 8, { duration: 0.12 });
-    this.ProgressFill.setSmooth("h", on ? 10 : 8, { duration: 0.12 });
+    this.ProgressTrack.setSmooth("h", on ? 10 : 10, { duration: 0.12 });
+    this.ProgressFill.setSmooth("h", on ? 10 : 10, { duration: 0.12 });
     this.ProgressTrack.color = on ? 0x66ffffff : 0x44ffffff;
-    this.ProgressFill.color = on ? 0xffffffff : 0xccffffff;
+    this.ProgressFill.color = on ? 0xff007ea7 : 0xccffffff;
     this.ProgressTimes.patch({
       text: { textColor: on ? 0xffffffff : 0xffd0d0d0 },
     });
@@ -576,31 +576,6 @@ export class Player extends Lightning.Component {
     this._clearAutohide();
     this._clearTick();
   }
-
-  // private _updateProgressUI() {
-  //   const dur = Math.max(0, this._vpGet<number>("duration", 0));
-  //   const cur = Math.max(0, this._vpGet<number>("currentTime", 0));
-  //   const pct = dur > 0 ? cur / dur : 0;
-  //   const trackW = this.ProgressTrack.w as number;
-
-  //   if (!this._scrubbing) {
-  //     this.ProgressFill.w = Math.max(
-  //       0,
-  //       Math.min(trackW, Math.round(trackW * pct))
-  //     );
-  //     this.ProgressTimes.text = {
-  //       text: `${this._fmt(cur)} / ${this._fmt(dur)}`,
-  //     };
-  //     this.ProgressThumb.x =
-  //       Math.round(trackW * pct) -
-  //       Math.floor((this.ProgressThumb.w as number) / 2);
-  //   } else {
-  //     this.ProgressFill.w = Math.round(trackW * this._scrubPct);
-  //   }
-
-  //   const playing = !!(VideoPlayer as any).playing;
-  //   (this.PlayPause as any).setVariant(playing ? "pause" : "play");
-  // }
 
   // ── Helpers ──────────────────────────────────────────────────────────────
 
