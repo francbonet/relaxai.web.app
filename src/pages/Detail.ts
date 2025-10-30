@@ -4,8 +4,6 @@ import Header from "../molecules/Header";
 import { BasePage } from "./base/BasePage";
 import { Theme } from "../core/theme";
 import type { TileData } from "../atoms/Tile";
-import { data } from "../data/data";
-import { Button } from "../atoms/Button";
 import { Rail } from "../molecules/Rail";
 
 // Helpers (sense dependència de `data`)
@@ -22,6 +20,7 @@ import {
   resolveById,
 } from "../utils/routerUtils";
 import { Hero } from "../molecules/Hero";
+import DataStore from "../services/DataStore";
 
 const HEADER_H = 200;
 const HERO_H = 650;
@@ -112,7 +111,11 @@ export default class Detail extends BasePage {
     }
 
     // Hidratació sense que els helpers coneguin `data`
-    this.data = resolveById<TileData>(newId, data, (d) => (d as any).id);
+    this.data = resolveById<TileData>(
+      newId,
+      DataStore.data,
+      (d) => (d as any).id
+    );
 
     if (!this.wasRestoredFromHistory) {
       if (cameFromRail) this._focusRailOnEnter();
@@ -148,13 +151,15 @@ export default class Detail extends BasePage {
       // No fem res aquí; ho fixem després de layout
     }
     applyHeaderSelected(this, this._fromRoute);
+    this.computeAfterLayout();
+  }
 
+  override _active(): void {
     const inner = "Viewport.Content.ContentInner";
     this.tag(`${inner}.TopSearches`)?.patch({
       title: "Related",
-      items: data.rail4.slice(0, 10),
+      items: DataStore.data.rail4?.slice(0, 10),
     });
-    this.computeAfterLayout();
   }
 
   /** Força el focus a un botó de l'Hero i situa la secció a Hero. */

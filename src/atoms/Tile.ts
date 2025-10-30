@@ -3,6 +3,7 @@ import { Lightning as L, Router, Utils } from "@lightningjs/sdk";
 import { Theme } from "../core/theme";
 
 export interface TileSpec extends L.Component.TemplateSpec {
+  PosterParent: L.Component;
   Poster: { PosterBg: L.Component; PosterImg: L.Component };
   Title: L.Component;
   FocusRing: L.Component;
@@ -93,7 +94,10 @@ export class Tile
         },
         PosterImg: { w: (w: number) => w, h: (h: number) => h },
       },
-      Title: { y: 176, text: { text: "", fontSize: 22 } },
+      Title: {
+        y: 176,
+        text: { text: "", fontSize: 22, textColor: Theme.colors.textDim },
+      },
     };
   }
 
@@ -101,11 +105,13 @@ export class Tile
     (this.tag("Poster") as L.Element).patch({
       shader: {
         type: L.shaders.Outline,
-        thickness: 8,
+        thickness: 16,
+        pixelSize: 16,
         color: Theme.colors.accent,
       },
     });
   }
+
   override _unfocus() {
     (this.tag("Poster") as L.Element).patch({ shader: null });
   }

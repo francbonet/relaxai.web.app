@@ -5,11 +5,10 @@ import {
   Utils,
   VideoPlayer,
 } from "@lightningjs/sdk";
-import { Button } from "../../atoms/Button";
 import { TileData } from "../../atoms/Tile";
-import { data } from "../../data/data";
 import { extractIdFromHash, resolveById } from "../../utils/routerUtils";
 import ControlButton from "../../atoms/ControlButton";
+import DataStore from "../../services/DataStore";
 
 type Ms = number;
 type FocusKey = "BackBtn" | "PlayPause" | "Back30" | "Fwd30" | "Progress";
@@ -148,7 +147,11 @@ export class Player extends Lightning.Component {
 
   override _onUrlParams(params: any) {
     const itemId = params?.id ? String(params.id) : extractIdFromHash();
-    this.data = resolveById<TileData>(itemId, data, (d) => (d as any).id);
+    this.data = resolveById<TileData>(
+      itemId,
+      DataStore.data,
+      (d) => (d as any).id
+    );
   }
 
   set data(v: TileData | null) {
@@ -298,19 +301,19 @@ export class Player extends Lightning.Component {
 
   // ── Events player ────────────────────────────────────────────────────────
   $videoPlayerPlaying() {
-    (this.PlayPause as any).setVariant("play");
+    (this.PlayPause as any).setVariant("pause");
     this.Poster.visible = false;
     this._autoHideSoon();
   }
   $videoPlayerPause() {
-    (this.PlayPause as any).setVariant("pause");
+    (this.PlayPause as any).setVariant("play");
     this._showControls();
   }
   $videoPlayerWaiting() {
     this._showControls();
   }
   $videoPlayerStop() {
-    (this.PlayPause as any).setVariant("pause");
+    (this.PlayPause as any).setVariant("play");
     this.Poster.visible = true;
     this._showControls();
   }

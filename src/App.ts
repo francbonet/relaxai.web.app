@@ -6,6 +6,8 @@ import SuggestSection from "./pages/SuggestSection";
 import Template from "./pages/Template";
 import Detail from "./pages/Detail";
 import { Player } from "./pages/player/Player";
+import DataStore from "./services/DataStore";
+import Boot from "./pages/Boot";
 
 // 👇 clau: heretar del Router.App (usa (Router as any) per compat versions)
 export default class App extends (Router as any).App {
@@ -54,17 +56,18 @@ export default class App extends (Router as any).App {
 
   _setup() {
     (Router.startRouter as any)({
-      appInstance: this, // ja és un Router.App
+      appInstance: this,
+      bootComponent: Boot,
       root: "home",
       routes: [
         { path: "home", component: HomeSection as any },
+        { path: "home/detail/:id", component: Detail as any },
         { path: "player/:id", component: Player as any },
         { path: "suggest", component: SuggestSection as any },
         { path: "breathe", component: Template as any },
         { path: "longform", component: Template as any },
         { path: "search", component: Template as any },
         { path: "watchlist", component: Template as any },
-        { path: "home/detail/:id", component: Detail as any },
         { path: "*", redirect: "home" },
       ],
     });

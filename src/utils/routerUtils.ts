@@ -43,23 +43,36 @@ export function extractIdFromHash(): string | null {
   return segs[3] ? decodeURIComponent(segs[3]) : segs[1] || null;
 }
 
-/** Cerca un item per id dins d’una col·lecció o dins d’un objecte amb seccions */
+/** Overloads para tipado más preciso */
 export function resolveById<T>(
   id: string | number | null,
-  data: readonly T[] | Record<string, readonly T[]>,
+  data: readonly T[],
+  getId: (item: T) => string | number
+): T | null;
+export function resolveById<T>(
+  id: string | number | null,
+  data: Record<string, readonly T[] | undefined>,
+  getId: (item: T) => string | number
+): T | null;
+
+/** Implementación */
+export function resolveById<T>(
+  id: string | number | null,
+  data: readonly T[] | Record<string, readonly T[] | undefined>,
   getId: (item: T) => string | number
 ): T | null {
-  if (!id) return null;
+  if (id == null) return null;
   const s = String(id);
 
-  // Si és un array pla → cerca directe
+  // Array plano → búsqueda directa
   if (Array.isArray(data)) {
     return data.find((it) => String(getId(it)) === s) ?? null;
   }
 
-  // Si és un objecte amb seccions → busca dins de cada secció
+  // Objeto con secciones (algunas pueden ser undefined)
   for (const section of Object.values(data)) {
-    const found = section.find((it: any) => String(getId(it)) === s);
+    if (!section || !Array.isArray(section)) continue;
+    const found = section.find((it) => String(getId(it)) === s);
     if (found) return found;
   }
 

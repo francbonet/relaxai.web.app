@@ -1,43 +1,43 @@
-import { Lightning as L } from '@lightningjs/sdk'
-import { Theme, Typography } from '../core/theme'
+import { Lightning as L } from "@lightningjs/sdk";
+import { Theme, Typography } from "../core/theme";
 
 interface LogoSpec extends L.Component.TemplateSpec {
   Wordmark?: {
-    LabelRelax?: L.Component
-    LabelAI?: L.Component
-  }
+    LabelRelax?: L.Component;
+    LabelAI?: L.Component;
+  };
 }
 
 export default class Logo
   extends L.Component<LogoSpec>
   implements L.Component.ImplementTemplateSpec<LogoSpec>
 {
-  private _left = 'Relax'
-  private _right = 'AI'
-  private _spacing = 6 // px entre “Relax” y “AI”
+  private _left = "Relax";
+  private _right = "AI";
+  private _spacing = 6; // px entre “Relax” y “AI”
 
   // Si quieres mantener compat con `label`, lo dividimos
   set label(v: string) {
     // por ejemplo si pasas "Relax AI"
-    const parts = v.split(/\s+/)
-    this._left = parts[0] ?? 'Relax'
-    this._right = parts[1] ?? 'AI'
-    this._updateWordmark()
+    const parts = v.split(/\s+/);
+    this._left = parts[0] ?? "Relax";
+    this._right = parts[1] ?? "AI";
+    this._updateWordmark();
   }
   get label() {
-    return `${this._left} ${this._right}`
+    return `${this._left} ${this._right}`;
   }
 
   get Wordmark() {
-    return this.tag('Wordmark')
+    return this.tag("Wordmark");
   }
 
   get LabelRelax() {
-    return (this.tag('Wordmark') as any).tag('LabelRelax') as L.Component
+    return (this.tag("Wordmark") as any).tag("LabelRelax") as L.Component;
   }
 
   get LabelAI() {
-    return (this.tag('Wordmark') as any).tag('LabelAI') as L.Component
+    return (this.tag("Wordmark") as any).tag("LabelAI") as L.Component;
   }
 
   static override _template(): L.Component.Template<LogoSpec> {
@@ -51,7 +51,7 @@ export default class Logo
         mountY: 0.5,
         LabelRelax: {
           text: {
-            text: 'Relax',
+            text: "Relax",
             fontFace: Typography.heading.face,
             fontSize: Typography.heading.size,
             textColor: Theme.colors.text,
@@ -60,18 +60,18 @@ export default class Logo
         LabelAI: {
           x: 135, // se actualiza dinámicamente
           text: {
-            text: 'AI',
+            text: "AI",
             fontFace: Typography.heading.face,
             fontSize: Typography.heading.size,
             textColor: Theme.colors.accent,
           },
         },
       },
-    }
+    };
   }
 
   override _init() {
-    this._updateWordmark()
+    this._updateWordmark();
   }
 
   private _updateWordmark() {
@@ -80,6 +80,6 @@ export default class Logo
         LabelRelax: { text: { text: this._left } },
         LabelAI: { text: { text: this._right } },
       },
-    })
+    });
   }
 }
