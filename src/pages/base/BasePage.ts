@@ -262,8 +262,34 @@ export abstract class BasePage extends L.Component {
     return () => true; // per defecte, sempre fa scroll
   }
 
-  protected _applyScrollForSection(index: number) {
+  $scrollTop() {
+    if ((this as any)._isRestoring) return; // si estem restaurant, no molestem
+
     const content = this.tag("Viewport.Content") as L.Component;
+    const prev = (content as any).transitions?.y;
+
+    // fixa a 0 sense transició
+    content.patch({ transitions: { y: { duration: 0 } } });
+    content.patch({ y: this._clamp(0) });
+
+    // restaura transició anterior si n'hi havia
+    if (prev) content.patch({ transitions: { y: prev } });
+    else content.patch({ transitions: { y: undefined as any } });
+
+    // opcional: sincronitza history perquè quedi guardat com 0
+    this._syncHistorySnapshot?.(true);
+  }
+
+  protected _applyScrollForSection(index: number) {
+    console.log("[BasePage] Scroll to section index:", index);
+    const content = this.tag("Viewport.Content") as L.Component;
+
+    if (index == 0) {
+      content.setSmooth("y", this._clamp(0));
+      this._refocus();
+      return;
+    }
+
     if (!this.enableScrollSnap) {
       this._refocus();
       return;
