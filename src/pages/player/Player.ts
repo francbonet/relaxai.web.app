@@ -222,7 +222,7 @@ export class Player extends Lightning.Component {
 
     // Abre y reproduce
     this.play(
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+      "https://res.cloudinary.com/dt8savcjt/video/upload/v1761829047/clip_thcmgl.mp4"
     );
   }
 

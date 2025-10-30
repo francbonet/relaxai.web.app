@@ -8,6 +8,8 @@ import Detail from "./pages/Detail";
 import { Player } from "./pages/player/Player";
 import DataStore from "./services/DataStore";
 import Boot from "./pages/Boot";
+import BreatheSection from "./pages/Breathe";
+import Longform from "./pages/Longform";
 
 // 👇 clau: heretar del Router.App (usa (Router as any) per compat versions)
 export default class App extends (Router as any).App {
@@ -64,8 +66,11 @@ export default class App extends (Router as any).App {
         { path: "home/detail/:id", component: Detail as any },
         { path: "player/:id", component: Player as any },
         { path: "suggest", component: SuggestSection as any },
-        { path: "breathe", component: Template as any },
-        { path: "longform", component: Template as any },
+        { path: "suggest/detail/:id", component: Detail as any },
+        { path: "breathe", component: BreatheSection as any },
+        { path: "breathe/detail/:id", component: Detail as any },
+        { path: "longform", component: Longform as any },
+        { path: "longform/detail/:id", component: Detail as any },
         { path: "search", component: Template as any },
         { path: "watchlist", component: Template as any },
         { path: "*", redirect: "home" },
