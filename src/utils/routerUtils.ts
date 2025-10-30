@@ -6,7 +6,8 @@ export type SectionRoute =
   | "suggest"
   | "breathe"
   | "longform"
-  | "search";
+  | "search"
+  | "watchlist";
 
 export function getActiveRouteName(fallback = "home"): string {
   const route = (Router as any).getActiveRoute?.();
@@ -32,6 +33,7 @@ export function sanitizeSection(v: any): SectionRoute | null {
     "breathe",
     "longform",
     "search",
+    "watchlist",
   ];
   return allowed.includes(s as SectionRoute) ? (s as SectionRoute) : null;
 }

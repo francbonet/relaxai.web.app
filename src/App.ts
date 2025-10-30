@@ -6,10 +6,10 @@ import SuggestSection from "./pages/SuggestSection";
 import Template from "./pages/Template";
 import Detail from "./pages/Detail";
 import { Player } from "./pages/player/Player";
-import DataStore from "./services/DataStore";
 import Boot from "./pages/Boot";
 import BreatheSection from "./pages/Breathe";
 import Longform from "./pages/Longform";
+import SearchSection from "./pages/Search";
 
 // 👇 clau: heretar del Router.App (usa (Router as any) per compat versions)
 export default class App extends (Router as any).App {
@@ -71,7 +71,7 @@ export default class App extends (Router as any).App {
         { path: "breathe/detail/:id", component: Detail as any },
         { path: "longform", component: Longform as any },
         { path: "longform/detail/:id", component: Detail as any },
-        { path: "search", component: Template as any },
+        { path: "search", component: SearchSection as any },
         { path: "watchlist", component: Template as any },
         { path: "*", redirect: "home" },
       ],

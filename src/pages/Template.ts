@@ -1,23 +1,23 @@
-import { BasePage } from './base/BasePage'
-import { Theme } from '../core/theme'
-import Header from '../molecules/Header'
-import { Router } from '@lightningjs/sdk'
-import { getActiveRouteName } from '../utils/routerUtils'
+import { BasePage } from "./base/BasePage";
+import { Theme } from "../core/theme";
+import Header from "../molecules/Header";
+import { Router } from "@lightningjs/sdk";
+import { getActiveRouteName } from "../utils/routerUtils";
 
-const HEADER_H = 200
+const HEADER_H = 200;
 
 export default class Template extends BasePage {
   protected override get hasHeader() {
-    return true
+    return true;
   }
   protected override get enableScrollSnap() {
-    return false
+    return false;
   }
 
   protected override get defaultHeights() {
     return {
       Header: HEADER_H,
-    }
+    };
   }
 
   static override _template() {
@@ -31,13 +31,13 @@ export default class Template extends BasePage {
         x: Theme.w / 2,
         y: Theme.h / 2,
         mount: 0.5,
-        text: { text: 'Template', fontSize: 64 },
+        text: { text: "Template", fontSize: 64 },
       },
-    })
+    });
   }
 
   override _focus() {
-    const name = getActiveRouteName()
-    this.tag('Viewport.Content.ContentInner.Header')?.setCurrentByRoute?.(name)
+    const name = getActiveRouteName();
+    this.tag("Viewport.Content.ContentInner.Header")?.setCurrentByRoute?.(name);
   }
 }

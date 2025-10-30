@@ -72,8 +72,6 @@ export default class HomeSection extends BasePage {
     this.tag("Viewport.Content.ContentInner.Header")?.setCurrentByRoute?.(name);
   }
 
-  override _init() {}
-
   override async _active() {
     const dataCarousel = DataStore.data.rail5?.slice(5, 15)!;
     (this.tag("Viewport.Content.ContentInner.Carussel") as CarouselComp).items =

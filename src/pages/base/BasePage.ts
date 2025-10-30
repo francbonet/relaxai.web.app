@@ -14,9 +14,6 @@ export type HistorySnapshot = {
 export abstract class BasePage extends L.Component {
   // dins class BasePage
   private _pendingRestoreY: number | null = null;
-  private _restoreTries = 0;
-  private _restoreMaxTries = 6; // 6 frames (~100ms) acostuma a sobrar
-  private _pendingEpsilon = 1; // tolerància de 1px
 
   // ======== CONFIGURACIÓ PER PÀGINA (override a la subclasse) ========
   /** Si tens capçalera al top (tag 'Header' a ContentInner). */
@@ -260,6 +257,11 @@ export abstract class BasePage extends L.Component {
     this._syncHistorySnapshot();
   }
 
+  // 🔹 Nova: permet decidir si cal scroll per secció
+  protected get shouldScrollOnSection(): (index: number) => boolean {
+    return () => true; // per defecte, sempre fa scroll
+  }
+
   protected _applyScrollForSection(index: number) {
     const content = this.tag("Viewport.Content") as L.Component;
     if (!this.enableScrollSnap) {
@@ -267,7 +269,13 @@ export abstract class BasePage extends L.Component {
       return;
     }
 
-    if (this.hasHeader && index <= 0) {
+    // 🔹 Respecta el hook
+    if (!this.enableScrollSnap || !this.shouldScrollOnSection(index)) {
+      this._refocus();
+      return;
+    }
+
+    if (this.hasHeader && index < 0) {
       content.setSmooth("y", this._clamp(0));
       this._refocus();
       return;
@@ -368,6 +376,8 @@ export abstract class BasePage extends L.Component {
     // Evita deixar el Header (-1) com a focus inicial per defecte
     const safeIndex = Math.max(0, desired);
 
+    if (this._section < 0) this._section = safeIndex;
+
     if (safeIndex !== this._section) {
       this._section = safeIndex;
       this._applyScrollForSection(this._section);
@@ -401,7 +411,13 @@ export abstract class BasePage extends L.Component {
       : -1;
     if (heroIdx >= 0) return heroIdx;
 
-    // 4) fallback: primera secció
+    // 4) Input
+    const searchInputIdx = this._hasInnerTag("SearchInput")
+      ? this.sections.indexOf("SearchInput")
+      : -1;
+    if (searchInputIdx >= 0) return searchInputIdx;
+
+    // 5) fallback: primera secció
     return 0;
   }
 
