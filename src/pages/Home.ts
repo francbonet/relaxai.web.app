@@ -4,6 +4,7 @@ import { Rail } from "../molecules/Rail";
 import { getActiveRouteName } from "../utils/routerUtils";
 import { CarouselComp } from "../molecules/Carousel";
 import DataStore from "../services/DataStore";
+import { Router } from "@lightningjs/sdk";
 
 const GAP2 = 30;
 const GAP = 60;
@@ -73,7 +74,8 @@ export default class HomeSection extends BasePage {
   }
 
   override async _active() {
-    const dataCarousel = DataStore.data.rail5?.slice(0, 15)!;
+    super._active();
+    const dataCarousel = DataStore.data.rail5?.slice(1, 8)!;
     (this.tag("Viewport.Content.ContentInner.Carussel") as CarouselComp).items =
       dataCarousel;
 

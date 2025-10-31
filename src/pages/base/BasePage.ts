@@ -139,6 +139,53 @@ export abstract class BasePage extends L.Component {
     this._maybeInitFocus();
   }
 
+  override _active() {
+    if ((Router as any)._resetNextPage) {
+      console.warn(
+        "\x1b[31m%s\x1b[0m",
+        "[HomePage] Reset state due to header navigation"
+      );
+      this.resetRailsFocus();
+      this.focusCarousel();
+      (Router as any)._resetNextPage = false;
+    }
+  }
+
+  private resetRailsFocus() {
+    for (const key of this.sections) {
+      const node = this.tag(`${this.innerPath}.${key}`) as any;
+      if (!node) continue;
+
+      try {
+        // Si el componente tiene setFocusIndex o _focusIndex → lo reseteamos
+        if (node.setFocusIndex) {
+          node.setFocusIndex(0);
+        } else if (node._focusIndex !== undefined) {
+          node._focusIndex = 0;
+        }
+      } catch {
+        // noop
+      }
+    }
+  }
+
+  private focusCarousel() {
+    const carouselIndex = this.sections.indexOf("Carussel");
+    if (carouselIndex < 0) return; // No existe Carussel
+
+    // 1️⃣ Ajustar sección actual
+    this._section = carouselIndex;
+
+    // 2️⃣ Hacer scroll a la sección
+    this._applyScrollForSection(carouselIndex);
+
+    // 3️⃣ Refocus
+    this._refocus();
+
+    // 4️⃣ Optional: sincronizar snapshot de history
+    this._syncHistorySnapshot();
+  }
+
   /** Ejecuta después de layout (útil desde subclases post-patch). */
   protected computeAfterLayout() {
     // Dejar que el motor resuelva medidas y posiciones antes de calcular límites
@@ -342,6 +389,7 @@ export abstract class BasePage extends L.Component {
     this.focusNext();
     return true;
   }
+
   override _handleUp() {
     this.focusPrev();
     return true;
@@ -354,11 +402,15 @@ export abstract class BasePage extends L.Component {
     const target = params?.id
       ? `${base}/${encodeURIComponent(params.id)}`
       : base;
+
+    if (params?.from == "header") {
+      (Router as any)._resetNextPage = true;
+    }
     (Router as any).navigate(target);
   }
 
   // ======== FOCUS INICIAL INTELIGENTE ========
-  private _maybeInitFocus() {
+  public _maybeInitFocus() {
     if (!this.autoInitialFocus) return;
     if (this.wasRestoredFromHistory) return;
     if (!this.sections.length) return;
@@ -375,7 +427,7 @@ export abstract class BasePage extends L.Component {
   }
 
   /** Heurística para sección inicial: prevFocus > Carussel > Hero > SearchInput > primera. */
-  private _determineInitialSectionIndex(): number {
+  public _determineInitialSectionIndex(): number {
     const withPrev = this.sections.findIndex((name) => {
       const idx = this._getChildFocusIndex(name);
       return idx !== undefined && idx !== null;

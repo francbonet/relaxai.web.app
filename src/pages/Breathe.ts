@@ -76,6 +76,7 @@ export default class BreatheSection extends BasePage {
   override _init() {}
 
   override async _active() {
+    super._active();
     const dataCarousel = DataStore.data.rail3?.slice(0, 15)!;
     (this.tag("Viewport.Content.ContentInner.Carussel") as CarouselComp).items =
       dataCarousel;

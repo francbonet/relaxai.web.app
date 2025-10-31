@@ -245,14 +245,4 @@ export default class Detail extends BasePage {
     this._syncHistorySnapshot();
     return true;
   }
-
-  override navigate(path: string, params?: Record<string, any>) {
-    console.log("[Detail] ->", { path, params });
-    this._syncHistorySnapshot?.(true); // 💾
-    const base = path.replace(/^#?\/?/, "").toLowerCase();
-    const target = params?.id
-      ? `${base}/${encodeURIComponent(params.id)}`
-      : base;
-    (Router as any).navigate(target);
-  }
 }
