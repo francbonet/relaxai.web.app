@@ -232,6 +232,7 @@ export default class Detail extends BasePage {
     const max = 1; // Hero(0), TopSearches(1)
     (this as any)._section = Math.min(max, ((this as any)._section ?? 0) + 1);
     scrollToSection(this, (this as any)._section);
+    this._syncHistorySnapshot();
     this._refocus();
   }
 
@@ -239,6 +240,7 @@ export default class Detail extends BasePage {
     const cur = (this as any)._section ?? 0;
     (this as any)._section = Math.max(-1, cur - 1); // permet -1 (Header)
     scrollToSection(this, (this as any)._section);
+    this._syncHistorySnapshot();
     this._refocus();
   }
 
@@ -258,6 +260,7 @@ export default class Detail extends BasePage {
         section: this._fromRoute || "home",
       });
     }
+    this._syncHistorySnapshot();
     return true;
   }
 

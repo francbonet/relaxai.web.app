@@ -330,20 +330,23 @@ export abstract class BasePage extends L.Component {
       !this.persistHeaderInHistory && this._section < 0 ? 0 : this._section;
     const scrollY = Math.abs((content.y as number) || 0);
 
-    console.log("%c[BasePage] SAVE", "color: #00bfa5", {
-      section: sectionToSave,
-      scrollY,
-    });
-
     const state: HistorySnapshot = {
       section: sectionToSave,
       scrollY,
       focus: {},
     };
+
     for (const key of this.sections) {
       const idx = this._getChildFocusIndex(key);
       if (idx !== undefined) state.focus![key] = idx;
     }
+
+    console.log("%c[BasePage] SAVE", "color: #00bfa5", {
+      section: state.section,
+      scrollY: state.scrollY,
+      focus: state.focus,
+    });
+
     Router.replaceHistoryState?.(state);
   }
 
