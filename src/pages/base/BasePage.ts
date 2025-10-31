@@ -88,7 +88,7 @@ export abstract class BasePage extends L.Component {
 
   // ======== HISTORYSTATE ========
   override historyState(params?: HistorySnapshot) {
-    if (!this.enableHistory) return;
+    if (!this.enableHistory || !this.enableFocusRecovery) return;
 
     const content = this.tag("Viewport.Content") as L.Component;
 
@@ -105,7 +105,7 @@ export abstract class BasePage extends L.Component {
       this._pendingRestoreY = params.scrollY ?? 0;
 
       // Restaurar foco de hijos (si procede)
-      if (this.enableFocusRecovery && params.focus) {
+      if (params.focus) {
         for (const key of this.sections) {
           const idx = params.focus[key];
           if (idx !== undefined) this._setChildFocusIndex(key, idx);
@@ -119,6 +119,7 @@ export abstract class BasePage extends L.Component {
     // PUSH → guardar snapshot
     const sectionToSave =
       !this.persistHeaderInHistory && this._section < 0 ? 0 : this._section;
+
     const snap: HistorySnapshot = {
       section: sectionToSave,
       scrollY: Math.abs((content.y as number) || 0),
