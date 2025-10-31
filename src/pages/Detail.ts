@@ -1,5 +1,5 @@
 // src/pages/Detail.ts
-import { Img, Lightning as L, Router, Utils } from "@lightningjs/sdk";
+import { Router } from "@lightningjs/sdk";
 import Header from "../molecules/Header";
 import { BasePage } from "./base/BasePage";
 import { Theme } from "../core/theme";
@@ -9,7 +9,6 @@ import { Rail } from "../molecules/Rail";
 // Helpers (sense dependència de `data`)
 import {
   scrollToSection,
-  forceFocusPlayBtn,
   applyHeaderSelected,
   patchDetailData,
 } from "../utils/detailHelpers";
@@ -25,7 +24,6 @@ import DataStore from "../services/DataStore";
 const HEADER_H = 200;
 const HERO_H = 650;
 const CONTENT_Y = HEADER_H;
-const SIDE_MARGIN = 100;
 const RAIL_H = 230;
 
 export default class Detail extends BasePage {
@@ -65,6 +63,11 @@ export default class Detail extends BasePage {
     return false;
   }
 
+  protected override get enableFocusRecovery(): boolean {
+    // ✅ Desactivem la recuperació de focus des de l’historial
+    return false;
+  }
+
   // ===== Template =====
   static override _template() {
     return BasePage.chrome({
@@ -96,19 +99,15 @@ export default class Detail extends BasePage {
     this._fromRoute = sanitizeSection(params?.section);
 
     const newId = params?.id ? String(params.id) : extractIdFromHash();
-    const cameFromRail =
-      params?.focus === "rail" || params?.section === "search";
 
     if (newId && newId !== this._lastId) {
       this._lastId = newId;
+      // Evitem qualsevol intent de “restore” intern
       (this as any)._restoredFromHistory = false;
-
-      if (cameFromRail) {
-        this._focusRailOnEnter();
-      } else {
-        forceFocusPlayBtn(this);
-      }
     }
+
+    applyHeaderSelected(this, this._fromRoute);
+    // this.computeAfterLayout();
 
     // Hidratació sense que els helpers coneguin `data`
     this.data = resolveById<TileData>(
@@ -117,12 +116,11 @@ export default class Detail extends BasePage {
       (d) => (d as any).id
     );
 
-    if (!this.wasRestoredFromHistory) {
-      if (cameFromRail) this._focusRailOnEnter();
-      else forceFocusPlayBtn(this);
-    }
-
-    applyHeaderSelected(this, this._fromRoute);
+    // ✅ SIEMPRE forcem Hero → PlayBtn
+    console.log("[FORCE FOCUS] Detail -> Hero PlayBtn");
+    setTimeout(() => {
+      this.focusHeroBtn("PlayBtn");
+    }, 100);
   }
 
   // ===== HistoryState: inclou/recupera fromRoute i respecta POP =====
@@ -144,17 +142,10 @@ export default class Detail extends BasePage {
     patchDetailData(this, v);
   }
 
-  // ===== Focus management =====
-  override _setup() {
-    if (!this.wasRestoredFromHistory) {
-      // _onUrlParams pot haver posat secció=1 (rail) o 0 (hero)
-      // No fem res aquí; ho fixem després de layout
-    }
-    applyHeaderSelected(this, this._fromRoute);
-    this.computeAfterLayout();
-  }
-
   override _active(): void {
+    // ♻️ Refuerç per si el layout/rehidratació altera el focus
+    this.focusHeroBtn("PlayBtn");
+
     const inner = "Viewport.Content.ContentInner";
     this.tag(`${inner}.TopSearches`)?.patch({
       title: "Related",
@@ -185,8 +176,7 @@ export default class Detail extends BasePage {
       return this.tag("Viewport.Content.ContentInner.Header");
     }
     if ((this as any)._section === 0) {
-      const key = this._btnOrder[this._btnIndex];
-      return this.tag(`Viewport.Content.ContentInner.Hero`);
+      return this.tag("Viewport.Content.ContentInner.Hero");
     }
     // secció 1: TopSearches
     return this.tag("Viewport.Content.ContentInner.TopSearches");
@@ -243,12 +233,6 @@ export default class Detail extends BasePage {
     this._syncHistorySnapshot();
     this._refocus();
   }
-
-  private _focusRailOnEnter = () => {
-    (this as any)._section = 1;
-    scrollToSection(this, 1);
-    this._refocus();
-  };
 
   // ===== Acció Enter =====
   override _handleEnter() {

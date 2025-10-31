@@ -2,7 +2,7 @@
 import { Lightning as L, Router } from "@lightningjs/sdk";
 import { Theme } from "../../core/theme";
 
-// Tipus per clau de secció
+// ---- Tipos ----
 export type SectionKey = string;
 
 export type HistorySnapshot = {
@@ -12,50 +12,46 @@ export type HistorySnapshot = {
 };
 
 export abstract class BasePage extends L.Component {
-  // dins class BasePage
-  private _pendingRestoreY: number | null = null;
-
-  // ======== CONFIGURACIÓ PER PÀGINA (override a la subclasse) ========
-  /** Si tens capçalera al top (tag 'Header' a ContentInner). */
+  // ======== CONFIG POR PÁGINA (override en subclases) ========
   protected get hasHeader(): boolean {
     return true;
   }
-  /** Ordre de seccions (excloent 'Header'). Ex.: ['Hero','RailX','RailY'] */
   protected get sections(): SectionKey[] {
     return [];
   }
-  /** Fallback d’alçades si algun node encara no té .h resolt. */
   protected get defaultHeights(): Partial<
     Record<SectionKey | "Header", number>
   > {
     return {};
   }
-  /** Marge extra al final per respirar. */
   protected get extraBottom(): number {
     return 120;
   }
-  /** Activar scroll snap per seccions (si false, no fa scroll i ignora _section). */
   protected get enableScrollSnap(): boolean {
     return true;
   }
-  /** Persistir/recuperar estat amb Router.historyState. */
   protected get enableHistory(): boolean {
     return true;
   }
-  /** Path a ContentInner (per si canvies l’estructura). */
   protected get innerPath(): string {
     return "Viewport.Content.ContentInner";
   }
-  /** Si `false`, no persistim mai el Header (-1) a l'history. */
   protected get persistHeaderInHistory(): boolean {
     return false;
   }
-  /** Si `true`, s’aplica focus inicial intel·ligent en entrada “nova”. */
   protected get autoInitialFocus(): boolean {
     return true;
   }
+  /** Si `false`, no restauramos índices de foco desde history POP. */
+  protected get enableFocusRecovery(): boolean {
+    return true;
+  }
+  /** Hook: decidir si una sección debe hacer scroll (por índice). */
+  protected get shouldScrollOnSection(): (index: number) => boolean {
+    return () => true;
+  }
 
-  // ======== ESTAT COMÚ ========
+  // ======== ESTADO ========
   protected _section: number = this.hasHeader ? -1 : 0;
   protected _restoredFromHistory = false;
   protected get wasRestoredFromHistory() {
@@ -66,8 +62,9 @@ export abstract class BasePage extends L.Component {
   private _minY = 0;
   private _maxY = 0;
   private _lastSync = 0;
+  private _pendingRestoreY: number | null = null;
 
-  // ======== TEMPLATE COMÚ (Chrome) ========
+  // ======== TEMPLATE (Chrome) ========
   static chrome(
     children: L.Component.Template<any>
   ): L.Component.Template<any> {
@@ -92,46 +89,34 @@ export abstract class BasePage extends L.Component {
   // ======== HISTORYSTATE ========
   override historyState(params?: HistorySnapshot) {
     if (!this.enableHistory) return;
+
     const content = this.tag("Viewport.Content") as L.Component;
 
+    // POP → restaurar estado
     if (params) {
-      // POP → restaura (però aplicarem el y després de layout)
       this._restoredFromHistory = true;
-      const restoredSection = params.section ?? (this.hasHeader ? -1 : 0);
-      this._section =
-        !this.persistHeaderInHistory && restoredSection < 0
-          ? 0
-          : restoredSection;
 
-      // 👇 No toquem encara content.y; només guardem el valor
+      // Si no persistimos Header en history, al restaurar -1 lo normalizamos a 0
+      const restored = params.section ?? (this.hasHeader ? -1 : 0);
+      this._section =
+        !this.persistHeaderInHistory && restored < 0 ? 0 : restored;
+
+      // Guardamos scroll deseado para aplicarlo tras layout
       this._pendingRestoreY = params.scrollY ?? 0;
 
-      // 🔍 Log de diagnosi
-      console.log(
-        "%c[BasePage] RESTORE (historyState)",
-        "color: #ff9800; font-weight: bold;",
-        {
-          restoredSection,
-          pendingRestoreY: this._pendingRestoreY,
-          focus: params.focus,
+      // Restaurar foco de hijos (si procede)
+      if (this.enableFocusRecovery && params.focus) {
+        for (const key of this.sections) {
+          const idx = params.focus[key];
+          if (idx !== undefined) this._setChildFocusIndex(key, idx);
         }
-      );
-
-      const test = this._pendingRestoreY;
-      setTimeout(() => {
-        const content = this.tag("Viewport.Content") as L.Component;
-        content.setSmooth("y", -test);
-      }, 100);
-
-      for (const key of this.sections) {
-        const idx = params.focus?.[key];
-        if (idx !== undefined) this._setChildFocusIndex(key, idx);
       }
-      this._refocus();
+
+      // No tocar y aún; se aplica tras _computeMetrics
       return;
     }
 
-    // PUSH → desa (si estaves al Header i no el volem persistir, guarda 0)
+    // PUSH → guardar snapshot
     const sectionToSave =
       !this.persistHeaderInHistory && this._section < 0 ? 0 : this._section;
     const snap: HistorySnapshot = {
@@ -139,6 +124,7 @@ export abstract class BasePage extends L.Component {
       scrollY: Math.abs((content.y as number) || 0),
       focus: {},
     };
+
     for (const key of this.sections) {
       const idx = this._getChildFocusIndex(key);
       if (idx !== undefined) snap.focus![key] = idx;
@@ -146,12 +132,19 @@ export abstract class BasePage extends L.Component {
     return snap;
   }
 
-  // ======== LAYOUT ========
+  // ======== LIFECYCLE ========
+  override _attach() {
+    this._computeMetrics();
+    this._maybeInitFocus();
+  }
+
+  /** Ejecuta después de layout (útil desde subclases post-patch). */
   protected computeAfterLayout() {
+    // Dejar que el motor resuelva medidas y posiciones antes de calcular límites
     setTimeout(() => {
       this._computeMetrics();
 
-      // 👇 Si venim de POP, apliquem ara el scroll exacte amb els límits ja calculats
+      // Si venimos de POP, aplicar scroll exacto ahora que ya tenemos límites
       if (this._pendingRestoreY !== null) {
         const content = this.tag("Viewport.Content") as L.Component;
         const wantedY = -this._pendingRestoreY;
@@ -164,15 +157,13 @@ export abstract class BasePage extends L.Component {
     }, 0);
   }
 
-  override _attach() {
-    this._computeMetrics();
-    this._maybeInitFocus();
-  }
-
+  // ======== MÉTRICAS / LIMITES ========
   protected _computeMetrics() {
     const content = this.tag("Viewport.Content") as L.Component;
     const inner = this.tag(this.innerPath) as L.Component;
-    this.stage.update();
+
+    // Asegura final coords (Lightning recomienda forzar update para layout)
+    this.stage.update(); // :contentReference[oaicite:2]{index=2}
 
     const zy = (n?: any) => (n?.y as number) || 0;
     const zh = (name: string, n?: any) =>
@@ -205,31 +196,36 @@ export abstract class BasePage extends L.Component {
 
     const totalH = Math.max(...bottoms, Theme.h) + this.extraBottom;
     const viewportH = Theme.h;
+
     this._maxY = 0;
     this._minY = Math.min(0, viewportH - totalH);
+
+    // Re-clamp del valor actual
     content.y = this._clamp(content.y as number);
+  }
+
+  protected _clamp(y: number) {
+    return Math.max(this._minY, Math.min(y, this._maxY));
   }
 
   // ======== FOCUS ========
   override _getFocused() {
-    if (this.hasHeader && this._section === -1)
+    if (this.hasHeader && this._section === -1) {
       return this.tag(`${this.innerPath}.Header`);
+    }
     const name = this._nameFor(this._section);
     return this.tag(`${this.innerPath}.${name}`);
   }
 
   protected _nameFor(index: number): string {
+    const clampIndex = (i: number) =>
+      Math.max(0, Math.min(i, this.sections.length - 1));
+
     if (this.hasHeader) {
-      // -1 = Header, 0..n = sections
       if (index < 0) return "Header";
-      return this.sections[
-        Math.max(0, Math.min(index, this.sections.length - 1))
-      ]!;
+      return this.sections[clampIndex(index)]!;
     }
-    // 0..n = sections
-    return this.sections[
-      Math.max(0, Math.min(index, this.sections.length - 1))
-    ]!;
+    return this.sections[clampIndex(index)]!;
   }
 
   protected focusActiveNode() {
@@ -237,14 +233,11 @@ export abstract class BasePage extends L.Component {
     if (f?.focus) f.focus();
   }
 
-  // ======== NAVEGACIÓ PER SECCIONS ========
+  // ======== NAVEGACIÓN POR SECCIONES ========
   protected focusNext() {
     if (!this.enableScrollSnap) return;
     const max = this.sections.length - 1;
-    const next = this.hasHeader
-      ? Math.min(this._section + 1, max)
-      : Math.min(this._section + 1, max);
-    this._section = next;
+    this._section = Math.min(this._section + 1, max);
     this._applyScrollForSection(this._section);
     this._syncHistorySnapshot();
   }
@@ -257,51 +250,30 @@ export abstract class BasePage extends L.Component {
     this._syncHistorySnapshot();
   }
 
-  // 🔹 Nova: permet decidir si cal scroll per secció
-  protected get shouldScrollOnSection(): (index: number) => boolean {
-    return () => true; // per defecte, sempre fa scroll
-  }
-
+  /** Lleva el viewport al top inmediato, preservando transiciones del resto. */
   $scrollTop() {
-    if ((this as any)._isRestoring) return; // si estem restaurant, no molestem
-
     const content = this.tag("Viewport.Content") as L.Component;
     const prev = (content as any).transitions?.y;
 
-    // fixa a 0 sense transició
     content.patch({ transitions: { y: { duration: 0 } } });
     content.patch({ y: this._clamp(0) });
+    // restaurar transición previa o quitarla si no existía
+    content.patch({ transitions: { y: prev ?? (undefined as any) } });
 
-    // restaura transició anterior si n'hi havia
-    if (prev) content.patch({ transitions: { y: prev } });
-    else content.patch({ transitions: { y: undefined as any } });
-
-    // opcional: sincronitza history perquè quedi guardat com 0
-    this._syncHistorySnapshot?.(true);
+    this._syncHistorySnapshot(true);
   }
 
   protected _applyScrollForSection(index: number) {
-    console.log("[BasePage] Scroll to section index:", index);
     const content = this.tag("Viewport.Content") as L.Component;
 
-    if (index == 0) {
-      content.setSmooth("y", this._clamp(0));
-      this._refocus();
-      return;
-    }
-
-    if (!this.enableScrollSnap) {
-      this._refocus();
-      return;
-    }
-
-    // 🔹 Respecta el hook
+    // Si no hay snap o el hook lo desactiva para esta sección → solo refocus
     if (!this.enableScrollSnap || !this.shouldScrollOnSection(index)) {
       this._refocus();
       return;
     }
 
-    if (this.hasHeader && index < 0) {
+    // Header o sección 0 → al tope
+    if ((this.hasHeader && index < 0) || index === 0) {
       content.setSmooth("y", this._clamp(0));
       this._refocus();
       return;
@@ -313,19 +285,14 @@ export abstract class BasePage extends L.Component {
     this._refocus();
   }
 
-  protected _clamp(y: number) {
-    return Math.max(this._minY, Math.min(y, this._maxY));
-  }
-
   // ======== HISTORY SNAPSHOT (throttle) ========
   protected _syncHistorySnapshot(force = false) {
     if (!this.enableHistory) return;
-    const now = Date.now();
+    const now = performance?.now?.() ?? Date.now();
     if (!force && now - this._lastSync < 120) return;
     this._lastSync = now;
 
     const content = this.tag("Viewport.Content") as L.Component;
-
     const sectionToSave =
       !this.persistHeaderInHistory && this._section < 0 ? 0 : this._section;
     const scrollY = Math.abs((content.y as number) || 0);
@@ -335,29 +302,25 @@ export abstract class BasePage extends L.Component {
       scrollY,
       focus: {},
     };
-
     for (const key of this.sections) {
       const idx = this._getChildFocusIndex(key);
       if (idx !== undefined) state.focus![key] = idx;
     }
 
-    console.log("%c[BasePage] SAVE", "color: #00bfa5", {
-      section: state.section,
-      scrollY: state.scrollY,
-      focus: state.focus,
-    });
+    // Útil para depuración
+    console.log("%c[BasePage] SAVE", "color:#00bfa5", state);
 
     Router.replaceHistoryState?.(state);
   }
 
-  // ======== HELPERS FOCUS INTERN ========
+  // ======== HELPERS FOCUS HIJOS ========
   protected _getChildFocusIndex(name: SectionKey): number | undefined {
     const node = this.tag(`${this.innerPath}.${name}`) as any;
     try {
       if (node?.getFocusIndex) return node.getFocusIndex();
       if (node?._focusIndex !== undefined) return node._focusIndex;
     } catch {
-      /* empty */
+      /* noop */
     }
     return undefined;
   }
@@ -369,11 +332,11 @@ export abstract class BasePage extends L.Component {
       if (node?.setFocusIndex) node.setFocusIndex(idx);
       else if (node) node._focusIndex = idx;
     } catch {
-      /* empty */
+      /* noop */
     }
   }
 
-  // ======== TECLAT PER DEFECTE (pots override) ========
+  // ======== TECLAS POR DEFECTO ========
   override _handleDown() {
     this.focusNext();
     return true;
@@ -385,7 +348,7 @@ export abstract class BasePage extends L.Component {
 
   // ======== NAVEGAR util ========
   protected navigate(path: string, params?: Record<string, any>) {
-    this._syncHistorySnapshot?.(true); // 💾
+    this._syncHistorySnapshot(true); // 💾
     const base = path.replace(/^#?\/?/, "").toLowerCase();
     const target = params?.id
       ? `${base}/${encodeURIComponent(params.id)}`
@@ -393,21 +356,16 @@ export abstract class BasePage extends L.Component {
     (Router as any).navigate(target);
   }
 
-  // ======== FOCUS INICIAL INTEL·LIGENT ========
-  /** Decideix i aplica la secció inicial quan no venim d’history POP. */
+  // ======== FOCUS INICIAL INTELIGENTE ========
   private _maybeInitFocus() {
     if (!this.autoInitialFocus) return;
     if (this.wasRestoredFromHistory) return;
     if (!this.sections.length) return;
 
     const desired = this._determineInitialSectionIndex();
+    const safeIndex = Math.max(0, desired); // evita -1(Header) por defecto
 
-    // Evita deixar el Header (-1) com a focus inicial per defecte
-    const safeIndex = Math.max(0, desired);
-
-    if (this._section < 0) this._section = safeIndex;
-
-    if (safeIndex !== this._section) {
+    if (this._section !== safeIndex) {
       this._section = safeIndex;
       this._applyScrollForSection(this._section);
     } else {
@@ -415,48 +373,37 @@ export abstract class BasePage extends L.Component {
     }
   }
 
-  /**
-   * Troba la millor secció inicial segons:
-   * prev focus > Carussel > Hero > primera.
-   * Nota: comprovem que el tag existeix i que el nom és a `sections`.
-   */
+  /** Heurística para sección inicial: prevFocus > Carussel > Hero > SearchInput > primera. */
   private _determineInitialSectionIndex(): number {
-    // 1) si algun fill té focus previ (getFocusIndex/_focusIndex)
     const withPrev = this.sections.findIndex((name) => {
       const idx = this._getChildFocusIndex(name);
       return idx !== undefined && idx !== null;
     });
     if (withPrev >= 0) return withPrev;
 
-    // 2) Carussel explícit
-    const carusselIdx = this._hasInnerTag("Carussel")
+    const idxCar = this._hasInnerTag("Carussel")
       ? this.sections.indexOf("Carussel")
       : -1;
-    if (carusselIdx >= 0) return carusselIdx;
+    if (idxCar >= 0) return idxCar;
 
-    // 3) Hero
-    const heroIdx = this._hasInnerTag("Hero")
+    const idxHero = this._hasInnerTag("Hero")
       ? this.sections.indexOf("Hero")
       : -1;
-    if (heroIdx >= 0) return heroIdx;
+    if (idxHero >= 0) return idxHero;
 
-    // 4) Input
-    const searchInputIdx = this._hasInnerTag("SearchInput")
+    const idxSearch = this._hasInnerTag("SearchInput")
       ? this.sections.indexOf("SearchInput")
       : -1;
-    if (searchInputIdx >= 0) return searchInputIdx;
+    if (idxSearch >= 0) return idxSearch;
 
-    // 5) fallback: primera secció
     return 0;
   }
 
-  /** Comprova si existeix un tag sota ContentInner amb aquest nom. */
   private _hasInnerTag(name: string): boolean {
     try {
-      const node = this.tag(`${this.innerPath}.${name}`) as
+      return !!(this.tag(`${this.innerPath}.${name}`) as
         | L.Component
-        | undefined;
-      return !!node;
+        | undefined);
     } catch {
       return false;
     }
