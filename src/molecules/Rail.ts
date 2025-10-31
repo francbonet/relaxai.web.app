@@ -27,6 +27,11 @@ export class Rail extends L.Component {
     };
   }
 
+  public reset() {
+    this._index = 0;
+    this._scrollToIndex();
+  }
+
   /** <-- NUEVO: API para que el padre (BasePage) pueda leer/poner el foco */
   getFocusIndex(): number {
     return this._index;

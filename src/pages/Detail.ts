@@ -119,6 +119,8 @@ export default class Detail extends BasePage {
     // ✅ SIEMPRE forcem Hero → PlayBtn
     console.log("[FORCE FOCUS] Detail -> Hero PlayBtn");
     setTimeout(() => {
+      const rail = this.tag("TopSearches") as Rail;
+      rail?.reset();
       this.focusHeroBtn("PlayBtn");
     }, 100);
   }
