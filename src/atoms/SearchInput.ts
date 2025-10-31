@@ -1,5 +1,6 @@
 // src/molecules/SearchInput.ts
 import { Lightning as L } from "@lightningjs/sdk";
+import { Theme } from "../core/theme";
 
 type SearchInputSignals = {
   enter: (value: string) => void;
@@ -7,47 +8,37 @@ type SearchInputSignals = {
 };
 
 export class SearchInput extends L.Component<L.Component.TemplateSpecLoose> {
-  private _value = "";
+  private _value = "pepe";
   private _placeholder = "Search...";
 
   static override _template(): L.Component.Template<any> {
     return {
-      // El pare controla x, y, w, h (com al teu snippet)
-      rect: true,
-      color: 0xff131b2a, // background per defecte
-      shader: { type: L.shaders.RoundedRectangle, radius: 10 },
-      SearchText: {
-        x: 40, // GAP_W “suau”
-        y: 12,
-        w: 1000,
-        h: 80,
-        color: 0xffe3e5e8,
-        text: {
-          text: "Search...",
-          fontSize: 38,
-          // textAlign: "left" as const,
-          fontFace: "RelaxAI-SoraMedium",
-          // wordWrapWidth: (t: any) => Math.max(0, (t.w || 0) - 160),
-          // maxLines: 1,
-          // cutEx: 1,
+      Input: {
+        x: 0,
+        y: 0,
+        w: (w: number) => w,
+        h: (h: number) => h,
+        Bg: {
+          x: 0,
+          y: 0,
+          w: (w: number) => w,
+          h: (h: number) => h,
+          rect: true,
+          color: 0xff131b2a,
+          shader: null,
         },
-      },
-
-      FocusRing: {
-        // subtil resplendor de focus
-        mount: 0.5,
-        x: (t: any) => (t.w || 0) / 2,
-        y: (t: any) => (t.h || 0) / 2,
-        w: (t: any) => t.w || 0,
-        h: (t: any) => t.h || 0,
-        rect: true,
-        color: 0x00ffffff,
-        alpha: 0,
-        shader: {
-          type: L.shaders.RoundedRectangle,
-          radius: 12,
-          stroke: 2,
-          strokeColor: 0x66ffffff,
+        SearchText: {
+          x: 40,
+          y: 12,
+          w: (w: number) => w,
+          h: (h: number) => h,
+          rect: true,
+          text: {
+            text: "Search...",
+            fontSize: 38,
+            textColor: 0xffffffff,
+            fontFace: "RelaxAI-SoraMedium",
+          },
         },
       },
     };
@@ -59,7 +50,7 @@ export class SearchInput extends L.Component<L.Component.TemplateSpecLoose> {
   }
 
   set value(v: string) {
-    this._value = (v ?? "").trimStart(); // no white leading
+    this._value = (v ?? "").trimStart();
     this._renderText();
     this.signal("changed", this._value);
   }
@@ -79,21 +70,26 @@ export class SearchInput extends L.Component<L.Component.TemplateSpecLoose> {
 
   // ------- Focus styles -------
   override _focus() {
-    // canvi de to + anell de focus
-    this.patch({ color: 0xff1a2436 });
-    this.tag("FocusRing").setSmooth("alpha", 1);
+    (this.tag("Bg") as L.Element).patch({
+      shader: {
+        type: L.shaders.Outline,
+        thickness: 16,
+        pixelSize: 16,
+        color: Theme.colors.accent,
+      },
+    });
     this._renderText();
   }
 
   override _unfocus() {
-    this.patch({ color: 0xff131b2a });
-    this.tag("FocusRing").setSmooth("alpha", 0);
+    (this.tag("Bg") as L.Element).patch({
+      shader: null,
+    });
     this._renderText();
   }
 
   // ------- Tecles -------
   override _handleEnter() {
-    // notifica el valor actual; el pare pot obrir el Keyboard aquí
     this.signal("enter", this._value);
     return true;
   }
@@ -121,7 +117,7 @@ export class SearchInput extends L.Component<L.Component.TemplateSpecLoose> {
   private _renderText() {
     const empty = this._value.length === 0;
     const text = empty ? this._placeholder : this._value;
-    const color = empty ? 0x99e3e5e8 : 0xffe3e5e8;
+    const color = empty ? Theme.colors.textDim : Theme.colors.text;
     this.tag("SearchText").patch({ text: { text }, color });
   }
 }

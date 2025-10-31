@@ -42,7 +42,6 @@ export default class SearchSection extends BasePage {
         signals: {
           enter: "onSearchInputEnter",
           changed: "onSearchInputChanged",
-          closed: "onKeyboardClosed",
         },
       },
     });
