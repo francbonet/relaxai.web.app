@@ -76,8 +76,18 @@ export class CarouselItem extends L.Component {
     const genres = Array.isArray((v as any).genres)
       ? (v as any).genres.join(", ")
       : (v as any).genres || "";
-    const meta = [v.year, genres, v.duration].filter(Boolean).join(" • ");
-    this.tag("Info.Meta").patch({ text: { text: meta } });
+
+    const parts = [
+      v.year ? `${v.year}` : null,
+      v.duration ? `${v.duration} min` : null,
+      v.author ? `${v.author}` : null,
+      genres ? `${genres}` : null,
+    ].filter(Boolean);
+
+    const textParts = parts.join("  •  ");
+
+    this.tag("Info.Meta").patch({ text: { text: textParts } });
+
     this.tag("DescBox").patch({ text: { text: v.description } });
   }
 
