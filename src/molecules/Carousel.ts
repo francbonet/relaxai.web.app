@@ -9,8 +9,10 @@ export class CarouselComp extends L.Component {
   private _interval = 6_000; // 6 segons
   private _isFocused = false;
 
-  // ✅ focus de contenidor: per defecte true (no hi ha cap ítem amb focus)
-  private _containerFocus = true;
+  // 🔹 refs privades per listeners (nou)
+  private _onHidden?: () => void;
+  private _onVisible?: () => void;
+  private _onVisChange?: () => void;
 
   static override _template(): L.Component.Template {
     return {
@@ -34,7 +36,6 @@ export class CarouselComp extends L.Component {
     const rail = this.tag("Rail") as any;
     const max = Math.max(0, (rail?.children?.length || 1) - 1);
     rail.index = Math.max(0, Math.min(i ?? 0, max));
-    this._containerFocus = false;
     this._refocus();
   }
 
@@ -98,6 +99,50 @@ export class CarouselComp extends L.Component {
     this._pauseAndScheduleResume();
   }
 
+  // ==== 🔹 Nou: wiring de visibilitat OS/pestanya ====
+
+  // Preparem callbacks UNA sola vegada
+  override _setup() {
+    this._onHidden = () => {
+      console.log("Carousel: pàgina oculta, aturant autoplay");
+      this._stopAutoplay();
+      this._clearResume();
+    };
+
+    this._onVisible = () => {
+      console.log("Carousel: pàgina visible, reiniciant autoplay");
+      // Només reprenem si el component té focus (com feies fins ara)
+      if (this._isFocused) this._startAutoplay();
+    };
+
+    this._onVisChange = () => {
+      if (document.visibilityState === "hidden") this._onHidden?.();
+      else this._onVisible?.();
+    };
+  }
+
+  // Afegim/quitem listeners quan el component és visible/invisible a escena
+  override _active() {
+    if (this._onVisChange && this._onHidden && this._onVisible) {
+      document.addEventListener("visibilitychange", this._onVisChange);
+      window.addEventListener("blur", this._onHidden);
+      window.addEventListener("focus", this._onVisible);
+    }
+    // Sincronitza estat actual
+    if (document.visibilityState === "hidden") this._onHidden?.();
+    else if (this._isFocused) this._startAutoplay();
+  }
+
+  override _inactive() {
+    if (this._onVisChange && this._onHidden && this._onVisible) {
+      document.removeEventListener("visibilitychange", this._onVisChange);
+      window.removeEventListener("blur", this._onHidden);
+      window.removeEventListener("focus", this._onVisible);
+    }
+    this._stopAutoplay();
+    this._clearResume();
+  }
+
   // ---- Helpers autoplay
   private _startAutoplay() {
     this._stopAutoplay();
@@ -122,7 +167,9 @@ export class CarouselComp extends L.Component {
     this._stopAutoplay();
     this._clearResume();
     this._resumeTmr = setTimeout(() => {
-      if (this._isFocused) this._startAutoplay();
+      if (this._isFocused && document.visibilityState !== "hidden") {
+        this._startAutoplay();
+      }
     }, this._interval); // reprèn després de 6s sense interacció
   }
 
