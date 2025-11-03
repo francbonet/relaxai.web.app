@@ -1,5 +1,6 @@
 import { Lightning as L } from "@lightningjs/sdk";
 import { Tile, TileData } from "../atoms/Tile";
+import { Theme } from "../core/theme";
 
 const STEP = 330; // amplada targeta + gap (300 + 30)
 const VIEW_W = 1840; // amplada visible del rail (ajusta-ho al teu layout)
@@ -11,7 +12,16 @@ export class Rail extends L.Component {
 
   static override _template() {
     return {
-      Title: { x: LEFT_PAD, y: 0, text: { text: "", fontSize: 32 } },
+      Title: {
+        x: LEFT_PAD,
+        y: 0,
+        text: {
+          text: "",
+          fontSize: 32,
+          fontFace: "RelaxAI-SoraRegular",
+          textColor: Theme.colors.text,
+        },
+      },
       Viewport: {
         x: 0,
         y: 62,

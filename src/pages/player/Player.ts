@@ -646,10 +646,10 @@ export class Player extends Lightning.Component {
       "";
 
     const parts = [
-      year ? `Año: ${year}` : null,
-      duration ? `Duración: ${duration}` : null,
-      author ? `Autor: ${author}` : null,
-      genre ? `Género: ${genre}` : null,
+      year ? `${year}` : null,
+      duration ? `${duration} min` : null,
+      author ? `${author}` : null,
+      genre ? `${genre}` : null,
     ].filter(Boolean);
 
     return parts.join("  •  ");

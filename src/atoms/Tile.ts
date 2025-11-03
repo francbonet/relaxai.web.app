@@ -96,7 +96,12 @@ export class Tile
       },
       Title: {
         y: 176,
-        text: { text: "", fontSize: 22, textColor: Theme.colors.textDim },
+        text: {
+          text: "",
+          fontSize: 22,
+          fontFace: "RelaxAI-SoraRegular",
+          textColor: Theme.colors.textDim,
+        },
       },
     };
   }
