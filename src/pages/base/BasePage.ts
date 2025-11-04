@@ -58,7 +58,7 @@ export abstract class BasePage extends L.Component {
     return this._restoredFromHistory;
   }
 
-  private _offsets: Record<string, number> = {};
+  public _offsets: Record<string, number> = {};
   private _minY = 0;
   private _maxY = 0;
   private _lastSync = 0;

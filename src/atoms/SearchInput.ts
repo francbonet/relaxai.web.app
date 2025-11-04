@@ -85,6 +85,7 @@ export class SearchInput extends L.Component<L.Component.TemplateSpecLoose> {
       },
     });
     this._renderText();
+    this.signal("onFocus");
   }
 
   override _unfocus() {

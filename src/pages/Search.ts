@@ -4,7 +4,7 @@ import Header from "../molecules/Header";
 import { getActiveRouteName } from "../utils/routerUtils";
 import SearchInput from "../atoms/SearchInput";
 import { Key as BaseKey, Keyboard } from "@lightningjs/ui";
-import { Colors } from "@lightningjs/sdk";
+import { Colors, Lightning } from "@lightningjs/sdk";
 import { Rail } from "../molecules/Rail";
 import DataStore from "../services/DataStore";
 import { Grid } from "../molecules/Grid";
@@ -178,6 +178,7 @@ export default class SearchSection extends BasePage {
         type: SearchInput,
         signals: {
           enter: "onSearchInputEnter",
+          onFocus: "onFocusInput",
         },
       },
       KeyboardWrap: {
@@ -195,14 +196,22 @@ export default class SearchSection extends BasePage {
         },
       },
       Results: {
-        visible: false,
-        alpha: 0,
         y: HEADER_H + GAP_H + 140,
         type: Grid,
         config: { cols: 5, rowsVisible: 3, gapX: 68, gapY: 0, tileH: 230 },
-        signals: { focusPrev: true, focusNext: true, navigate: true },
+        signals: {
+          focusPrev: true,
+          focusNext: true,
+          navigate: true,
+          focusMoved: true,
+        },
       },
     });
+  }
+
+  onFocusInput() {
+    const content = this.tag("Viewport.Content") as Lightning.Component;
+    content.setSmooth("y", this._clamp(0));
   }
 
   set value(v: string) {
@@ -233,6 +242,15 @@ export default class SearchSection extends BasePage {
     this._refocus();
   }
 
+  override focusPrev() {
+    if (!this.enableScrollSnap) return;
+    const min = this.hasHeader ? -1 : 0;
+    this._section = Math.max(this._section - 1, min);
+    console.log(this._section);
+    this._applyScrollForSection(this._section);
+    this._syncHistorySnapshot();
+  }
+
   override _focus() {
     const name = getActiveRouteName();
     this.tag("Viewport.Content.ContentInner.Header")?.setCurrentByRoute?.(name);
@@ -252,7 +270,7 @@ export default class SearchSection extends BasePage {
 
   showResults() {
     const inner = "Viewport.Content.ContentInner";
-    this.tag(`${inner}.Retro`)?.patch({
+    this.tag(`${inner}.Results`)?.patch({
       visible: true,
       alpha: 1,
     });
@@ -260,7 +278,7 @@ export default class SearchSection extends BasePage {
 
   hideResults() {
     const inner = "Viewport.Content.ContentInner";
-    this.tag(`${inner}.Retro`)?.patch({
+    this.tag(`${inner}.Results`)?.patch({
       visible: false,
       alpha: 0,
     });
@@ -291,6 +309,11 @@ export default class SearchSection extends BasePage {
     });
     this.showResults();
     this.computeAfterLayout();
+
+    // Al cargar resultados, sitúa el viewport al inicio de Results
+    const baseOffset = this._resultsBaseOffset();
+    const content = this.tag("Viewport.Content") as Lightning.Component;
+    content.setSmooth("y", this._clamp(-baseOffset));
   }
 
   onInputChanged(data: { input: string; previousInput: string }) {
@@ -308,5 +331,100 @@ export default class SearchSection extends BasePage {
   onClear() {
     this._value = "";
     this.tag("SearchInput")?.setValue?.("");
+  }
+
+  /** Offset base de la sección Results */
+  private _resultsBaseOffset(): number {
+    const secIdx = this.sections.indexOf("Results");
+    if (secIdx < 0) return 0;
+    const key = (this as any)._nameFor?.(secIdx) ?? "Results";
+    return this._offsets?.[key] ?? 0;
+  }
+
+  /** Calcula la ancla actual (primera fila visible) según y actual */
+  private _currentResultsAnchor(): number {
+    const content = this.tag("Viewport.Content") as Lightning.Component;
+    const baseOffset = this._resultsBaseOffset();
+    const { rowH } = this._gridWindowAndRowH();
+    const currentY = (content as any).y ?? 0;
+    const extra = (-currentY - baseOffset) / rowH;
+    return Math.max(0, Math.round(extra));
+  }
+
+  /** Devuelve rowsVisible y rowH desde el Grid (o defaults) */
+  private _gridWindowAndRowH() {
+    const grid: any = this.tag("Results");
+    const rowsVisible = grid?.config?.rowsVisible ?? 3;
+    const rowH = (grid?.config?.tileH ?? 230) + (grid?.config?.gapY ?? 0);
+    return { rowsVisible, rowH };
+  }
+
+  /** Aplica el scroll global de página a una ancla de fila dada */
+  private _applyScrollAnchorForResults(
+    targetAnchor: number,
+    itemsLen: number,
+    cols: number
+  ) {
+    console.log("applyScrollAnchorForResults", {
+      targetAnchor,
+      itemsLen,
+      cols,
+    });
+    const content = this.tag("Viewport.Content") as Lightning.Component;
+    const baseOffset = this._resultsBaseOffset();
+    const { rowsVisible, rowH } = this._gridWindowAndRowH();
+
+    const totalRows = Math.max(1, Math.ceil(itemsLen / Math.max(1, cols)));
+    const maxAnchor = Math.max(0, totalRows - rowsVisible);
+    const clampedAnchor = Math.max(0, Math.min(maxAnchor, targetAnchor));
+
+    const targetY = -(baseOffset + clampedAnchor * rowH);
+    content.setSmooth("y", this._clamp(targetY));
+    this._refocus();
+  }
+
+  /**
+   * Integración del evento del Grid:
+   * Mantiene la fila enfocada dentro de la "ventana" (rowsVisible).
+   * Si la fila sale por abajo -> ancla fila al final; si sale por arriba -> ancla al inicio.
+   * (Opcional) activar modo centrado marcando la línea indicada.
+   */
+  focusMoved(payload: {
+    index: number;
+    row: number;
+    col: number;
+    anchorY: number;
+    centerY: number;
+    rowH: number;
+    cols: number;
+    itemsLen: number;
+  }) {
+    // Solo actuamos si Results es parte de las secciones actuales
+    if (!this._onLoadResults) return;
+
+    // ⬅️ nuevo: no scrollear nunca en la fila 0
+    if (payload.row === 0) return;
+
+    const { rowsVisible } = this._gridWindowAndRowH();
+
+    // Ancla actual (primera fila visible) según el y actual:
+    const currentAnchor = this._currentResultsAnchor();
+    const visibleStart = currentAnchor;
+    const visibleEnd = currentAnchor + (rowsVisible - 1);
+
+    // Si ya está visible, no tocamos nada
+    if (payload.row > visibleStart && payload.row < visibleEnd) return;
+
+    // Nueva ancla propuesta: al final o al inicio de la ventana
+    let targetAnchor =
+      payload.row > visibleEnd
+        ? payload.row - (rowsVisible - 1) // que quede como última fila visible
+        : payload.row; // que quede como primera fila visible
+
+    this._applyScrollAnchorForResults(
+      targetAnchor,
+      payload.itemsLen,
+      payload.cols
+    );
   }
 }
