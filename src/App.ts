@@ -72,6 +72,7 @@ export default class App extends (Router as any).App {
         { path: "longform", component: Longform as any },
         { path: "longform/detail/:id", component: Detail as any },
         { path: "search", component: SearchSection as any },
+        { path: "search/detail/:id", component: Detail as any },
         { path: "watchlist", component: Template as any },
         { path: "*", redirect: "home" },
       ],

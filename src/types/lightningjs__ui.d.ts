@@ -1,42 +1,99 @@
 // src/types/lightningjs__ui.d.ts
+/* eslint-disable @typescript-eslint/no-explicit-any */
 declare module "@lightningjs/ui" {
   import { Lightning as L } from "@lightningjs/sdk";
 
-  /** Tipado mínimo para que TS no se queje y mantengas autocompletado básico */
-  export interface CarouselSpec extends L.Component.TemplateSpec {}
+  // ====== Utilidades mínimas ======
+  type Patch = any; // el SDK no expone Patch/NewPatch types
 
-  export class Carousel extends L.Component<CarouselSpec> {
-    /** Índice del item enfocado */
-    index: number;
-    /** Separación entre items */
-    spacing?: number;
-    /** Dirección del carrusel */
+  // ====== InputField ======
+  export interface InputFieldSpec extends L.Component.TemplateSpec {
+    inputText?: {
+      text?: string;
+      fontSize?: number;
+      [k: string]: any;
+    };
+    description?: string;
+  }
+
+  export class InputField<TSpec = InputFieldSpec> extends L.Component {
+    /** Texto visible (opcional – depende de implementación) */
+    inputText?: InputFieldSpec["inputText"];
+    /** Placeholder */
+    description?: string;
+
+    /** Borra el contenido del input */
+    clear(): void;
+
+    /** Valor actual (no oficial, pero útil para tipado liviano) */
+    input?: string;
+  }
+
+  // ====== Key (tecla base) ======
+  export class Key extends L.Component {
+    static width: number;
+    static height: number;
+
+    label?: any;
+    labelColors?: { unfocused?: number; focused?: number };
+    backgroundColors?: { unfocused?: number; focused?: number };
+
+    // hooks internos que algunos extienden
+    _firstActive(): void;
+    _active(): void;
+    _focus(): void;
+  }
+
+  // ====== Keyboard ======
+
+  export interface KeyboardConfig {
+    layout?: string;
+    layouts?: Record<string, string[][]>;
+    styling?: {
+      align?: "left" | "center" | "right";
+      horizontalSpacing?: number;
+      verticalSpacing?: number;
+    };
+    [k: string]: any;
+  }
+
+  export class Keyboard {
+    config?: KeyboardConfig;
+  }
+
+  // ====== Carousel ======
+  export interface CarouselSpec extends L.Component.TemplateSpec {
     direction?: "row" | "column";
-    /** Áncora de scroll (0 = izq/arriba, 0.5 = centro) */
+    spacing?: number;
+    scroll?: number; // 0..1 (anchor)
+    autoResize?: boolean;
+    items?: Patch[];
+  }
+
+  export class Carousel<TSpec = CarouselSpec> extends L.Component {
+    index: number;
+    spacing?: number;
+    direction?: "row" | "column";
     scroll?: number;
-    /** Mantener tamaño constante (opcional) */
     autoResize?: boolean;
 
-    /**
-     * Sustituye todos los items del carrusel.
-     * Usamos any[] porque el SDK no exporta tipos PatchTemplate/NewPatchTemplate.
-     */
-    reload(items: any[]): void;
-
-    /** Acceso a los hijos (opcional, útil en tiempo de ejecución) */
+    reload(items: Patch[]): void;
     readonly items: L.Component[];
   }
 
-  // Puedes añadir más componentes aquí si los usas (tipado mínimo)
-  export class Grid extends L.Component<L.Component.TemplateSpec> {
-    set items(v: any[]);
+  // ====== Otros componentes mínimos ======
+  export class Grid extends L.Component {
+    set items(v: Patch[]);
   }
-  export class List extends L.Component<L.Component.TemplateSpec> {
+
+  export class List extends L.Component {
     index: number;
-    set items(v: any[]);
+    set items(v: Patch[]);
   }
-  export class Marquee extends L.Component<L.Component.TemplateSpec> {}
-  export class Button extends L.Component<L.Component.TemplateSpec> {
+
+  export class Marquee extends L.Component {}
+
+  export class Button extends L.Component {
     label?: string;
   }
 }

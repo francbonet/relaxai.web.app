@@ -8,7 +8,7 @@ type SearchInputSignals = {
 };
 
 export class SearchInput extends L.Component<L.Component.TemplateSpecLoose> {
-  private _value = "pepe";
+  private _value = "";
   private _placeholder = "Search...";
 
   static override _template(): L.Component.Template<any> {
@@ -58,6 +58,7 @@ export class SearchInput extends L.Component<L.Component.TemplateSpecLoose> {
   get placeholder() {
     return this._placeholder;
   }
+
   set placeholder(v: string) {
     this._placeholder = v ?? "Search...";
     this._renderText();
@@ -65,6 +66,11 @@ export class SearchInput extends L.Component<L.Component.TemplateSpecLoose> {
 
   clear() {
     this._value = "";
+    this._renderText();
+  }
+
+  setValue(v: string) {
+    this._value = v;
     this._renderText();
   }
 
@@ -93,25 +99,6 @@ export class SearchInput extends L.Component<L.Component.TemplateSpecLoose> {
     this.signal("enter", this._value);
     return true;
   }
-
-  // Opcional: permet tecleig directe (si tens teclat físic)
-  // override _handleKey(code: number) {
-  //   // backspace
-  //   if (code === 8) {
-  //     this.value = this._value.slice(0, -1);
-  //     return true;
-  //   }
-  //   // espai
-  //   if (code === 32) {
-  //     this.value = `${this._value} `;
-  //     return true;
-  //   }
-  //   // A..Z, 0..9 i símbols bàsics
-  //   if (code >= 48 && code <= 90) {
-  //     this.value = this._value + String.fromCharCode(code);
-  //     return true;
-  //   }
-  // }
 
   // ------- Render intern -------
   private _renderText() {

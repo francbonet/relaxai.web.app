@@ -3,20 +3,157 @@ import { Theme } from "../core/theme";
 import Header from "../molecules/Header";
 import { getActiveRouteName } from "../utils/routerUtils";
 import SearchInput from "../atoms/SearchInput";
+import { Key as BaseKey, Keyboard } from "@lightningjs/ui";
+import { Colors } from "@lightningjs/sdk";
+import { Rail } from "../molecules/Rail";
+import DataStore from "../services/DataStore";
+import { Grid } from "../molecules/Grid";
 
 const HEADER_H = 200;
+const RAIL_H = 230;
 const GAP_H = 40;
 const GAP_W = 40;
 
+class Key extends BaseKey {
+  override _firstActive() {
+    this.label = {
+      mountY: 0.45,
+      fontSize: 36,
+    };
+    this.labelColors = {
+      unfocused: Theme.colors.text,
+      focused: Theme.colors.bg,
+    };
+    this.backgroundColors = {
+      unfocused: Theme.colors.bg,
+      focused: Theme.colors.accent,
+    };
+    if (this.hasFocus()) {
+      this._focus();
+    }
+  }
+
+  get width() {
+    return 50;
+  }
+  get height() {
+    return 50;
+  }
+}
+
+class ActionKey extends BaseKey {
+  override _active() {
+    this.label = {
+      mountY: 0.45,
+      fontSize: 36,
+    };
+    this.labelColors = {
+      unfocused: Theme.colors.text,
+      focused: Theme.colors.bg,
+    };
+    this.backgroundColors = {
+      unfocused: Theme.colors.bg,
+      focused: Theme.colors.accent,
+    };
+    if (this.hasFocus()) {
+      this._focus();
+    }
+  }
+
+  get height() {
+    return 50;
+  }
+
+  get width() {
+    return 160;
+  }
+}
+
+export const keyboardConfig = {
+  layout: "grid-en",
+
+  layouts: {
+    // ───────── lower (qwerty-ish but packed in grid) ─────────
+    abc: [
+      ["q", "w", "e", "r", "t", "y", "u", "i"],
+      ["o", "p", "a", "s", "d", "f", "g", "h"],
+      ["j", "k", "l", "z", "x", "c", "v", "b"],
+      ["n", "m", ",", ".", "'", "-", "/", "="],
+      [
+        "Layout:ABC",
+        "Layout:@#&",
+        "Space:space",
+        "Backspace:←",
+        "Clear:clear",
+        "Submit:search",
+      ],
+    ],
+
+    // ───────── UPPER (Caps) ─────────
+    ABC: [
+      ["Q", "W", "E", "R", "T", "Y", "U", "I"],
+      ["O", "P", "A", "S", "D", "F", "G", "H"],
+      ["J", "K", "L", "Z", "X", "C", "V", "B"],
+      ["N", "M", "<", ">", '"', "_", "?", ":"],
+      [
+        "Layout:abc",
+        "Layout:@#&",
+        "Space:space",
+        "Backspace:←",
+        "Clear:clear",
+        "Submit:search",
+      ],
+    ],
+
+    // ───────── symbols / numbers ─────────
+    "@#&": [
+      ["1", "2", "3", "4", "5", "6", "7", "8"],
+      ["9", "0", "!", "@", "#", "$", "%", "^"],
+      ["&", "*", "(", ")", "-", "_", "+", "="],
+      ["/", "\\", ":", ";", '"', "'", ".", "?"],
+      [
+        "Layout:abc",
+        "Layout:ABC",
+        "Space:space",
+        "Backspace:←",
+        "Clear:clear",
+        "Submit:search",
+      ],
+    ],
+  },
+
+  // Graella: sense offsets ni spacers
+  styling: {
+    align: "center",
+    horizontalSpacing: 8,
+    verticalSpacing: 24,
+  },
+
+  // TOTES les tecles amb la mateixa mida per mantenir la graella perfecta
+  buttonTypes: {
+    default: { type: Key, w: 120, h: 64 },
+    Layout: { type: ActionKey, w: 120, h: 64 },
+    Space: { type: ActionKey, w: 130, h: 64 },
+    Backspace: { type: ActionKey, w: 100, h: 64 },
+    Clear: { type: ActionKey, w: 120, h: 64 },
+    Submit: { type: ActionKey, w: 150, h: 64 },
+  },
+};
+
 export default class SearchSection extends BasePage {
-  private _keyboardVisible = false;
+  private _keyboardVisible = true;
+  private _value: string = "";
+  private _onLoadResults: boolean = false;
 
   protected override get hasHeader() {
     return true;
   }
 
   protected override get sections() {
-    return ["SearchInput"];
+    const sections = ["SearchInput"];
+    if (this._keyboardVisible) sections.push("KeyboardWrap.Keyboard");
+    if (this._onLoadResults) sections.push("Results");
+    return sections;
   }
 
   protected override get defaultHeights() {
@@ -41,14 +178,59 @@ export default class SearchSection extends BasePage {
         type: SearchInput,
         signals: {
           enter: "onSearchInputEnter",
-          changed: "onSearchInputChanged",
         },
+      },
+      KeyboardWrap: {
+        y: HEADER_H + GAP_H + 120,
+        x: GAP_W,
+        Keyboard: {
+          type: Keyboard,
+          currentLayout: "abc",
+          config: keyboardConfig,
+          signals: {
+            onInputChanged: true,
+            onSubmit: true,
+            onClear: true,
+          },
+        },
+      },
+      Results: {
+        visible: false,
+        alpha: 0,
+        y: HEADER_H + GAP_H + 140,
+        type: Grid,
+        config: { cols: 5, rowsVisible: 3, gapX: 68, gapY: 0, tileH: 230 },
+        signals: { focusPrev: true, focusNext: true, navigate: true },
       },
     });
   }
 
-  get _input() {
-    return this.tag("SearchInput") as SearchInput;
+  set value(v: string) {
+    console.log("set value ->", v);
+    this._value = v;
+    this.tag("SearchInput")?.setValue?.(v);
+  }
+
+  get value() {
+    return this._value;
+  }
+
+  // mostrar
+  _showKeyboard() {
+    const wrap = this.tag("KeyboardWrap");
+    wrap.visible = true;
+    wrap.patch({ smooth: { alpha: 1 } });
+    this._keyboardVisible = true;
+    this._refocus();
+  }
+
+  // ocultar
+  _hideKeyboard() {
+    const wrap = this.tag("KeyboardWrap");
+    wrap.patch({ smooth: { alpha: 0 } });
+    wrap.visible = false;
+    this._keyboardVisible = false;
+    this._refocus();
   }
 
   override _focus() {
@@ -64,25 +246,67 @@ export default class SearchSection extends BasePage {
     }
   }
 
-  // 🔹 No vull scroll quan el focus entra a la primera secció (idx 0)
   protected override get shouldScrollOnSection() {
-    return (index: number) => index !== 0;
+    return (index: number) => index >= 2;
   }
 
-  onKeyboardClosed() {
-    console.log("onKeyboardClosed");
+  showResults() {
+    const inner = "Viewport.Content.ContentInner";
+    this.tag(`${inner}.Retro`)?.patch({
+      visible: true,
+      alpha: 1,
+    });
+  }
+
+  hideResults() {
+    const inner = "Viewport.Content.ContentInner";
+    this.tag(`${inner}.Retro`)?.patch({
+      visible: false,
+      alpha: 0,
+    });
   }
 
   // handlers…
   onSearchInputEnter(value: string) {
-    // Exemple: obrir el teclat amb el seed 'value'
-    console.log("onSearchInputEnter", value);
+    console.log("onSearchInputEnter ->", value);
+    if (!this._keyboardVisible) {
+      this._onLoadResults = false;
+      this._showKeyboard();
+      this.hideResults();
+    } else {
+      if (value !== "") {
+        this.search(value);
+        this._hideKeyboard();
+      }
+    }
   }
 
-  onSearchInputChanged(value: string) {
-    // Si vols auto-cerca amb més de 3 paraules:
-    // const wc = value.trim().split(/\s+/).filter(Boolean).length;
-    // if (wc > 3) this.signal("search", value);
-    console.log("onSearchInputChanged", value);
+  search(v: string) {
+    console.log("****** Do Search ->", v);
+    this._onLoadResults = true;
+    const inner = "Viewport.Content.ContentInner";
+    this.tag(`${inner}.Results`)?.patch({
+      title: `Results`,
+      items: DataStore.data.rail4?.slice(0, 15),
+    });
+    this.showResults();
+    this.computeAfterLayout();
+  }
+
+  onInputChanged(data: { input: string; previousInput: string }) {
+    this.value = data.input;
+    this.tag("SearchInput")?.setValue?.(this.value); // o patch visual de tu input
+  }
+
+  onSubmit(data: { input: string; previousInput: string }) {
+    console.log("onSubmit ->", data.input);
+    this.value = data.input;
+    this._hideKeyboard();
+    this.search(data.input);
+  }
+
+  onClear() {
+    this._value = "";
+    this.tag("SearchInput")?.setValue?.("");
   }
 }
