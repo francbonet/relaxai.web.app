@@ -311,9 +311,9 @@ export default class SearchSection extends BasePage {
     this.computeAfterLayout();
 
     // Al cargar resultados, sitúa el viewport al inicio de Results
-    const baseOffset = this._resultsBaseOffset();
+    // const baseOffset = this._resultsBaseOffset();
     const content = this.tag("Viewport.Content") as Lightning.Component;
-    content.setSmooth("y", this._clamp(-baseOffset));
+    content.setSmooth("y", this._clamp(0));
   }
 
   onInputChanged(data: { input: string; previousInput: string }) {
