@@ -300,18 +300,17 @@ export default class SearchSection extends BasePage {
   }
 
   search(v: string) {
-    console.log("****** Do Search ->", v);
     this._onLoadResults = true;
     const inner = "Viewport.Content.ContentInner";
-    this.tag(`${inner}.Results`)?.patch({
-      title: `Results`,
+    const grid = this.tag(`${inner}.Results`);
+    grid?.patch({
+      title: `Search Results for ${v}`,
       items: DataStore.data.rail4?.slice(0, 15),
     });
+    grid?.reset();
     this.showResults();
     this.computeAfterLayout();
 
-    // Al cargar resultados, sitúa el viewport al inicio de Results
-    // const baseOffset = this._resultsBaseOffset();
     const content = this.tag("Viewport.Content") as Lightning.Component;
     content.setSmooth("y", this._clamp(0));
   }
