@@ -229,6 +229,7 @@ export default class SearchSection extends BasePage {
   _resetView() {
     this._onLoadResults = false;
     this.value = "";
+    this._value = "";
     this._section = 0;
     this.hideResults();
     const content = this.tag("Viewport.Content") as Lightning.Component;
