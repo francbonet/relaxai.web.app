@@ -4,7 +4,7 @@ import Header from "../molecules/Header";
 import { getActiveRouteName } from "../utils/routerUtils";
 import SearchInput from "../atoms/SearchInput";
 import { Key as BaseKey, Keyboard } from "@lightningjs/ui";
-import { Colors, Lightning } from "@lightningjs/sdk";
+import { Colors, Lightning, Router } from "@lightningjs/sdk";
 import { Rail } from "../molecules/Rail";
 import DataStore from "../services/DataStore";
 import { Grid } from "../molecules/Grid";
@@ -164,6 +164,10 @@ export default class SearchSection extends BasePage {
     };
   }
 
+  get Keyboard() {
+    return this.tag("KeyboardWrap.Keyboard");
+  }
+
   static override _template() {
     return BasePage.chrome({
       Header: {
@@ -220,6 +224,27 @@ export default class SearchSection extends BasePage {
         },
       },
     });
+  }
+
+  _resetView() {
+    this._onLoadResults = false;
+    this.value = "";
+    this._section = 0;
+    this.hideResults();
+    const content = this.tag("Viewport.Content") as Lightning.Component;
+    content.y = this._clamp(0);
+    this._showKeyboard();
+    this.Keyboard.resetFocus();
+  }
+
+  override _active() {
+    if ((Router as any)._resetNextPage) {
+      console.log("Reset Search!!");
+      this._resetView();
+    } else {
+      this.onFocusInput();
+    }
+    super._active();
   }
 
   onFocusInput() {
