@@ -206,7 +206,7 @@ export default class SearchSection extends BasePage {
         alpha: 0,
         visible: false,
         text: {
-          text: "No Items found",
+          text: "No results found",
           fontSize: 36,
           fontFace: "RelaxAI-SoraRegular",
           textColor: Theme.colors.text,
