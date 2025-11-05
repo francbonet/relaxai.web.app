@@ -128,7 +128,6 @@ export default class Detail extends BasePage {
 
   // ===== HistoryState: inclou/recupera fromRoute i respecta POP =====
   override historyState(params?: any) {
-    console.log("****historyState Detail*****");
     if (params) {
       // POP: restaura fromRoute i deixa BasePage restaurar scroll/section/focus
       this._fromRoute = sanitizeSection(params.fromRoute) ?? this._fromRoute;

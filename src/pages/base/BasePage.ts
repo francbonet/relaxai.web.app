@@ -94,9 +94,7 @@ export abstract class BasePage extends L.Component {
 
   // ======== HISTORYSTATE ========
   override historyState(params?: HistorySnapshot) {
-    console.log("****historyState*****");
-
-    // if (!this.enableHistory || !this.enableFocusRecovery) return;
+    if (!this.enableHistory || !this.enableFocusRecovery) return;
 
     const content = this.tag("Viewport.Content") as L.Component;
 
