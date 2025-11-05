@@ -61,7 +61,6 @@ export class Grid extends L.Component {
         x: 0,
         y: 100,
         w: VIEW_W + LEFT_PAD,
-        h: VIEW_H,
         clipping: false, // 🔴 sin clipping vertical
         Grid: {
           x: LEFT_PAD,

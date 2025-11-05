@@ -8,6 +8,7 @@ import { Colors, Lightning } from "@lightningjs/sdk";
 import { Rail } from "../molecules/Rail";
 import DataStore from "../services/DataStore";
 import { Grid } from "../molecules/Grid";
+import { searchItems } from "../utils/searchUtils";
 
 const HEADER_H = 200;
 const RAIL_H = 230;
@@ -195,10 +196,22 @@ export default class SearchSection extends BasePage {
           },
         },
       },
+      NotFound: {
+        y: HEADER_H + GAP_H + 140,
+        x: GAP_W,
+        alpha: 0,
+        visible: false,
+        text: {
+          text: "No Items found",
+          fontSize: 36,
+          fontFace: "RelaxAI-SoraRegular",
+          textColor: Theme.colors.text,
+        },
+      },
       Results: {
         y: HEADER_H + GAP_H + 140,
         type: Grid,
-        config: { cols: 5, rowsVisible: 3, gapX: 68, gapY: 0, tileH: 230 },
+        config: { cols: 5, rowsVisible: 1, gapX: 68, gapY: 0, tileH: 230 },
         signals: {
           focusPrev: true,
           focusNext: true,
@@ -230,6 +243,10 @@ export default class SearchSection extends BasePage {
     wrap.visible = true;
     wrap.patch({ smooth: { alpha: 1 } });
     this._keyboardVisible = true;
+    this.tag("NotFound").patch({
+      alpha: 0,
+      visible: false,
+    });
     this._refocus();
   }
 
@@ -303,13 +320,26 @@ export default class SearchSection extends BasePage {
     this._onLoadResults = true;
     const inner = "Viewport.Content.ContentInner";
     const grid = this.tag(`${inner}.Results`);
-    grid?.patch({
-      title: `Search Results for ${v}`,
-      items: DataStore.data.rail4?.slice(0, 15),
-    });
-    grid?.reset();
-    this.showResults();
-    this.computeAfterLayout();
+    const items = searchItems(DataStore.data, v);
+    if (items.length > 0) {
+      this.tag("NotFound").patch({
+        alpha: 0,
+        visible: false,
+      });
+      grid?.patch({
+        title: `Search results for ${v}`,
+        items,
+      });
+      grid?.reset();
+      this.showResults();
+      this.computeAfterLayout();
+    } else {
+      this.tag("NotFound").patch({
+        alpha: 1,
+        visible: true,
+      });
+      this._onLoadResults = false;
+    }
 
     const content = this.tag("Viewport.Content") as Lightning.Component;
     content.setSmooth("y", this._clamp(0));
@@ -332,56 +362,6 @@ export default class SearchSection extends BasePage {
     this.tag("SearchInput")?.setValue?.("");
   }
 
-  /** Offset base de la sección Results */
-  private _resultsBaseOffset(): number {
-    const secIdx = this.sections.indexOf("Results");
-    if (secIdx < 0) return 0;
-    const key = (this as any)._nameFor?.(secIdx) ?? "Results";
-    return this._offsets?.[key] ?? 0;
-  }
-
-  /** Calcula la ancla actual (primera fila visible) según y actual */
-  private _currentResultsAnchor(): number {
-    const content = this.tag("Viewport.Content") as Lightning.Component;
-    const baseOffset = this._resultsBaseOffset();
-    const { rowH } = this._gridWindowAndRowH();
-    const currentY = (content as any).y ?? 0;
-    const extra = (-currentY - baseOffset) / rowH;
-    return Math.max(0, Math.round(extra));
-  }
-
-  /** Devuelve rowsVisible y rowH desde el Grid (o defaults) */
-  private _gridWindowAndRowH() {
-    const grid: any = this.tag("Results");
-    const rowsVisible = grid?.config?.rowsVisible ?? 3;
-    const rowH = (grid?.config?.tileH ?? 230) + (grid?.config?.gapY ?? 0);
-    return { rowsVisible, rowH };
-  }
-
-  /** Aplica el scroll global de página a una ancla de fila dada */
-  private _applyScrollAnchorForResults(
-    targetAnchor: number,
-    itemsLen: number,
-    cols: number
-  ) {
-    console.log("applyScrollAnchorForResults", {
-      targetAnchor,
-      itemsLen,
-      cols,
-    });
-    const content = this.tag("Viewport.Content") as Lightning.Component;
-    const baseOffset = this._resultsBaseOffset();
-    const { rowsVisible, rowH } = this._gridWindowAndRowH();
-
-    const totalRows = Math.max(1, Math.ceil(itemsLen / Math.max(1, cols)));
-    const maxAnchor = Math.max(0, totalRows - rowsVisible);
-    const clampedAnchor = Math.max(0, Math.min(maxAnchor, targetAnchor));
-
-    const targetY = -(baseOffset + clampedAnchor * rowH);
-    content.setSmooth("y", this._clamp(targetY));
-    this._refocus();
-  }
-
   /**
    * Integración del evento del Grid:
    * Mantiene la fila enfocada dentro de la "ventana" (rowsVisible).
@@ -394,36 +374,57 @@ export default class SearchSection extends BasePage {
     col: number;
     anchorY: number;
     centerY: number;
-    rowH: number;
+    rowH: number; // alçada visual del tile (incloent text si cal)
     cols: number;
     itemsLen: number;
   }) {
-    // Solo actuamos si Results es parte de las secciones actuales
     if (!this._onLoadResults) return;
 
-    // ⬅️ nuevo: no scrollear nunca en la fila 0
-    if (payload.row === 0) return;
+    const content = this.tag("Viewport.Content") as Lightning.Component;
+    const viewport = this.tag("Viewport") as any;
+    const grid = this.tag("ResultsGrid") as any; // opcional, només per llegir gap si existeix
 
-    const { rowsVisible } = this._gridWindowAndRowH();
+    // ---- constants bàsiques ----
+    const baseOffset =
+      (this as any)._resultsBaseOffset?.() ??
+      ((this as any).HEADER_H ?? 0) + ((this as any).GAP_H ?? 0) + 140;
 
-    // Ancla actual (primera fila visible) según el y actual:
-    const currentAnchor = this._currentResultsAnchor();
-    const visibleStart = currentAnchor;
-    const visibleEnd = currentAnchor + (rowsVisible - 1);
+    const EXTRA_BOTTOM = Number((this as any).extraBottom ?? 0);
+    const CENTER_BIAS = -140; // 👈 el teu tweak que et deixa “perfecte” el final
 
-    // Si ya está visible, no tocamos nada
-    if (payload.row > visibleStart && payload.row < visibleEnd) return;
-
-    // Nueva ancla propuesta: al final o al inicio de la ventana
-    let targetAnchor =
-      payload.row > visibleEnd
-        ? payload.row - (rowsVisible - 1) // que quede como última fila visible
-        : payload.row; // que quede como primera fila visible
-
-    this._applyScrollAnchorForResults(
-      targetAnchor,
-      payload.itemsLen,
-      payload.cols
+    // ---- mesures essencials ----
+    const cols = Math.max(1, payload.cols | 0);
+    const row = Math.max(0, payload.row | 0);
+    const tileH = Math.max(1, payload.rowH | 0);
+    const gapY = Number(
+      grid?.gapY ?? grid?.spacingY ?? grid?.itemSpacingY ?? 0
     );
+    const rowPitch = tileH + gapY;
+
+    const totalRows = Math.max(1, Math.ceil(payload.itemsLen / cols));
+    const lastRowBottom = totalRows * rowPitch - gapY; // (rows-1)*rowPitch + tileH
+
+    const viewportH = Number(viewport?.h ?? 1080);
+    const availableH = Math.max(1, viewportH - baseOffset - EXTRA_BOTTOM);
+
+    // ---- centrat continu amb clamp “flush” al final ----
+    const rowCenterPx = row * rowPitch + tileH / 2;
+    let anchorPx = rowCenterPx - availableH / 2;
+
+    // topall perquè la darrera fila no quedi tallada ni sobri espai
+    const maxAnchorPx = Math.max(0, lastRowBottom - availableH);
+
+    if (anchorPx < 0) anchorPx = 0;
+    if (anchorPx > maxAnchorPx) anchorPx = maxAnchorPx;
+
+    // Y global (negatiu = cap avall) + el teu ajust fi
+    let targetY = -(baseOffset + anchorPx) + CENTER_BIAS;
+
+    // assegura alçada del contenidor scrollable
+    const neededH = baseOffset + lastRowBottom + EXTRA_BOTTOM;
+    const currentH = Number((content as any).h ?? 0);
+    if (currentH < neededH) (content as any).h = neededH;
+
+    content.setSmooth("y", targetY);
   }
 }
