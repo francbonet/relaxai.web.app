@@ -9,6 +9,7 @@ import { TileData } from "../../atoms/Tile";
 import { extractIdFromHash, resolveById } from "../../utils/routerUtils";
 import ControlButton from "../../atoms/ControlButton";
 import DataStore from "../../services/DataStore";
+import { Theme } from "../../core/theme";
 
 type Ms = number;
 type FocusKey = "BackBtn" | "PlayPause" | "Back30" | "Fwd30" | "Progress";
@@ -44,10 +45,10 @@ export class Player extends Lightning.Component {
 
     return {
       Poster: {
+        x: 0,
+        y: 0,
         w: 1920,
         h: 1080,
-        src: Utils.asset("images/background.png"),
-        visible: true,
       },
 
       Controls: {
@@ -71,15 +72,26 @@ export class Player extends Lightning.Component {
         },
 
         Title: {
-          x: SIDE_PAD,
-          y: 150,
-          text: { text: "", fontSize: 56, wordWrap: true, wordWrapWidth: 1800 },
+          x: Theme.w - SIDE_PAD,
+          y: 50,
+          mountX: 1,
+          text: {
+            text: "",
+            fontSize: 56,
+            textAlign: "right",
+          },
         },
 
         Metadata: {
-          x: SIDE_PAD,
-          y: 230,
-          text: { text: "", fontSize: 28, textColor: 0xffd0d0d0 },
+          x: Theme.w - SIDE_PAD,
+          y: 130,
+          mountX: 1,
+          text: {
+            text: "",
+            fontSize: 28,
+            textColor: 0xffd0d0d0,
+            textAlign: "right",
+          },
         },
 
         // ── Controles inferiores
@@ -220,10 +232,21 @@ export class Player extends Lightning.Component {
     const md = this._buildMetadata(this._data);
     this.tag("Controls.Metadata").text = { text: md };
 
-    // Abre y reproduce
-    this.play(
-      "https://res.cloudinary.com/dt8savcjt/video/upload/v1761829047/clip_thcmgl.mp4"
-    );
+    const poster = this.tag("Poster");
+    const src = Utils.asset("images/poster.png");
+    console.log("posterSrc ->", src);
+    poster.texture = {
+      type: Lightning.textures.ImageTexture,
+      src,
+    };
+    poster.visible = !!src;
+
+    setTimeout(() => {
+      // Abre y reproduce
+      this.play(
+        "https://res.cloudinary.com/dt8savcjt/video/upload/v1761829047/clip_thcmgl.mp4"
+      );
+    }, 1000);
   }
 
   // focus de página

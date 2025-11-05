@@ -10,11 +10,7 @@ const WIDTH = Theme.w - 80;
 
 export class Hero extends L.Component<L.Component.TemplateSpecLoose> {
   private _btnIndex = 0;
-  private _btnOrder: Array<"PlayBtn" | "AddBtn" | "LikeBtn"> = [
-    "PlayBtn",
-    "AddBtn",
-    "LikeBtn",
-  ];
+  private _btnOrder: Array<"PlayBtn" | "AddBtn"> = ["PlayBtn", "AddBtn"];
   private _data: TileData | null = null;
 
   static override _template(): L.Component.Template<any> {
@@ -79,20 +75,6 @@ export class Hero extends L.Component<L.Component.TemplateSpecLoose> {
               x: 40,
               y: 40,
               text: { text: "+", textColor: Theme.colors.bg, fontSize: 40 },
-            },
-          },
-          LikeBtn: {
-            type: Button,
-            x: 375,
-            w: 80,
-            h: 80,
-            shader: { type: L.shaders.RoundedRectangle, radius: 40 },
-            label: "",
-            Icon: {
-              mount: 0.5,
-              x: 40,
-              y: 40,
-              text: { text: "👍", textColor: Theme.colors.bg, fontSize: 40 },
             },
           },
         },
