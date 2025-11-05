@@ -240,11 +240,10 @@ export default class SearchSection extends BasePage {
   }
 
   override _active() {
+    console.log("active *****");
     if ((Router as any)._resetNextPage) {
       console.log("Reset Search!!");
       this._resetView();
-    } else {
-      this.onFocusInput();
     }
     super._active();
   }

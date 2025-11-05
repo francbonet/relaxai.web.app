@@ -19,26 +19,32 @@ export abstract class BasePage extends L.Component {
   protected get sections(): SectionKey[] {
     return [];
   }
+
   protected get defaultHeights(): Partial<
     Record<SectionKey | "Header", number>
   > {
     return {};
   }
+
   protected get extraBottom(): number {
     return 120;
   }
+
   protected get enableScrollSnap(): boolean {
     return true;
   }
+
   protected get enableHistory(): boolean {
     return true;
   }
+
   protected get innerPath(): string {
     return "Viewport.Content.ContentInner";
   }
   protected get persistHeaderInHistory(): boolean {
     return false;
   }
+
   protected get autoInitialFocus(): boolean {
     return true;
   }
@@ -88,12 +94,16 @@ export abstract class BasePage extends L.Component {
 
   // ======== HISTORYSTATE ========
   override historyState(params?: HistorySnapshot) {
-    if (!this.enableHistory || !this.enableFocusRecovery) return;
+    console.log("****historyState*****");
+
+    // if (!this.enableHistory || !this.enableFocusRecovery) return;
 
     const content = this.tag("Viewport.Content") as L.Component;
 
     // POP → restaurar estado
     if (params) {
+      console.log("%c[BasePage] LOAD", "color:#00bfa5", params);
+
       this._restoredFromHistory = true;
 
       // Si no persistimos Header en history, al restaurar -1 lo normalizamos a 0
@@ -111,9 +121,10 @@ export abstract class BasePage extends L.Component {
           if (idx !== undefined) this._setChildFocusIndex(key, idx);
         }
       }
-
       // No tocar y aún; se aplica tras _computeMetrics
-      return;
+      return undefined;
+    } else {
+      console.log("%cf[BasePage] NO LOAD", "color:#00bfa5", params);
     }
 
     // PUSH → guardar snapshot
@@ -140,6 +151,10 @@ export abstract class BasePage extends L.Component {
   }
 
   override _active() {
+    super._active?.();
+    const history = Router.getHistory?.();
+    const active = Router.getActiveHash?.();
+    console.log("[_onMounted] active:", active, "history:", history);
     if ((Router as any)._resetNextPage) {
       console.warn(
         "\x1b[31m%s\x1b[0m",
@@ -183,7 +198,7 @@ export abstract class BasePage extends L.Component {
     this._refocus();
 
     // 4️⃣ Optional: sincronizar snapshot de history
-    this._syncHistorySnapshot();
+    // this._syncHistorySnapshot();
   }
 
   /** Ejecuta después de layout (útil desde subclases post-patch). */
@@ -287,7 +302,7 @@ export abstract class BasePage extends L.Component {
     const max = this.sections.length - 1;
     this._section = Math.min(this._section + 1, max);
     this._applyScrollForSection(this._section);
-    this._syncHistorySnapshot();
+    // this._syncHistorySnapshot();
   }
 
   protected focusPrev() {
@@ -295,7 +310,7 @@ export abstract class BasePage extends L.Component {
     const min = this.hasHeader ? -1 : 0;
     this._section = Math.max(this._section - 1, min);
     this._applyScrollForSection(this._section);
-    this._syncHistorySnapshot();
+    // this._syncHistorySnapshot();
   }
 
   /** Lleva el viewport al top inmediato, preservando transiciones del resto. */
@@ -308,7 +323,7 @@ export abstract class BasePage extends L.Component {
     // restaurar transición previa o quitarla si no existía
     content.patch({ transitions: { y: prev ?? (undefined as any) } });
 
-    this._syncHistorySnapshot(true);
+    // this._syncHistorySnapshot();
   }
 
   protected _applyScrollForSection(index: number) {
@@ -334,20 +349,47 @@ export abstract class BasePage extends L.Component {
   }
 
   // ======== HISTORY SNAPSHOT (throttle) ========
-  protected _syncHistorySnapshot(force = false) {
+  // protected _syncHistorySnapshot() {
+  //   if (!this.enableHistory) return;
+
+  //   const content = this.tag("Viewport.Content") as L.Component;
+  //   const sectionToSave =
+  //     !this.persistHeaderInHistory && this._section < 0 ? 0 : this._section;
+  //   const scrollY = Math.abs((content.y as number) || 0);
+
+  //   const state: HistorySnapshot = {
+  //     section: sectionToSave,
+  //     scrollY,
+  //     focus: {},
+  //   };
+
+  //   for (const key of this.sections) {
+  //     const idx = this._getChildFocusIndex(key);
+  //     if (idx !== undefined) state.focus![key] = idx;
+  //   }
+
+  //   const history = Router.getHistory?.();
+  //   console.log("history ->", history);
+
+  //   // const currentHash = history?.[history.length - 1]?.hash ?? "home";
+  //   const _ownHash = Router.getActiveHash?.() ?? "";
+  //   const hash = _ownHash ?? Router.getActiveHash?.() ?? "";
+
+  //   // Útil para depuración
+  //   console.log("%c[BasePage] SAVE", "color:#00bfa5", { hash, state });
+
+  //   Router.replaceHistoryState?.(state, hash);
+  // }
+  protected _syncHistorySnapshot() {
     if (!this.enableHistory) return;
-    const now = performance?.now?.() ?? Date.now();
-    if (!force && now - this._lastSync < 120) return;
-    this._lastSync = now;
 
     const content = this.tag("Viewport.Content") as L.Component;
     const sectionToSave =
       !this.persistHeaderInHistory && this._section < 0 ? 0 : this._section;
-    const scrollY = Math.abs((content.y as number) || 0);
 
     const state: HistorySnapshot = {
       section: sectionToSave,
-      scrollY,
+      scrollY: Math.abs((content.y as number) || 0),
       focus: {},
     };
     for (const key of this.sections) {
@@ -355,10 +397,15 @@ export abstract class BasePage extends L.Component {
       if (idx !== undefined) state.focus![key] = idx;
     }
 
-    // Útil para depuración
-    console.log("%c[BasePage] SAVE", "color:#00bfa5", state);
-
+    // Escriu a l’entrada ACTIVA (ja existeix gràcies al seed)
     Router.replaceHistoryState?.(state);
+
+    // Debug útil
+    console.log("%c[BasePage] SAVE", "color:#00bfa5", {
+      hash: Router.getActiveHash?.(),
+      state,
+      history: Router.getHistory?.(),
+    });
   }
 
   // ======== HELPERS FOCUS HIJOS ========
@@ -397,7 +444,7 @@ export abstract class BasePage extends L.Component {
 
   // ======== NAVEGAR util ========
   protected navigate(path: string, params?: Record<string, any>) {
-    this._syncHistorySnapshot(true); // 💾
+    this._syncHistorySnapshot();
     const base = path.replace(/^#?\/?/, "").toLowerCase();
     const target = params?.id
       ? `${base}/${encodeURIComponent(params.id)}`
@@ -406,7 +453,7 @@ export abstract class BasePage extends L.Component {
     if (params?.from == "header") {
       (Router as any)._resetNextPage = true;
     }
-    (Router as any).navigate(target);
+    (Router as any).navigate(target, params, true);
   }
 
   // ======== FOCUS INICIAL INTELIGENTE ========

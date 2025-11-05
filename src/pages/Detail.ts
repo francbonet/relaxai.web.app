@@ -47,6 +47,11 @@ export default class Detail extends BasePage {
   protected override get hasHeader() {
     return true;
   }
+
+  protected override get enableHistory() {
+    return false;
+  }
+
   protected override get enableScrollSnap() {
     return true;
   } // Header <-> Hero
@@ -123,6 +128,7 @@ export default class Detail extends BasePage {
 
   // ===== HistoryState: inclou/recupera fromRoute i respecta POP =====
   override historyState(params?: any) {
+    console.log("****historyState Detail*****");
     if (params) {
       // POP: restaura fromRoute i deixa BasePage restaurar scroll/section/focus
       this._fromRoute = sanitizeSection(params.fromRoute) ?? this._fromRoute;
@@ -141,6 +147,8 @@ export default class Detail extends BasePage {
   }
 
   override _active(): void {
+    super._active();
+
     // ♻️ Refuerç per si el layout/rehidratació altera el focus
     this.focusHeroBtn("PlayBtn");
 
@@ -237,12 +245,16 @@ export default class Detail extends BasePage {
     const key = this._btnOrder[this._btnIndex];
     if (key === "PlayBtn") {
       // si vols propagar la secció fins al player per coherència visual
-      (this as any)["navigate"]?.("player", {
-        id: this._data?.id,
-        section: this._fromRoute || "home",
-      });
+      this._syncHistorySnapshot();
+      (this as any).navigate(
+        "player",
+        {
+          id: this._data?.id,
+          section: this._fromRoute || "home",
+        },
+        true
+      );
     }
-    this._syncHistorySnapshot();
     return true;
   }
 }

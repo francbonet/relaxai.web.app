@@ -62,18 +62,66 @@ export default class App extends (Router as any).App {
       bootComponent: Boot,
       root: "home",
       routes: [
-        { path: "home", component: HomeSection as any },
-        { path: "home/detail/:id", component: Detail as any },
-        { path: "player/:id", component: Player as any },
-        { path: "suggest", component: SuggestSection as any },
-        { path: "suggest/detail/:id", component: Detail as any },
-        { path: "breathe", component: BreatheSection as any },
-        { path: "breathe/detail/:id", component: Detail as any },
-        { path: "longform", component: Longform as any },
-        { path: "longform/detail/:id", component: Detail as any },
-        { path: "search", component: SearchSection as any },
-        { path: "search/detail/:id", component: Detail as any },
-        { path: "watchlist", component: Template as any },
+        {
+          path: "home",
+          component: HomeSection as any,
+          options: { preventStorage: false },
+        },
+        {
+          path: "home/detail/:id",
+          component: Detail as any,
+          options: { preventStorage: false },
+        },
+        {
+          path: "player/:id",
+          component: Player as any,
+          options: { preventStorage: false },
+        },
+        {
+          path: "suggest",
+          component: SuggestSection as any,
+          options: { preventStorage: false },
+        },
+        {
+          path: "suggest/detail/:id",
+          component: Detail as any,
+          options: { preventStorage: false },
+        },
+        {
+          path: "breathe",
+          component: BreatheSection as any,
+          options: { preventStorage: false },
+        },
+        {
+          path: "breathe/detail/:id",
+          component: Detail as any,
+          options: { preventStorage: false },
+        },
+        {
+          path: "longform",
+          component: Longform as any,
+          options: { preventStorage: false },
+        },
+        {
+          path: "longform/detail/:id",
+          component: Detail as any,
+          options: { preventStorage: false },
+        },
+        {
+          path: "search",
+          component: SearchSection as any,
+          options: { preventStorage: false },
+        },
+        {
+          path: "search/detail/:id",
+          component: Detail as any,
+          options: { preventStorage: false },
+        },
+        {
+          path: "watchlist",
+          component: Template as any,
+          options: { preventStorage: false },
+        },
         { path: "*", redirect: "home" },
       ],
     });
