@@ -235,6 +235,7 @@ export default class SearchSection extends BasePage {
     const content = this.tag("Viewport.Content") as Lightning.Component;
     content.y = this._clamp(0);
     this._showKeyboard();
+    this.Keyboard.clear();
     this.Keyboard.resetFocus();
   }
 
