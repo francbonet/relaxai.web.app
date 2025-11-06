@@ -10,6 +10,7 @@ import Boot from "./pages/Boot";
 import BreatheSection from "./pages/Breathe";
 import Longform from "./pages/Longform";
 import SearchSection from "./pages/Search";
+import { App as CapApp } from "@capacitor/app";
 
 // 👇 clau: heretar del Router.App (usa (Router as any) per compat versions)
 export default class App extends (Router as any).App {
@@ -54,6 +55,20 @@ export default class App extends (Router as any).App {
         url: Utils.asset("fonts/Manrope-Medium.ttf") as string,
       },
     ];
+  }
+
+  _init() {
+    // Envía un keydown ‘Backspace’, que Lightning escucha por defecto como “Back”
+    CapApp.addListener("backButton", ({ canGoBack }) => {
+      console.log("[App] backButton Listener");
+      // Puedes decidir si navegar internamente con tu router de Lightning
+      const ev = new KeyboardEvent("keydown", {
+        key: "Backspace",
+        keyCode: 8,
+        which: 8,
+      });
+      window.dispatchEvent(ev);
+    });
   }
 
   _setup() {
