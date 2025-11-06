@@ -310,7 +310,6 @@ export abstract class BasePage extends L.Component {
     const max = this.sections.length - 1;
     this._section = Math.min(this._section + 1, max);
     this._applyScrollForSection(this._section);
-    // this._syncHistorySnapshot();
   }
 
   protected focusPrev() {
@@ -318,7 +317,6 @@ export abstract class BasePage extends L.Component {
     const min = this.hasHeader ? -1 : 0;
     this._section = Math.max(this._section - 1, min);
     this._applyScrollForSection(this._section);
-    // this._syncHistorySnapshot();
   }
 
   /** Lleva el viewport al top inmediato, preservando transiciones del resto. */
@@ -330,8 +328,6 @@ export abstract class BasePage extends L.Component {
     content.patch({ y: this._clamp(0) });
     // restaurar transición previa o quitarla si no existía
     content.patch({ transitions: { y: prev ?? (undefined as any) } });
-
-    // this._syncHistorySnapshot();
   }
 
   protected _applyScrollForSection(index: number) {
@@ -356,38 +352,6 @@ export abstract class BasePage extends L.Component {
     this._refocus();
   }
 
-  // ======== HISTORY SNAPSHOT (throttle) ========
-  // protected _syncHistorySnapshot() {
-  //   if (!this.enableHistory) return;
-
-  //   const content = this.tag("Viewport.Content") as L.Component;
-  //   const sectionToSave =
-  //     !this.persistHeaderInHistory && this._section < 0 ? 0 : this._section;
-  //   const scrollY = Math.abs((content.y as number) || 0);
-
-  //   const state: HistorySnapshot = {
-  //     section: sectionToSave,
-  //     scrollY,
-  //     focus: {},
-  //   };
-
-  //   for (const key of this.sections) {
-  //     const idx = this._getChildFocusIndex(key);
-  //     if (idx !== undefined) state.focus![key] = idx;
-  //   }
-
-  //   const history = Router.getHistory?.();
-  //   console.log("history ->", history);
-
-  //   // const currentHash = history?.[history.length - 1]?.hash ?? "home";
-  //   const _ownHash = Router.getActiveHash?.() ?? "";
-  //   const hash = _ownHash ?? Router.getActiveHash?.() ?? "";
-
-  //   // Útil para depuración
-  //   console.log("%c[BasePage] SAVE", "color:#00bfa5", { hash, state });
-
-  //   Router.replaceHistoryState?.(state, hash);
-  // }
   protected _syncHistorySnapshot() {
     if (!this.enableHistory) return;
 
