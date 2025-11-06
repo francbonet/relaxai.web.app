@@ -122,22 +122,30 @@ export default class Detail extends BasePage {
     );
 
     // ✅ SIEMPRE forcem Hero → PlayBtn
-    console.log("[FORCE FOCUS] Detail -> Hero PlayBtn");
-    this.focusHeroBtn("PlayBtn");
+    // console.log("[FORCE FOCUS] Detail -> Hero PlayBtn");
+    // this.focusHeroBtn("PlayBtn");
+    const active = Router.getActiveHash?.();
+    const state = Router.getHistoryState?.(active);
+    console.log("[_onUrlParams] getActiveHash ->", active, state);
+    if (state) {
+      this._refocus();
+    } else {
+      this.focusHeroBtn("PlayBtn");
+    }
   }
 
   // ===== HistoryState: inclou/recupera fromRoute i respecta POP =====
-  override historyState(params?: any) {
-    if (params) {
-      // POP: restaura fromRoute i deixa BasePage restaurar scroll/section/focus
-      this._fromRoute = sanitizeSection(params.fromRoute) ?? this._fromRoute;
-      applyHeaderSelected(this, this._fromRoute);
-      return super.historyState(params);
-    }
-    const snap = super.historyState() as any;
-    if (snap) snap.fromRoute = this._fromRoute || undefined;
-    return snap;
-  }
+  // override historyState(params?: any) {
+  //   if (params) {
+  //     // POP: restaura fromRoute i deixa BasePage restaurar scroll/section/focus
+  //     this._fromRoute = sanitizeSection(params.fromRoute) ?? this._fromRoute;
+  //     applyHeaderSelected(this, this._fromRoute);
+  //     return super.historyState(params);
+  //   }
+  //   const snap = super.historyState() as any;
+  //   if (snap) snap.fromRoute = this._fromRoute || undefined;
+  //   return snap;
+  // }
 
   // ===== Data setter =====
   set data(v: TileData | null) {

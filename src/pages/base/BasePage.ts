@@ -94,7 +94,7 @@ export abstract class BasePage extends L.Component {
 
   // ======== HISTORYSTATE ========
   override historyState(params?: HistorySnapshot) {
-    if (!this.enableHistory || !this.enableFocusRecovery) return;
+    // if (!this.enableHistory || !this.enableFocusRecovery) return;
 
     const content = this.tag("Viewport.Content") as L.Component;
 
@@ -119,6 +119,16 @@ export abstract class BasePage extends L.Component {
           if (idx !== undefined) this._setChildFocusIndex(key, idx);
         }
       }
+
+      if (params.section) {
+        this._section = params.section;
+      }
+
+      if (params.scrollY) {
+        const content = this.tag("Viewport.Content") as L.Component;
+        content.setSmooth("y", -params.scrollY);
+      }
+
       // No tocar y aún; se aplica tras _computeMetrics
       return undefined;
     } else {
