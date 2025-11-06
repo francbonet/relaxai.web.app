@@ -1,13 +1,18 @@
-// src/index.ts
-import { Lightning, Launch, PlatformSettings, AppData } from '@lightningjs/sdk'
-import App from './App'
+import "./polyfills";
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+import "whatwg-fetch";
+import { Lightning, Launch, PlatformSettings, AppData } from "@lightningjs/sdk";
+import App from "./App";
 
-// ⚠️ El bootstrap (startApp.js) espera un *default export* que sigui una funció
-// que retorni Launch(...)
-export default function (
+// Dona-li un nom a la funció per poder-la enganxar al window
+export default function bootstrap(
   appSettings: Lightning.Application.Options,
   platformSettings: PlatformSettings,
-  appData: AppData,
+  appData: AppData
 ) {
-  return Launch(App as any, appSettings, platformSettings, appData)
+  return Launch(App as any, appSettings, platformSettings, appData);
 }
+
+// @ts-ignore
+(window as any).APP_RELAXAI = bootstrap;

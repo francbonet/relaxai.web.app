@@ -1,0 +1,9 @@
+{
+  "presets": [
+    ["@babel/preset-env", {
+      "targets": { "chrome": "44" },
+      "bugfixes": true,
+      "modules": false
+    }]
+  ]
+}
