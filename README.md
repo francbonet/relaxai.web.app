@@ -244,6 +244,33 @@ Una vez completados los pasos:
 - `app-debug.apk` → para pruebas locales.
 - `app-release.apk` o `app-release.aab` → para publicar en Google Play o instalar en TV.
 
-
 ## Conect Android Device:
+
 adb connect 192.168.1.39:5555
+
+# command to install Apk Debug in device
+
+# 1) Compilar i preparar APK
+
+npm run build:apk
+
+# 2) Connectar per Wi-Fi ADB
+
+export ANDROID_IP=192.168.1.39
+npm run android:connect
+
+# 3) Instal·lar l’APK de debug
+
+npm run android:install
+
+# Comandes útils
+
+### Desinstal·lar ràpid:
+
+npm run android:uninstall
+
+### Veure logs de la WebView/Capacitor:
+
+npm run android:logs
+
+chrome://inspect/#devices
