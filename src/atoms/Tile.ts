@@ -1,5 +1,5 @@
 // src/atoms/Tile.ts
-import { Lightning as L, Router, Utils } from "@lightningjs/sdk";
+import { Lightning as L, Utils } from "@lightningjs/sdk";
 import { Theme } from "../core/theme";
 
 export interface TileSpec extends L.Component.TemplateSpec {
@@ -74,8 +74,8 @@ export class Tile
     this.videoSrc = d.videoSrc;
   }
 
-  get data() {
-    return this._data!;
+  get data(): TileData | undefined {
+    return this._data;
   }
 
   static override _template(): L.Component.Template<TileSpec> {

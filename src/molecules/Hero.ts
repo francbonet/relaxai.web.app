@@ -18,9 +18,7 @@ export class Hero extends L.Component<L.Component.TemplateSpecLoose> {
       x: 40,
       w: WIDTH,
       h: HERO_H,
-
       Poster: { w: WIDTH, h: HERO_H, texture: null },
-
       Overlay: {
         w: WIDTH,
         h: HERO_H,
@@ -28,7 +26,6 @@ export class Hero extends L.Component<L.Component.TemplateSpecLoose> {
         colorTop: 0x00000000,
         colorBottom: 0xe0000000,
       },
-
       Info: {
         x: SIDE_MARGIN,
         y: HERO_H - 450,
@@ -40,12 +37,10 @@ export class Hero extends L.Component<L.Component.TemplateSpecLoose> {
             textColor: Theme.colors.text,
           },
         },
-
         Meta: {
           y: 90,
           text: { text: "", fontSize: 30, textColor: Theme.colors.textDim },
         },
-
         DescBox: {
           y: 140,
           x: 0,
@@ -59,7 +54,6 @@ export class Hero extends L.Component<L.Component.TemplateSpecLoose> {
             textColor: Theme.colors.textDim,
           },
         },
-
         Buttons: {
           y: 250,
           PlayBtn: { type: Button, x: 0, w: 260, label: "WATCH NOW" },
@@ -74,16 +68,11 @@ export class Hero extends L.Component<L.Component.TemplateSpecLoose> {
               mount: 0.5,
               x: 40,
               y: 40,
-              text: {
-                text: "+",
-                textColor: Theme.colors.bg,
-                fontSize: 40,
-              },
+              text: { text: "+", textColor: Theme.colors.bg, fontSize: 40 },
             },
           },
         },
       },
-      // Exposa signals cap amunt perquè BasePage en pugui reaprofitar
       signals: { navigate: true, focusPrev: true, focusNext: true },
     };
   }
@@ -93,9 +82,7 @@ export class Hero extends L.Component<L.Component.TemplateSpecLoose> {
   }
 
   override _active(): void {
-    if (this._data) {
-      this.refreshAddButton(this._data.id);
-    }
+    if (this._data) this.refreshAddButton(this._data.id);
   }
 
   refreshAddButton(id: string) {
@@ -108,27 +95,22 @@ export class Hero extends L.Component<L.Component.TemplateSpecLoose> {
   getFocusIndex() {
     return this._btnIndex;
   }
-
   setFocusIndex(i: number) {
     this._btnIndex = Math.max(0, Math.min(i, this._btnOrder.length - 1));
   }
 
-  // ------- Focus path: delega al botó actiu -------
   override _getFocused() {
     const key = this._btnOrder[this._btnIndex];
     return this.tag(`Info.Buttons.${key}`);
   }
-
   public setIndex(i: number) {
     this._btnIndex = Math.max(0, Math.min(i, this._btnOrder.length - 1));
     this._refocus();
   }
-
   public step(dir: -1 | 1) {
     this.setIndex(this._btnIndex + dir);
   }
 
-  // ------- Tecles locals (només dins l’Hero) -------
   override _handleRight() {
     this.setFocusIndex(this._btnIndex + 1);
     this._refocus();

@@ -2,11 +2,6 @@
 import { Lightning as L } from "@lightningjs/sdk";
 import { Theme } from "../core/theme";
 
-type SearchInputSignals = {
-  enter: (value: string) => void;
-  changed: (value: string) => void;
-};
-
 export class SearchInput extends L.Component<L.Component.TemplateSpecLoose> {
   private _value = "";
   private _placeholder = "Search...";
@@ -44,7 +39,6 @@ export class SearchInput extends L.Component<L.Component.TemplateSpecLoose> {
     };
   }
 
-  // ------- API -------
   get value() {
     return this._value;
   }
@@ -74,7 +68,6 @@ export class SearchInput extends L.Component<L.Component.TemplateSpecLoose> {
     this._renderText();
   }
 
-  // ------- Focus styles -------
   override _focus() {
     (this.tag("Bg") as L.Element).patch({
       shader: {
@@ -95,13 +88,11 @@ export class SearchInput extends L.Component<L.Component.TemplateSpecLoose> {
     this._renderText();
   }
 
-  // ------- Tecles -------
   override _handleEnter() {
     this.signal("enter", this._value);
     return true;
   }
 
-  // ------- Render intern -------
   private _renderText() {
     const empty = this._value.length === 0;
     const text = empty ? this._placeholder : this._value;

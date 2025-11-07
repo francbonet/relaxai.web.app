@@ -1,18 +1,16 @@
-// atoms/NavItem.ts
-import { Lightning as L } from '@lightningjs/sdk'
-import { Theme, Typography } from '../core/theme'
+import { Lightning as L } from "@lightningjs/sdk";
+import { Theme, Typography } from "../core/theme";
 
 export interface NavItemSpec extends L.Component.TemplateSpec {
-  Label: L.Component
-  Indicator: L.Component
+  Label: L.Component;
+  Indicator: L.Component;
 }
 
-export type NavItemRef = NavItem & L.Component
+export type NavItemRef = NavItem & L.Component;
 
-// NavItem.ts
 export default class NavItem extends L.Component<NavItemSpec> {
-  private _routeActive = false
-  private _pendingIndicatorColor: number | null = null
+  private _routeActive = false;
+  private _pendingIndicatorColor: number | null = null;
 
   static override _template(): L.Component.Template<NavItemSpec> {
     return {
@@ -20,77 +18,82 @@ export default class NavItem extends L.Component<NavItemSpec> {
       h: 60,
       rect: true,
       color: 0x00000000,
-      Indicator: { x: 0, y: 58, w: (w: number) => w, h: 6, rect: true, color: 0x00000000 },
+      Indicator: {
+        x: 0,
+        y: 58,
+        w: (w: number) => w,
+        h: 6,
+        rect: true,
+        color: 0x00000000,
+      },
       Label: {
         y: 0,
         x: 0,
         text: {
-          text: '',
+          text: "",
           fontFace: Typography.nav.face,
           fontSize: Typography.nav.size,
           textColor: Theme.colors.text,
         },
       },
-    }
+    };
   }
 
   set labelText(v: string) {
-    this.patch({ Label: { text: { text: v } } })
+    this.patch({ Label: { text: { text: v } } });
   }
   get labelText() {
-    return (this.tag('Label') as L.Component)?.text?.text || ''
+    return (this.tag("Label") as L.Component)?.text?.text || "";
   }
 
   override _init() {
-    // si hi havia un color pendent d'abans que existís l'Indicator, l'apliquem
     if (this._pendingIndicatorColor !== null) {
-      const ind = this.tag('Indicator') as L.Component | undefined
-      ind?.patch({ color: this._pendingIndicatorColor })
+      const ind = this.tag("Indicator") as L.Component | undefined;
+      ind?.patch({ color: this._pendingIndicatorColor });
 
-      this._pendingIndicatorColor = null
+      this._pendingIndicatorColor = null;
     } else {
-      this._renderIndicator()
+      this._renderIndicator();
     }
   }
 
   set routeActive(v: boolean) {
-    this._routeActive = v
-    this._renderIndicator()
+    this._routeActive = v;
+    this._renderIndicator();
   }
   get routeActive() {
-    return this._routeActive
+    return this._routeActive;
   }
 
   setSelected(v: boolean) {
-    this.routeActive = v
+    this.routeActive = v;
   }
 
   override _focus() {
-    this._renderIndicator()
-    return true
+    this._renderIndicator();
+    return true;
   }
   override _unfocus() {
-    this._renderIndicator()
-    return true
+    this._renderIndicator();
+    return true;
   }
 
   private _renderIndicator() {
-    const ind = this.tag('Indicator') as L.Component | undefined
-    const la = this.tag('Label') as L.Component | undefined
-    const focused = this.hasFocus()
-    const SELECTED = Theme.colors.accent ?? 0xffff0000
-    const UNSELECTED = 0xffffffff
-    const UNFOCUS = 0x00000000
+    const ind = this.tag("Indicator") as L.Component | undefined;
+    const la = this.tag("Label") as L.Component | undefined;
+    const focused = this.hasFocus();
+    const SELECTED = Theme.colors.accent ?? 0xffff0000;
+    const UNSELECTED = 0xffffffff;
+    const UNFOCUS = 0x00000000;
 
-    const color = focused ? SELECTED : this._routeActive ? UNSELECTED : UNFOCUS
-    la?.patch({ text: { textColor: focused ? SELECTED : UNSELECTED } })
+    const color = focused ? SELECTED : this._routeActive ? UNSELECTED : UNFOCUS;
+    la?.patch({ text: { textColor: focused ? SELECTED : UNSELECTED } });
 
     if (ind) {
-      ind.patch({ color })
-      this._pendingIndicatorColor = null
+      ind.patch({ color });
+      this._pendingIndicatorColor = null;
     } else {
-      // l'Indicator pot no estar creat encara (ordre d'inicialització)
-      this._pendingIndicatorColor = color
+      this._pendingIndicatorColor = color;
     }
   }
 }

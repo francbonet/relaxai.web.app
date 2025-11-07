@@ -1,7 +1,6 @@
 import { BasePage } from "./base/BasePage";
 import { Theme } from "../core/theme";
 import Header from "../molecules/Header";
-import { Router } from "@lightningjs/sdk";
 import { getActiveRouteName } from "../utils/routerUtils";
 
 const HEADER_H = 200;
@@ -10,6 +9,7 @@ export default class Template extends BasePage {
   protected override get hasHeader() {
     return true;
   }
+
   protected override get enableScrollSnap() {
     return false;
   }

@@ -12,7 +12,6 @@ import Longform from "./pages/Longform";
 import SearchSection from "./pages/Search";
 import { App as CapApp } from "@capacitor/app";
 
-// 👇 clau: heretar del Router.App (usa (Router as any) per compat versions)
 export default class App extends (Router as any).App {
   static _template(): L.Component.Template<any> {
     return {
@@ -58,10 +57,8 @@ export default class App extends (Router as any).App {
   }
 
   _init() {
-    // Envía un keydown ‘Backspace’, que Lightning escucha por defecto como “Back”
-    CapApp.addListener("backButton", ({ canGoBack }) => {
+    CapApp.addListener("backButton", () => {
       console.log("[App] backButton Listener");
-      // Puedes decidir si navegar internamente con tu router de Lightning
       const ev = new KeyboardEvent("keydown", {
         key: "Backspace",
         keyCode: 8,

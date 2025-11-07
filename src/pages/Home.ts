@@ -1,10 +1,9 @@
 import { BasePage } from "./base/BasePage";
 import Header from "../molecules/Header";
 import { Rail } from "../molecules/Rail";
-import { getActiveRouteName } from "../utils/routerUtils";
 import { CarouselComp } from "../molecules/Carousel";
+import { getActiveRouteName } from "../utils/routerUtils";
 import DataStore from "../services/DataStore";
-import { Router } from "@lightningjs/sdk";
 
 const GAP2 = 30;
 const GAP = 60;
@@ -16,9 +15,11 @@ export default class HomeSection extends BasePage {
   protected override get hasHeader() {
     return true;
   }
+
   protected override get sections() {
     return ["Carussel", "TopSearches", "NextWatch", "Retro"];
   }
+
   protected override get defaultHeights() {
     return {
       Header: HEADER_H,
@@ -38,9 +39,9 @@ export default class HomeSection extends BasePage {
       },
 
       Carussel: {
+        x: 40,
         y: HEADER_H + GAP2,
         h: CAROUSSEL_H,
-        x: 40,
         type: CarouselComp,
         signals: { focusPrev: true, focusNext: true, navigate: true },
       },
@@ -69,29 +70,35 @@ export default class HomeSection extends BasePage {
   }
 
   override _focus() {
-    const name = getActiveRouteName();
-    this.tag("Viewport.Content.ContentInner.Header")?.setCurrentByRoute?.(name);
+    const routeName = getActiveRouteName();
+    this.tag("Viewport.Content.ContentInner.Header")?.setCurrentByRoute?.(
+      routeName,
+    );
   }
 
   override async _active() {
     super._active();
-    const dataCarousel = DataStore.data.rail5?.slice(1, 8)!;
-    (this.tag("Viewport.Content.ContentInner.Carussel") as CarouselComp).items =
-      dataCarousel;
 
     const inner = "Viewport.Content.ContentInner";
+
+    const carouselData = DataStore.data.rail5?.slice(1, 8) ?? [];
+    (this.tag(`${inner}.Carussel`) as CarouselComp).items = carouselData;
+
     this.tag(`${inner}.TopSearches`)?.patch({
       title: "Top searches",
-      items: DataStore.data.rail1?.slice(0, 15),
+      items: DataStore.data.rail1?.slice(0, 15) ?? [],
     });
+
     this.tag(`${inner}.NextWatch`)?.patch({
       title: "Your next watch",
-      items: DataStore.data.rail3?.slice(0, 15),
+      items: DataStore.data.rail3?.slice(0, 15) ?? [],
     });
+
     this.tag(`${inner}.Retro`)?.patch({
       title: "Retro TV",
-      items: DataStore.data.rail4?.slice(0, 15),
+      items: DataStore.data.rail4?.slice(0, 15) ?? [],
     });
+
     this.computeAfterLayout();
   }
 }

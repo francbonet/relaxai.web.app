@@ -1,9 +1,9 @@
-import { Lightning } from '@lightningjs/sdk'
+import { Lightning } from "@lightningjs/sdk";
 
-export type ARGB = number
+export type ARGB = number;
 
 export interface WithTitle extends Lightning.Component.TemplateSpec {
-  title: string
+  title: string;
 }
 
 export const enum Z {
@@ -12,10 +12,10 @@ export const enum Z {
 }
 
 export const enum Keys {
-  Left = 'Left',
-  Right = 'Right',
-  Up = 'Up',
-  Down = 'Down',
-  Enter = 'Enter',
-  Back = 'Back',
+  Left = "Left",
+  Right = "Right",
+  Up = "Up",
+  Down = "Down",
+  Enter = "Enter",
+  Back = "Back",
 }

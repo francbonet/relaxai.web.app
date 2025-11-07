@@ -1,4 +1,3 @@
-// atoms/ControlButton.ts
 import { Lightning as L, Img, Utils } from "@lightningjs/sdk";
 import { Theme } from "../core/theme";
 
@@ -16,9 +15,8 @@ export class ControlButton
   private _iconSrc: string | undefined;
   private _size = 80;
   private _radius = 8;
-  private _iconScale = 0.5; // 50%
+  private _iconScale = 0.5;
 
-  // Getters curts
   get Bg() {
     return this.tag("Bg");
   }
@@ -49,7 +47,6 @@ export class ControlButton
     };
   }
 
-  // ===== API pública (sense col·lidir amb Component.src) =====
   set iconSrc(v: string | undefined) {
     this._iconSrc = v;
     this._applyIcon();
@@ -73,7 +70,6 @@ export class ControlButton
     }
   }
 
-  // Helper semàntic (opcional)
   setVariant(v: "play" | "pause" | "rew" | "fwd" | "back") {
     const map: Record<string, string> = {
       play: "videos/controls/play.png",
@@ -101,13 +97,11 @@ export class ControlButton
     this.setSmooth("scale", 1.0, { duration: 0.12 });
   }
 
-  // Deixem que ENTER bublegi fins al pare (Player)
   override _handleEnter() {
     this.signal("select", { iconSrc: this._iconSrc });
     return false;
   }
 
-  // ===== Interns =====
   private _applySizing() {
     this.w = this._size;
     this.h = this._size;

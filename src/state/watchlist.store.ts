@@ -54,5 +54,4 @@ export class WatchlistStore {
   }
 }
 
-// instancia única (simple)
 export const watchlistStore = new WatchlistStore();

@@ -14,11 +14,9 @@ export default class Logo
 {
   private _left = "Relax";
   private _right = "AI";
-  private _spacing = 6; // px entre “Relax” y “AI”
+  private _spacing = 6;
 
-  // Si quieres mantener compat con `label`, lo dividimos
   set label(v: string) {
-    // por ejemplo si pasas "Relax AI"
     const parts = v.split(/\s+/);
     this._left = parts[0] ?? "Relax";
     this._right = parts[1] ?? "AI";
@@ -58,7 +56,7 @@ export default class Logo
           },
         },
         LabelAI: {
-          x: 135, // se actualiza dinámicamente
+          x: 135,
           text: {
             text: "AI",
             fontFace: Typography.heading.face,

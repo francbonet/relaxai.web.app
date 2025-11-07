@@ -2,8 +2,6 @@ import { Lightning as L, Utils } from "@lightningjs/sdk";
 import { Theme } from "../core/theme";
 import { TileData } from "./Tile";
 
-type ItemData = { title: string; src?: string };
-
 const HERO_H = 650;
 const SIDE_MARGIN = 100;
 
@@ -114,8 +112,7 @@ export class CarouselItem extends L.Component {
   override _handleEnter() {
     if (!this._data) return true;
     const section = this._getCurrentSection().toLowerCase() || "home";
-    // @ts-ignore
-    this.fireAncestors("$onChildNavigate", `${section}/detail`, {
+    this.fireAncestors("$onChildNavigate" as any, `${section}/detail`, {
       id: this._data?.id,
     });
     return true;
