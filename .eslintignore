@@ -2,4 +2,5 @@ node_modules/
 dist/
 build/
 build-ts/
+scripts/*.mjs
 .eslintrc.js

@@ -17,7 +17,8 @@
     "android:install": "adb install -r android/app/build/outputs/apk/debug/app-debug.apk",
     "android:uninstall": "adb uninstall app.web.relaxai.lightning",
     "android:logs": "adb logcat Chromium:D Capacitor:D *:S",
-    "android:refresh": "cd android && ./gradlew clean && cd .. && npx cap sync android && npm run android:debug"
+    "android:refresh": "cd android && ./gradlew clean && cd .. && npx cap sync android && npm run android:debug",
+    "deploy:gh": "npm run build:web && npm run build:es5 && node scripts/prepare-gh-pages.mjs && node scripts/deploy-gh-pages.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.4",
@@ -48,6 +49,7 @@
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^8.10.2",
     "eslint-plugin-prettier": "^4.2.5",
+    "gh-pages": "^6.3.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "prettier": "^2.8.8",
