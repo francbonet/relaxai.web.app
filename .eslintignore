@@ -1,4 +1,4 @@
-**/node_modules
-dist
-build
-build-ts
+node_modules/
+dist/
+build/
+build-ts/
