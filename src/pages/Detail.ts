@@ -98,6 +98,7 @@ export default class Detail extends BasePage {
     const active = Router.getActiveHash?.();
     const state = Router.getHistoryState?.(active);
     state ? this._refocus() : this.focusHeroBtn("PlayBtn");
+    this.tag("Hero").data = this._data;
   }
 
   set data(v: TileData | null) {

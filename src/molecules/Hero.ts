@@ -79,6 +79,7 @@ export class Hero extends L.Component<L.Component.TemplateSpecLoose> {
 
   set data(v: TileData) {
     this._data = v;
+    this.refreshAddButton(v.id);
   }
 
   override _active(): void {

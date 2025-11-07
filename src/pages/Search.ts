@@ -243,10 +243,9 @@ export default class SearchSection extends BasePage {
     const viewport = this.tag("Viewport") as any;
     const grid = this.tag("ResultsGrid") as any;
 
-    const baseOffset =
-      (this as any)._resultsBaseOffset?.() ?? HEADER_H + GAP_H + 140;
-    const EXTRA_BOTTOM = Number((this as any).extraBottom ?? 0);
-    const CENTER_BIAS = -140;
+    const baseOffset = HEADER_H + GAP_H + 140;
+    const EXTRA_BOTTOM = -100;
+    const CENTER_BIAS = 0;
 
     const cols = Math.max(1, payload.cols | 0);
     const row = Math.max(0, payload.row | 0);

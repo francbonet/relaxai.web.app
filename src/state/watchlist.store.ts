@@ -5,6 +5,10 @@ export class WatchlistStore {
   private readonly _watchlist$ = new BehaviorSubject<TileData[]>(this._load());
   readonly watchlist$ = this._watchlist$.asObservable();
 
+  get current(): TileData[] {
+    return this._watchlist$.value;
+  }
+
   add(movie: TileData) {
     const cur = this._watchlist$.value;
     if (!cur.find((m) => m.id === movie.id)) {

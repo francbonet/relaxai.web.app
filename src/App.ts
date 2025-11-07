@@ -3,7 +3,6 @@ import { Lightning as L, Router, Utils } from "@lightningjs/sdk";
 import { Theme } from "./core/theme";
 import HomeSection from "./pages/Home";
 import SuggestSection from "./pages/SuggestSection";
-import Template from "./pages/Template";
 import Detail from "./pages/Detail";
 import { Player } from "./pages/player/Player";
 import Boot from "./pages/Boot";
@@ -11,6 +10,7 @@ import BreatheSection from "./pages/Breathe";
 import Longform from "./pages/Longform";
 import SearchSection from "./pages/Search";
 import { App as CapApp } from "@capacitor/app";
+import WatchListSection from "./pages/Watchlist";
 
 export default class App extends (Router as any).App {
   static _template(): L.Component.Template<any> {
@@ -76,62 +76,67 @@ export default class App extends (Router as any).App {
       routes: [
         {
           path: "home",
-          component: HomeSection as any,
+          component: HomeSection,
           options: { preventStorage: false },
         },
         {
           path: "home/detail/:id",
-          component: Detail as any,
+          component: Detail,
           options: { preventStorage: false },
         },
         {
           path: "player/:id",
-          component: Player as any,
+          component: Player,
           options: { preventStorage: false },
         },
         {
           path: "suggest",
-          component: SuggestSection as any,
+          component: SuggestSection,
           options: { preventStorage: false },
         },
         {
           path: "suggest/detail/:id",
-          component: Detail as any,
+          component: Detail,
           options: { preventStorage: false },
         },
         {
           path: "breathe",
-          component: BreatheSection as any,
+          component: BreatheSection,
           options: { preventStorage: false },
         },
         {
           path: "breathe/detail/:id",
-          component: Detail as any,
+          component: Detail,
           options: { preventStorage: false },
         },
         {
           path: "longform",
-          component: Longform as any,
+          component: Longform,
           options: { preventStorage: false },
         },
         {
           path: "longform/detail/:id",
-          component: Detail as any,
+          component: Detail,
           options: { preventStorage: false },
         },
         {
           path: "search",
-          component: SearchSection as any,
+          component: SearchSection,
           options: { preventStorage: false },
         },
         {
           path: "search/detail/:id",
-          component: Detail as any,
+          component: Detail,
           options: { preventStorage: false },
         },
         {
           path: "watchlist",
-          component: Template as any,
+          component: WatchListSection,
+          options: { preventStorage: false },
+        },
+        {
+          path: "watchlist/detail/:id",
+          component: Detail,
           options: { preventStorage: false },
         },
         { path: "*", redirect: "home" },
