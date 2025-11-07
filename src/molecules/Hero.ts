@@ -1,8 +1,8 @@
-// Lightning v2, TS
-import { Lightning as L, Img, Utils } from "@lightningjs/sdk";
+import { Lightning as L } from "@lightningjs/sdk";
 import { Theme } from "../core/theme";
 import { Button } from "../atoms/Button";
 import type { TileData } from "../atoms/Tile";
+import { watchlistStore } from "../state/watchlist.store";
 
 const HERO_H = 650;
 const SIDE_MARGIN = 100;
@@ -74,7 +74,11 @@ export class Hero extends L.Component<L.Component.TemplateSpecLoose> {
               mount: 0.5,
               x: 40,
               y: 40,
-              text: { text: "+", textColor: Theme.colors.bg, fontSize: 40 },
+              text: {
+                text: "+",
+                textColor: Theme.colors.bg,
+                fontSize: 40,
+              },
             },
           },
         },
@@ -84,10 +88,27 @@ export class Hero extends L.Component<L.Component.TemplateSpecLoose> {
     };
   }
 
-  // ------- API pública perquè BasePage/history puguin persistir focus -------
+  set data(v: TileData) {
+    this._data = v;
+  }
+
+  override _active(): void {
+    if (this._data) {
+      this.refreshAddButton(this._data.id);
+    }
+  }
+
+  refreshAddButton(id: string) {
+    const hasStore = watchlistStore.has(id);
+    this.tag("AddBtn.Icon").patch({
+      text: { text: `${hasStore ? "-" : "+"}` },
+    });
+  }
+
   getFocusIndex() {
     return this._btnIndex;
   }
+
   setFocusIndex(i: number) {
     this._btnIndex = Math.max(0, Math.min(i, this._btnOrder.length - 1));
   }
@@ -127,37 +148,16 @@ export class Hero extends L.Component<L.Component.TemplateSpecLoose> {
     return true;
   }
   override _handleEnter() {
-    if (this._btnOrder[this._btnIndex] === "PlayBtn")
+    if (this._btnOrder[this._btnIndex] === "PlayBtn") {
       this.signal("navigate", "player", { id: this._data?.id });
-    return true;
+      return true;
+    }
+    if (this._btnOrder[this._btnIndex] === "AddBtn") {
+      if (this._data) {
+        watchlistStore.toggle(this._data);
+        this.refreshAddButton(this._data.id);
+      }
+      return true;
+    }
   }
-
-  // ------- Dades -------
-  // set data(v: TileData | null) {
-  //   this._data = v;
-  //   if (!v) return;
-
-  //   const src = (v as any).posterSrc || v.imageSrc;
-  //   if (src)
-  //     this.tag("Poster").patch({
-  //       texture: Img(Utils.asset(src)).cover(Theme.w, HERO_H),
-  //     });
-
-  //   this.tag("Info.Title").patch({ text: { text: v.title ?? "" } });
-
-  //   const genres = Array.isArray((v as any).genres)
-  //     ? (v as any).genres.join(", ")
-  //     : (v as any).genres || "";
-
-  //   const parts = [
-  //     v.year ? `${v.year}` : null,
-  //     v.duration ? `${v.duration} min` : null,
-  //     v.author ? `${v.author}` : null,
-  //     genres ? `${genres}` : null,
-  //   ].filter(Boolean);
-
-  //   const textParts = parts.join("  •  ");
-
-  //   this.tag("Info.Meta").patch({ text: { text: textParts } });
-  // }
 }

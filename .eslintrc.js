@@ -1,45 +1,32 @@
-/* eslint-env node */
 module.exports = {
-  root: true,
-  env: {
-    browser: true,
-    es6: true,
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    ecmaVersion: 2020,
+    sourceType: "module",
+    project: "./tsconfig.json",
   },
-  parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'prettier'],
+  plugins: ["@typescript-eslint", "prettier"],
   extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/eslint-recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',
-    'prettier',
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
   ],
   rules: {
-    quotes: [2, 'single', 'avoid-escape'],
-    semi: [2, 'never'],
-    'no-extra-boolean-cast': 'off',
-    'no-unused-vars': [
-      1,
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/no-non-null-asserted-optional-chain": "error",
+    "no-empty": "error",
+    "prettier/prettier": [
+      "error",
       {
-        ignoreRestSiblings: true,
-        argsIgnorePattern: 'res|next|^err',
-      },
-    ],
-    '@typescript-eslint/no-non-null-assertion': 'off',
-    'prettier/prettier': [
-      'error',
-      {
-        trailingComma: 'all',
-        singleQuote: true,
-        tabWidth: 2,
-        semi: false,
-        printWidth: 100,
-      },
-    ],
+        singleQuote: false, // <- aquí: false = comillas dobles
+        semi: true,
+        trailingComma: "all",
+        endOfLine: "lf"
+      }
+    ]
   },
-  parserOptions: {
-    parser: 'babel-eslint',
-    ecmaVersion: 2018,
-    sourceType: 'module',
-  },
-}
+  ignorePatterns: ["node_modules/", "dist/", "build/", "build-ts/"]
+};
+

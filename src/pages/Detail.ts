@@ -1,4 +1,3 @@
-// src/pages/Detail.ts
 import { Router } from "@lightningjs/sdk";
 import Header from "../molecules/Header";
 import { BasePage } from "./base/BasePage";
@@ -6,7 +5,6 @@ import { Theme } from "../core/theme";
 import type { TileData } from "../atoms/Tile";
 import { Rail } from "../molecules/Rail";
 
-// Helpers (sense dependència de `data`)
 import {
   scrollToSection,
   applyHeaderSelected,
@@ -29,7 +27,6 @@ const RAIL_H = 230;
 export default class Detail extends BasePage {
   private _data: TileData | null = null;
 
-  // índex horitzontal de botons dins de Hero
   private _btnIndex = 0;
   private _btnOrder: Array<"PlayBtn" | "AddBtn" | "LikeBtn"> = [
     "PlayBtn",
@@ -37,13 +34,10 @@ export default class Detail extends BasePage {
     "LikeBtn",
   ];
 
-  // secció d’origen (ve de params.section)
   private _fromRoute: SectionRoute | null = null;
 
-  // id anterior per detectar re-entrades amb altre ítem
   private _lastId: string | null = null;
 
-  // ===== Config pàgina (BasePage) =====
   protected override get hasHeader() {
     return true;
   }
@@ -118,7 +112,7 @@ export default class Detail extends BasePage {
     this.data = resolveById<TileData>(
       newId,
       DataStore.data,
-      (d) => (d as any).id
+      (d) => (d as any).id,
     );
 
     const active = Router.getActiveHash?.();
@@ -140,7 +134,6 @@ export default class Detail extends BasePage {
   override _active(): void {
     super._active();
 
-    // ♻️ Refuerç per si el layout/rehidratació altera el focus
     this.focusHeroBtn("PlayBtn");
 
     const inner = "Viewport.Content.ContentInner";
@@ -148,6 +141,7 @@ export default class Detail extends BasePage {
       title: "Related",
       items: DataStore.data.rail4?.slice(0, 10),
     });
+    this.tag(`${inner}.Hero`).patch({ data: this._data });
   }
 
   /** Força el focus a un botó de l'Hero i situa la secció a Hero. */
@@ -243,7 +237,7 @@ export default class Detail extends BasePage {
           id: this._data?.id,
           section: this._fromRoute || "home",
         },
-        true
+        true,
       );
     }
     return true;
