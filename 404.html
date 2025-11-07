@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #000;
+      overflow: hidden
+    }
+
+    canvas {
+      position: absolute;
+      display: block
+    }
+  </style>
+  <title>RelaxAI WebTV</title>
+</head>
+
+<body>
+  <!-- IMPORTANT: ruta relativa al bundle ES5 que copies a public/build/ -->
+  <script src="app.bundle.js"></script>
+  <script>
+    (function () {
+      var bootstrap = window.APP_RELAXAI;
+      if (typeof bootstrap !== 'function') {
+        console.error('APP_RELAXAI no disponible. Revisa paths/copy.');
+        return;
+      }
+      var app = bootstrap(
+        { stage: { w: 1920, h: 1080, clearColor: 0x00000000 }, debug: false },
+        { esEnv: 'eS5', textureMode: true },
+        {}
+      );
+      var canvas = app && app.stage && app.stage.getCanvas && app.stage.getCanvas();
+      if (canvas) {
+        function fit() {
+          // “stretch” a finestra; si vols letterbox, et passo l’altra funció
+          canvas.style.width = window.innerWidth + 'px';
+          canvas.style.height = window.innerHeight + 'px';
+          canvas.style.left = '0px';
+          canvas.style.top = '0px';
+        }
+        window.addEventListener('resize', fit);
+        fit();
+        if (!document.body.contains(canvas)) document.body.appendChild(canvas);
+      }
+    })();
+  </script>
+</body>
+
+</html>

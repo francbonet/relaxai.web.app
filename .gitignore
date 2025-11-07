@@ -1,0 +1,48 @@
+# Dependencias
+node_modules/**
+
+# Builds y distribuciones
+build/
+dist/
+releases/
+
+# Archivos temporales
+.tmp/
+temp/
+*.tmp
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Entorno
+.env
+.env.local
+.env.*.local
+
+# Editor / IDE
+.idea/
+
+# Tests y coverage
+coverage/
+jest-cache/
+jest-temp/
+
+# Cache de bundlers
+.cache/
+.eslintcache/
+
+# Archivos de lock (opcional según política)
+# package-lock.json
+# yarn.lock
+
+dist
+releases
+.tmp
+build

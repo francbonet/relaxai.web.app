@@ -1,0 +1,15 @@
+{
+  "editor.formatOnSave": false,
+  "editor.formatOnPaste": false,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always"
+  },
+  "eslint.nodePath": "./node_modules",
+  "eslint.workingDirectories": [{ "mode": "auto" }]
+}
