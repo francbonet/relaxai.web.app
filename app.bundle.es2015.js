@@ -51194,31 +51194,33 @@ SDK - v${this.sdkVersion}`;
       return [
         {
           family: "RelaxAI-SoraBold",
-          url: Utils_default.asset("fonts/Sora-Bold.ttf")
+          url: Utils_default.asset("/relaxai.web.app/fonts/Sora-Bold.ttf")
         },
         {
           family: "RelaxAI-SoraSemiBold",
-          url: Utils_default.asset("fonts/Sora-SemiBold.ttf")
+          url: Utils_default.asset("/relaxai.web.app/fonts/Sora-SemiBold.ttf")
         },
         {
           family: "RelaxAI-SoraRegular",
-          url: Utils_default.asset("fonts/Sora-Regular.ttf")
+          url: Utils_default.asset("/relaxai.web.app/fonts/Sora-Regular.ttf")
         },
         {
           family: "RelaxAI-SoraMedium",
-          url: Utils_default.asset("fonts/Sora-Medium.ttf")
+          url: Utils_default.asset("/relaxai.web.app/fonts/Sora-Medium.ttf")
         },
         {
           family: "RelaxAI-SoraLight",
-          url: Utils_default.asset("fonts/Sora-Light.ttf")
+          url: Utils_default.asset("/relaxai.web.app/fonts/Sora-Light.ttf")
         },
         {
           family: "RelaxAI-Manrope",
-          url: Utils_default.asset("fonts/Manrope-Regular.ttf")
+          url: Utils_default.asset(
+            "/relaxai.web.app/fonts/Manrope-Regular.ttf"
+          )
         },
         {
           family: "RelaxAI-ManropeMed",
-          url: Utils_default.asset("fonts/Manrope-Medium.ttf")
+          url: Utils_default.asset("/relaxai.web.app/fonts/Manrope-Medium.ttf")
         }
       ];
     }

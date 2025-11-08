@@ -3,7 +3,7 @@
  * SDK version: 5.5.5
  * CLI version: 2.14.2
  *
- * Generated: Sat, 08 Nov 2025 00:56:01 GMT
+ * Generated: Sat, 08 Nov 2025 00:59:54 GMT
  */
 
 var APP_com_domain_app_demov2 = (function () {
@@ -34700,25 +34700,25 @@ var APP_com_domain_app_demov2 = (function () {
 	  static getFonts() {
 	    return [{
 	      family: "RelaxAI-SoraBold",
-	      url: Utils.asset("fonts/Sora-Bold.ttf")
+	      url: Utils.asset("/relaxai.web.app/fonts/Sora-Bold.ttf")
 	    }, {
 	      family: "RelaxAI-SoraSemiBold",
-	      url: Utils.asset("fonts/Sora-SemiBold.ttf")
+	      url: Utils.asset("/relaxai.web.app/fonts/Sora-SemiBold.ttf")
 	    }, {
 	      family: "RelaxAI-SoraRegular",
-	      url: Utils.asset("fonts/Sora-Regular.ttf")
+	      url: Utils.asset("/relaxai.web.app/fonts/Sora-Regular.ttf")
 	    }, {
 	      family: "RelaxAI-SoraMedium",
-	      url: Utils.asset("fonts/Sora-Medium.ttf")
+	      url: Utils.asset("/relaxai.web.app/fonts/Sora-Medium.ttf")
 	    }, {
 	      family: "RelaxAI-SoraLight",
-	      url: Utils.asset("fonts/Sora-Light.ttf")
+	      url: Utils.asset("/relaxai.web.app/fonts/Sora-Light.ttf")
 	    }, {
 	      family: "RelaxAI-Manrope",
-	      url: Utils.asset("fonts/Manrope-Regular.ttf")
+	      url: Utils.asset("/relaxai.web.app/fonts/Manrope-Regular.ttf")
 	    }, {
 	      family: "RelaxAI-ManropeMed",
-	      url: Utils.asset("fonts/Manrope-Medium.ttf")
+	      url: Utils.asset("/relaxai.web.app/fonts/Manrope-Medium.ttf")
 	    }];
 	  }
 	  _init() {
