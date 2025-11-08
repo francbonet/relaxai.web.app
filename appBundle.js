@@ -3,7 +3,7 @@
  * SDK version: 5.5.5
  * CLI version: 2.14.2
  *
- * Generated: Sat, 08 Nov 2025 01:12:28 GMT
+ * Generated: Sat, 08 Nov 2025 09:53:25 GMT
  */
 
 var APP_com_domain_app_demov2 = (function () {
@@ -34670,7 +34670,7 @@ var APP_com_domain_app_demov2 = (function () {
 	    const gapY = (_c = grid === null || grid === void 0 ? void 0 : grid.gapY) !== null && _c !== void 0 ? _c : 10;
 	    const rowPitch = tileH + gapY;
 	    const totalRows = Math.ceil(payload.itemsLen / payload.cols);
-	    if (row < 1) {
+	    if (row < 2) {
 	      content.setSmooth("y", 0);
 	      return;
 	    }
@@ -34687,17 +34687,6 @@ var APP_com_domain_app_demov2 = (function () {
 	}
 
 	// src/App.ts
-	// const isGitHubPages = location.hostname === "francbonet.github.io";
-	// const ASSET_PREFIX = isGitHubPages ? "relaxai.web.app/" : "/";
-	// const originalAsset = Utils.asset.bind(Utils);
-	// Utils.asset = function (path) {
-	//   if (!path) return path;
-	//   if (/^https?:\/\//.test(path) || path.startsWith(ASSET_PREFIX)) {
-	//     return path;
-	//   }
-	//   const clean = path.replace(/^\/+/, "");
-	//   return originalAsset(ASSET_PREFIX + clean);
-	// };
 	class App extends Router.App {
 	  static _template() {
 	    return {
