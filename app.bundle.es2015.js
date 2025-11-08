@@ -31035,20 +31035,20 @@ ${indent}  "${refs[i]}":`;
       return shader;
     }
     getUniformLocation(name) {
-      let location = this._uniformLocations.get(name);
-      if (location === void 0) {
-        location = this.gl.getUniformLocation(this._program, name);
-        this._uniformLocations.set(name, location);
+      let location2 = this._uniformLocations.get(name);
+      if (location2 === void 0) {
+        location2 = this.gl.getUniformLocation(this._program, name);
+        this._uniformLocations.set(name, location2);
       }
-      return location;
+      return location2;
     }
     getAttribLocation(name) {
-      let location = this._attributeLocations.get(name);
-      if (location === void 0) {
-        location = this.gl.getAttribLocation(this._program, name);
-        this._attributeLocations.set(name, location);
+      let location2 = this._attributeLocations.get(name);
+      if (location2 === void 0) {
+        location2 = this.gl.getAttribLocation(this._program, name);
+        this._attributeLocations.set(name, location2);
       }
-      return location;
+      return location2;
     }
     destroy() {
       if (this._program) {
@@ -43067,13 +43067,13 @@ SDK - v${this.sdkVersion}`;
     let store = isBoolean(forceNavigateStore) ? forceNavigateStore : !preventStorage;
     if (store) {
       const toStore = hash.replace(/^\//, "");
-      const location = locationInHistory(toStore);
+      const location2 = locationInHistory(toStore);
       const stateObject = getStateObject(getActivePage(), request);
       const routerConfig2 = getRouterConfig();
-      if (location === -1 || routerConfig2.get("storeSameHash")) {
+      if (location2 === -1 || routerConfig2.get("storeSameHash")) {
         history.push({ hash: toStore, state: stateObject });
       } else {
-        const prev = history.splice(location, 1)[0];
+        const prev = history.splice(location2, 1)[0];
         history.push({ hash: prev.hash, state: stateObject });
       }
     }
@@ -43105,9 +43105,9 @@ SDK - v${this.sdkVersion}`;
     if (!history.length) {
       return;
     }
-    const location = hash ? locationInHistory(hash) : history.length - 1;
-    if (location !== -1 && isObject3(state3)) {
-      history[location].state = state3;
+    const location2 = hash ? locationInHistory(hash) : history.length - 1;
+    if (location2 !== -1 && isObject3(state3)) {
+      history[location2].state = state3;
     }
   };
   var getStateObject = (page, request) => {
@@ -51180,6 +51180,17 @@ SDK - v${this.sdkVersion}`;
   };
 
   // src/App.ts
+  var isGitHubPages = location.hostname === "francbonet.github.io";
+  var ASSET_PREFIX = isGitHubPages ? "/relaxai.web.app/" : "/";
+  var originalAsset = Utils_default.asset.bind(Utils_default);
+  Utils_default.asset = function(path) {
+    if (!path) return path;
+    if (/^https?:\/\//.test(path) || path.startsWith(ASSET_PREFIX)) {
+      return path;
+    }
+    const clean = path.replace(/^\/+/, "");
+    return originalAsset(ASSET_PREFIX + clean);
+  };
   var App2 = class extends Router_default.App {
     static _template() {
       return {
@@ -51194,33 +51205,31 @@ SDK - v${this.sdkVersion}`;
       return [
         {
           family: "RelaxAI-SoraBold",
-          url: Utils_default.asset("/relaxai.web.app/fonts/Sora-Bold.ttf")
+          url: Utils_default.asset("fonts/Sora-Bold.ttf")
         },
         {
           family: "RelaxAI-SoraSemiBold",
-          url: Utils_default.asset("/relaxai.web.app/fonts/Sora-SemiBold.ttf")
+          url: Utils_default.asset("fonts/Sora-SemiBold.ttf")
         },
         {
           family: "RelaxAI-SoraRegular",
-          url: Utils_default.asset("/relaxai.web.app/fonts/Sora-Regular.ttf")
+          url: Utils_default.asset("fonts/Sora-Regular.ttf")
         },
         {
           family: "RelaxAI-SoraMedium",
-          url: Utils_default.asset("/relaxai.web.app/fonts/Sora-Medium.ttf")
+          url: Utils_default.asset("fonts/Sora-Medium.ttf")
         },
         {
           family: "RelaxAI-SoraLight",
-          url: Utils_default.asset("/relaxai.web.app/fonts/Sora-Light.ttf")
+          url: Utils_default.asset("fonts/Sora-Light.ttf")
         },
         {
           family: "RelaxAI-Manrope",
-          url: Utils_default.asset(
-            "/relaxai.web.app/fonts/Manrope-Regular.ttf"
-          )
+          url: Utils_default.asset("fonts/Manrope-Regular.ttf")
         },
         {
           family: "RelaxAI-ManropeMed",
-          url: Utils_default.asset("/relaxai.web.app/fonts/Manrope-Medium.ttf")
+          url: Utils_default.asset("fonts/Manrope-Medium.ttf")
         }
       ];
     }
