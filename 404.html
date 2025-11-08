@@ -21,7 +21,14 @@
   </style>
   <title>RelaxAI WebTV</title>
 </head>
-
+<script>
+  const isGithubPages = location.hostname === 'francbonet.github.io';
+  if (isGithubPages) {
+    const base = document.createElement('base');
+    base.href = '/relaxai.web.app/';
+    document.head.prepend(base);
+  }
+</script>
 <body>
   <!-- IMPORTANT: ruta relativa al bundle ES5 que copies a public/build/ -->
   <script src="app.bundle.js"></script>
