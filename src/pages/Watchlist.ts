@@ -109,7 +109,7 @@ export default class WatchListSection extends BasePage {
     const rowPitch = tileH + gapY;
     const totalRows = Math.ceil(payload.itemsLen / payload.cols);
 
-    if (row < 1) {
+    if (row < 2) {
       content.setSmooth("y", 0);
       return;
     }

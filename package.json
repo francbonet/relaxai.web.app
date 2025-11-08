@@ -19,7 +19,7 @@
     "android:uninstall": "adb uninstall app.web.relaxai.lightning",
     "android:logs": "adb logcat Chromium:D Capacitor:D *:S",
     "android:refresh": "cd android && ./gradlew clean && cd .. && npx cap sync android && npm run android:debug",
-    "deploy:gh": "npm run build:web && npm run build:es5 && node scripts/prepare-gh-pages.mjs && node scripts/deploy-gh-pages.mjs"
+    "deploy:gh": "npm run build:web && node scripts/prepare-gh-pages.mjs && node scripts/deploy-gh-pages.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.4",
