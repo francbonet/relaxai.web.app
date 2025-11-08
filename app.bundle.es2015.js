@@ -45165,7 +45165,7 @@ SDK - v${this.sdkVersion}`;
     set imageSrc(v) {
       this._imageSrc = v;
       this.posterImg.patch({
-        src: Utils_default.asset("./" + v || "./assets/images/placeholder.png")
+        src: Utils_default.asset(v || "/assets/images/placeholder.png")
       });
     }
     get imageSrc() {
@@ -47772,7 +47772,7 @@ SDK - v${this.sdkVersion}`;
       var _a;
       this._data = v;
       this.patch({
-        Poster: v.posterSrc ? { src: Utils_default.asset("./" + v.posterSrc) } : { color: 4281545523 }
+        Poster: v.posterSrc ? { src: Utils_default.asset(v.posterSrc) } : { color: 4281545523 }
       });
       this.tag("Info.Title").patch({ text: { text: (_a = v.title) != null ? _a : "" } });
       const genres = Array.isArray(v.genres) ? v.genres.join(", ") : v.genres || "";
@@ -48012,7 +48012,7 @@ SDK - v${this.sdkVersion}`;
       return __async(this, null, function* () {
         if (this._data) return;
         if (from === "local") {
-          const url = Utils_default.asset("./data/data.json");
+          const url = Utils_default.asset("data/data.json");
           const res = yield fetch(url);
           if (!res.ok) throw new Error(`Error loading JSON (${res.status})`);
           this._data = yield res.json();
@@ -49765,7 +49765,7 @@ SDK - v${this.sdkVersion}`;
       const md = this._buildMetadata(this._data);
       this.tag("Controls.Metadata").text = { text: md };
       const poster = this.tag("Poster");
-      const src = Utils_default.asset("./images/poster.png");
+      const src = Utils_default.asset("images/poster.png");
       console.log("posterSrc ->", src);
       poster.texture = {
         type: Lightning_default.textures.ImageTexture,
@@ -51194,31 +51194,31 @@ SDK - v${this.sdkVersion}`;
       return [
         {
           family: "RelaxAI-SoraBold",
-          url: Utils_default.asset("./fonts/Sora-Bold.ttf")
+          url: Utils_default.asset("fonts/Sora-Bold.ttf")
         },
         {
           family: "RelaxAI-SoraSemiBold",
-          url: Utils_default.asset("./fonts/Sora-SemiBold.ttf")
+          url: Utils_default.asset("fonts/Sora-SemiBold.ttf")
         },
         {
           family: "RelaxAI-SoraRegular",
-          url: Utils_default.asset("./fonts/Sora-Regular.ttf")
+          url: Utils_default.asset("fonts/Sora-Regular.ttf")
         },
         {
           family: "RelaxAI-SoraMedium",
-          url: Utils_default.asset("./fonts/Sora-Medium.ttf")
+          url: Utils_default.asset("fonts/Sora-Medium.ttf")
         },
         {
           family: "RelaxAI-SoraLight",
-          url: Utils_default.asset("./fonts/Sora-Light.ttf")
+          url: Utils_default.asset("fonts/Sora-Light.ttf")
         },
         {
           family: "RelaxAI-Manrope",
-          url: Utils_default.asset("./fonts/Manrope-Regular.ttf")
+          url: Utils_default.asset("fonts/Manrope-Regular.ttf")
         },
         {
           family: "RelaxAI-ManropeMed",
-          url: Utils_default.asset("./fonts/Manrope-Medium.ttf")
+          url: Utils_default.asset("fonts/Manrope-Medium.ttf")
         }
       ];
     }
