@@ -50906,7 +50906,7 @@ SDK - v${this.sdkVersion}`;
       this._onLoadResults = false;
       this.value = "";
       this._value = "";
-      this._section = 0;
+      this._section = 1;
       this.hideResults();
       this.tag("Viewport.Content").y = this._clamp(0);
       this._showKeyboard();
@@ -50915,6 +50915,7 @@ SDK - v${this.sdkVersion}`;
     }
     _active() {
       if (Router_default._resetNextPage) this._resetView();
+      this._section = 1;
       super._active();
     }
     onFocusInput() {
@@ -50937,6 +50938,8 @@ SDK - v${this.sdkVersion}`;
       wrap.patch({ smooth: { alpha: 1 } });
       this._keyboardVisible = true;
       this.tag("NotFound").patch({ alpha: 0, visible: false });
+      this._section = 1;
+      this.Keyboard.resetFocus();
       this._refocus();
     }
     _hideKeyboard() {
@@ -50944,6 +50947,7 @@ SDK - v${this.sdkVersion}`;
       wrap.patch({ smooth: { alpha: 0 } });
       wrap.visible = false;
       this._keyboardVisible = false;
+      this._section = 0;
       this._refocus();
     }
     focusPrev() {

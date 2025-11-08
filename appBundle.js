@@ -3,7 +3,7 @@
  * SDK version: 5.5.5
  * CLI version: 2.14.2
  *
- * Generated: Fri, 07 Nov 2025 14:07:53 GMT
+ * Generated: Sat, 08 Nov 2025 00:43:26 GMT
  */
 
 var APP_com_domain_app_demov2 = (function () {
@@ -33829,7 +33829,7 @@ var APP_com_domain_app_demov2 = (function () {
 	    this._onLoadResults = false;
 	    this.value = "";
 	    this._value = "";
-	    this._section = 0;
+	    this._section = 1;
 	    this.hideResults();
 	    this.tag("Viewport.Content").y = this._clamp(0);
 	    this._showKeyboard();
@@ -33838,6 +33838,7 @@ var APP_com_domain_app_demov2 = (function () {
 	  }
 	  _active() {
 	    if (Router._resetNextPage) this._resetView();
+	    this._section = 1;
 	    super._active();
 	  }
 	  onFocusInput() {
@@ -33864,6 +33865,8 @@ var APP_com_domain_app_demov2 = (function () {
 	      alpha: 0,
 	      visible: false
 	    });
+	    this._section = 1;
+	    this.Keyboard.resetFocus();
 	    this._refocus();
 	  }
 	  _hideKeyboard() {
@@ -33875,6 +33878,7 @@ var APP_com_domain_app_demov2 = (function () {
 	    });
 	    wrap.visible = false;
 	    this._keyboardVisible = false;
+	    this._section = 0;
 	    this._refocus();
 	  }
 	  focusPrev() {
