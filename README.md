@@ -274,3 +274,6 @@ npm run android:uninstall
 npm run android:logs
 
 chrome://inspect/#devices
+
+# DEMO
+https://francbonet.github.io/relaxai.web.app/
