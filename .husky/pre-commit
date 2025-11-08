@@ -1,2 +1,22 @@
-#!/bin/bash
-npx lint-staged
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Debug útil
+set -e
+echo "[husky] PATH=$PATH"
+echo "[husky] node: $(command -v node || echo 'NOPE')"
+echo "[husky] npm:  $(command -v npm  || echo 'NOPE')"
+
+# Carrega nvm (git no carrega el teu ~/.zshrc)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" >/dev/null 2>&1 || true
+# Intenta posar la versió que uses (ajusta si cal)
+command -v nvm >/dev/null 2>&1 && nvm use 18 >/dev/null 2>&1 || true
+
+# “airbag”: prepenja la ruta d’on tens npm ara mateix
+[ -d "$HOME/.nvm/versions/node/v18.20.4/bin" ] && PATH="$HOME/.nvm/versions/node/v18.20.4/bin:$PATH"
+export PATH
+echo "[husky] npm after PATH fix: $(command -v npm || echo 'NOPE')"
+
+# Executa lint-staged via npm (més fiable que npx dins hooks)
+npm run -s lint-staged

@@ -3,6 +3,7 @@
   "description": "demo-v2",
   "scripts": {
     "prepare": "husky install",
+    "lint-staged": "lint-staged",
     "start": "lng dev",
     "build": "lng build",
     "build:web": "lng build && node scripts/patch-index.mjs",
