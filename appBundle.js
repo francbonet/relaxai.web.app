@@ -3,7 +3,7 @@
  * SDK version: 5.5.5
  * CLI version: 2.14.2
  *
- * Generated: Sat, 08 Nov 2025 01:07:00 GMT
+ * Generated: Sat, 08 Nov 2025 01:08:27 GMT
  */
 
 var APP_com_domain_app_demov2 = (function () {
@@ -34688,7 +34688,7 @@ var APP_com_domain_app_demov2 = (function () {
 
 	// src/App.ts
 	const isGitHubPages = location.hostname === "francbonet.github.io";
-	const ASSET_PREFIX = isGitHubPages ? "/relaxai.web.app/" : "/";
+	const ASSET_PREFIX = isGitHubPages ? "relaxai.web.app/" : "/";
 	const originalAsset = Utils.asset.bind(Utils);
 	Utils.asset = function (path) {
 	  if (!path) return path;
