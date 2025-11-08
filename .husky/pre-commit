@@ -14,7 +14,7 @@ export NVM_DIR="$HOME/.nvm"
 command -v nvm >/dev/null 2>&1 && nvm use 18 >/dev/null 2>&1 || true
 
 # “airbag”: prepenja la ruta d’on tens npm ara mateix
-[ -d "$HOME/.nvm/versions/node/v18.20.4/bin" ] && PATH="$HOME/.nvm/versions/node/v18.20.4/bin:$PATH"
+[ -d "$HOME/.nvm/versions/node/v20.18.1/bin" ] && PATH="$HOME/.nvm/versions/node/v20.18.1/bin:$PATH"
 export PATH
 echo "[husky] npm after PATH fix: $(command -v npm || echo 'NOPE')"
 
