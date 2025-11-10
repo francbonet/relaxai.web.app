@@ -72,7 +72,7 @@ export abstract class BasePage extends L.Component {
 
   // ======== TEMPLATE (Chrome) ========
   static chrome(
-    children: L.Component.Template<any>
+    children: L.Component.Template<any>,
   ): L.Component.Template<any> {
     return {
       w: Theme.w,
@@ -129,10 +129,7 @@ export abstract class BasePage extends L.Component {
         content.setSmooth("y", -params.scrollY);
       }
 
-      // No tocar y aún; se aplica tras _computeMetrics
       return undefined;
-    } else {
-      console.log("%cf[BasePage] NO LOAD", "color:#00bfa5", params);
     }
 
     // PUSH → guardar snapshot
@@ -149,6 +146,10 @@ export abstract class BasePage extends L.Component {
       const idx = this._getChildFocusIndex(key);
       if (idx !== undefined) snap.focus![key] = idx;
     }
+
+    const active = Router.getActiveHash?.();
+    console.log("%cf[BasePage] PUSH", "color:#ff0000", snap, active);
+
     return snap;
   }
 
@@ -166,7 +167,7 @@ export abstract class BasePage extends L.Component {
     if ((Router as any)._resetNextPage) {
       console.warn(
         "\x1b[31m%s\x1b[0m",
-        "[HomePage] Reset state due to header navigation"
+        "[HomePage] Reset state due to header navigation",
       );
       this.resetRailsFocus();
       this.focusCarousel();
@@ -416,7 +417,6 @@ export abstract class BasePage extends L.Component {
 
   // ======== NAVEGAR util ========
   protected navigate(path: string, params?: Record<string, any>) {
-    this._syncHistorySnapshot();
     const base = path.replace(/^#?\/?/, "").toLowerCase();
     const target = params?.id
       ? `${base}/${encodeURIComponent(params.id)}`

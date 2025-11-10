@@ -276,6 +276,20 @@ export class Player extends Lightning.Component {
     VideoPlayer.pause();
   }
 
+  override _inactive() {
+    this._clearTimers();
+    try {
+      (VideoPlayer as any).stop?.();
+    } catch {
+      /* empty */
+    }
+    try {
+      VideoPlayer.close();
+    } catch {
+      /* empty */
+    }
+  }
+
   private _exitPlayer() {
     console.log("[Player] Exiting player...");
     this._clearTimers();
