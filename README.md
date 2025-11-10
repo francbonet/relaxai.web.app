@@ -1,207 +1,158 @@
-# demo-v2
+# demo-v2 · com.domain.app.demov2
 
-## com.domain.app.demov2
+## 🌐 Live Demo on GitHub Pages
 
-### Getting started
+🔗 **Project URL:** [https://francbonet.github.io/relaxai.web.app/](https://francbonet.github.io/relaxai.web.app/)
 
-> Before you follow the steps below, make sure you have the
-> [Lightning-CLI](https://rdkcentral.github.io/Lightning-CLI/#/) installed _globally_ only your system
+---
 
-```
+## 🚀 Getting Started
+
+> Before you start, make sure you have **Lightning-CLI** installed **globally** on your system.
+
+```bash
 npm install -g @lightningjs/cli
 ```
 
-#### Running the App
+### Run Locally (Development)
 
-1. Install the NPM dependencies by running `npm install`
+```bash
+npm install
+npm run start      # same as `lng dev` (watch + local server)
+```
 
-2. Build the App using the _Lightning-CLI_ by running `lng build` inside the root of your project
+### Build the Web Version
 
-3. Fire up a local webserver and open the App in a browser by running `lng serve` inside the root of your project
+```bash
+npm run build:web  # runs `lng build` + index patch
+npm run build:es5  # (optional) transpiles for older WebViews
+```
 
-#### Developing the App
+> If you only need a simple build without patches/transpilation:
+>
+> ```bash
+> npm run build    # `lng build`
+> ```
 
-During development you can use the **watcher** functionality of the _Lightning-CLI_.
+### Lightning SDK Docs
 
-- use `lng watch` to automatically _rebuild_ your App whenever you make a change in the `src` or `static` folder
-- use `lng dev` to start the watcher and run a local webserver / open the App in a browser _at the same time_
+```bash
+lng docs
+```
 
-#### Documentation
+---
 
-Use `lng docs` to open up the Lightning-SDK documentation.
+## 📦 Android Build with Capacitor
 
-# 📱 Build de Android (APK/AAB) con Capacitor
+### Prerequisites (once)
 
-## 1️⃣ Requisitos previos (instalar una sola vez)
-
-- **Node.js** 18+ y **npm**
-- **Android Studio** (incluye SDK, Build Tools y emulador)
-- **JDK 17** (recomendado por Gradle/Android)
-- **Capacitor** en el proyecto:
-
+- Node.js 18+ and npm  
+- Android Studio (SDK + Build Tools)  
+- JDK 17  
+- Capacitor in your project:
   ```bash
   npm i -D @capacitor/cli
   npm i @capacitor/core
   ```
+- Initialization (only if you don’t have `android/` yet):
+  ```bash
+  npx cap init "RelaxAI WebTV" com.relaxai.webtv --web-dir=build
+  npx cap add android
+  ```
 
-> Si es la primera vez que integras Capacitor:
->
-> ```bash
-> npx cap init "RelaxAI WebTV" com.relaxai.webtv --web-dir=build
-> npx cap add android
-> ```
-
-Asegúrate de que tu app Lightning genera la carpeta `build/` con:
+### Quick Debug APK
 
 ```bash
-lng build
+npm run build:apk    # web build + ES5 + cap copy + assembleDebug
 ```
 
----
-
-## 2️⃣ Flujo de build (APK de debug)
-
-1. **Compila la web** de Lightning:
-   ```bash
-   lng build
-   ```
-2. **Copia los archivos web a Android:**
-   ```bash
-   npx cap copy android
-   ```
-3. **Compila el APK de debug:**
-   ```bash
-   cd android
-   ./gradlew assembleDebug
-   ```
-
-📍 **APK generado en:**
-
+📍 **Generated APK:**
 ```
 android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Puedes instalarlo directamente en tu dispositivo o emulador Android.
+### Connect to an Android Device
 
----
-
-## 3️⃣ Build de _release_ (firmado)
-
-### 3.1 Crear un keystore (una vez)
-
+#### 1️⃣ Connect via Wi‑Fi using ADB
 ```bash
-keytool -genkeypair -v -keystore my-release-key.jks   -keyalg RSA -keysize 2048 -validity 10000 -alias relaxai
+export ANDROID_IP=192.168.1.39
+npm run android:connect
 ```
 
-Guarda el archivo `my-release-key.jks` en `android/` o en una ruta segura.
-
-### 3.2 Configurar credenciales
-
-Agrega a `android/gradle.properties`:
-
-```
-RELEASE_STORE_FILE=my-release-key.jks
-RELEASE_STORE_PASSWORD=tuPassword
-RELEASE_KEY_ALIAS=relaxai
-RELEASE_KEY_PASSWORD=tuPassword
-```
-
-(O usa variables de entorno con los mismos nombres).
-
-En `android/app/build.gradle`, dentro de `android { ... }`, añade:
-
-```gradle
-signingConfigs {
-    release {
-        storeFile file(System.getenv("RELEASE_STORE_FILE") ?: project.properties["RELEASE_STORE_FILE"])
-        storePassword System.getenv("RELEASE_STORE_PASSWORD") ?: project.properties["RELEASE_STORE_PASSWORD"]
-        keyAlias System.getenv("RELEASE_KEY_ALIAS") ?: project.properties["RELEASE_KEY_ALIAS"]
-        keyPassword System.getenv("RELEASE_KEY_PASSWORD") ?: project.properties["RELEASE_KEY_PASSWORD"]
-    }
-}
-buildTypes {
-    release {
-        signingConfig signingConfigs.release
-        minifyEnabled true
-        shrinkResources true
-        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-    }
-}
-```
-
-### 3.3 Generar **APK release**
-
+#### 2️⃣ Install the APK
 ```bash
-lng build
-npx cap copy android
-cd android
-./gradlew assembleRelease
+npm run android:install
 ```
 
-📍 **APK generado en:**
-
-```
-android/app/build/outputs/apk/release/app-release.apk
-```
-
-### 3.4 Generar **AAB (para Google Play)**
-
+#### 3️⃣ View WebView/Capacitor Logs
 ```bash
-lng build
-npx cap copy android
-cd android
-./gradlew bundleRelease
-```
-
-📍 **AAB generado en:**
-
-```
-android/app/build/outputs/bundle/release/app-release.aab
+npm run android:logs
 ```
 
 ---
 
-## 4️⃣ Scripts útiles en `package.json`
+### Release Build (AAB / APK)
 
-Agrega estos scripts para automatizar el flujo:
+```bash
+npm run build:aab          # web + ES5 + cap copy + bundleRelease
+npm run android:release:apk   # optional, if you already ran cap copy
+```
+
+> Remember to sign your release using a keystore file.  
+> Use environment variables or `gradle.properties` for credentials.
+
+---
+
+## 🌐 Deploy to GitHub Pages
+
+```bash
+npm run deploy:gh  # web build + ES5 + prepare + push to gh-pages
+```
+
+---
+
+## 🔧 Available Scripts
 
 ```json
 {
   "scripts": {
-    "build:web": "lng build",
+    "prepare": "husky install",
+    "start": "lng dev",
+    "build": "lng build",
+    "build:web": "lng build && node scripts/patch-index.mjs",
+    "build:es5": "node scripts/build-es5.mjs",
     "cap:copy": "npx cap copy android",
     "android:debug": "cd android && ./gradlew assembleDebug",
     "android:release:apk": "cd android && ./gradlew assembleRelease",
     "android:release:aab": "cd android && ./gradlew bundleRelease",
-    "build:apk": "npm run build:web && npm run cap:copy && npm run android:debug",
-    "build:aab": "npm run build:web && npm run cap:copy && npm run android:release:aab"
+    "build:apk": "npm run build:web && npm run build:es5 && npm run cap:copy && cd android && ./gradlew assembleDebug",
+    "build:aab": "npm run build:web && npm run build:es5 && npm run cap:copy && cd android && ./gradlew bundleRelease",
+    "android:connect": "adb connect $ANDROID_IP:5555",
+    "android:install": "adb install -r android/app/build/outputs/apk/debug/app-debug.apk",
+    "android:uninstall": "adb uninstall app.web.relaxai.lightning",
+    "android:logs": "adb logcat Chromium:D Capacitor:D *:S",
+    "android:refresh": "cd android && ./gradlew clean && cd .. && npx cap sync android && npm run android:debug",
+    "deploy:gh": "npm run build:web && npm run build:es5 && node scripts/prepare-gh-pages.mjs && node scripts/deploy-gh-pages.mjs"
   }
 }
 ```
 
 ---
 
-## 5️⃣ Notas para Android TV (opcional pero recomendado)
+## 🧩 Quick Notes / Troubleshooting
 
-En `android/app/src/main/AndroidManifest.xml`, añade dentro de `<application>`:
-
-```xml
-<uses-feature android:name="android.software.leanback" android:required="false" />
-<uses-feature android:name="android.hardware.touchscreen" android:required="false" />
-
-<intent-filter>
-  <action android:name="android.intent.action.MAIN" />
-  <!-- Launcher para TV -->
-  <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
-  <!-- Launcher para móviles/tablets -->
-  <category android:name="android.intent.category.LAUNCHER" />
-</intent-filter>
-```
+| Issue | Solution |
+|-------|-----------|
+| **Black screen on launch** | Make sure `--web-dir` points to `build` and that you ran `npm run build:web` before `cap copy`. |
+| **Old WebViews (Android 6/TV)** | Use `npm run build:es5` for compatibility. |
+| **Back button closes app** | Add `@capacitor/app` and listen to `backButton` to forward a `Backspace` event to Lightning. |
+| **Missing SDK/Build Tools** | Install them via Android Studio → SDK Manager. |
 
 ---
 
-## 6️⃣ Capturar botón "Atrás" (Back) en Android
+## 📱 Final Output
 
+<<<<<<< Updated upstream
 Instala el plugin:
 
 ```bash
@@ -277,3 +228,7 @@ chrome://inspect/#devices
 
 # DEMO
 https://francbonet.github.io/relaxai.web.app/
+=======
+- `app-debug.apk` → for local testing  
+- `app-release.apk` or `.aab` → for Google Play or TV installation
+>>>>>>> Stashed changes
