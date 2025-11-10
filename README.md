@@ -46,9 +46,9 @@ lng docs
 
 ### Prerequisites (once)
 
-- Node.js 18+ and npm  
-- Android Studio (SDK + Build Tools)  
-- JDK 17  
+- Node.js 18+ and npm
+- Android Studio (SDK + Build Tools)
+- JDK 17
 - Capacitor in your project:
   ```bash
   npm i -D @capacitor/cli
@@ -98,7 +98,7 @@ npm run build:aab          # web + ES5 + cap copy + bundleRelease
 npm run android:release:apk   # optional, if you already ran cap copy
 ```
 
-> Remember to sign your release using a keystore file.  
+> Remember to sign your release using a keystore file.
 > Use environment variables or `gradle.properties` for credentials.
 
 ---
@@ -152,83 +152,5 @@ npm run deploy:gh  # web build + ES5 + prepare + push to gh-pages
 
 ## 📱 Final Output
 
-<<<<<<< Updated upstream
-Instala el plugin:
-
-```bash
-npm i @capacitor/app
-```
-
-Y añade este código en tu `index.ts` o archivo de arranque:
-
-```ts
-import { App as CapApp } from "@capacitor/app";
-
-CapApp.addListener("backButton", () => {
-  // Reenviar tecla "Backspace" para Lightning (equivale a 'Atrás')
-  const ev = new KeyboardEvent("keydown", {
-    key: "Backspace",
-    keyCode: 8,
-    which: 8,
-  });
-  window.dispatchEvent(ev);
-});
-```
-
----
-
-## 7️⃣ Problemas comunes
-
-| Problema                  | Solución                                                                                                              |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| Pantalla negra al abrir   | Asegúrate de que `webDir` en `capacitor.config.ts` apunta a `build` y ejecutaste `lng build` antes de `npx cap copy`. |
-| Botón atrás cierra la app | Usa el listener `backButton` como el ejemplo anterior.                                                                |
-| Faltan SDK/Build Tools    | En Android Studio → SDK Manager → instala "Android SDK Platform" y "Build-Tools" actualizados.                        |
-| Firma inválida            | Revisa las contraseñas del keystore y limpia con `./gradlew clean` si es necesario.                                   |
-
----
-
-## ✅ Resultado final
-
-Una vez completados los pasos:
-
-- `app-debug.apk` → para pruebas locales.
-- `app-release.apk` o `app-release.aab` → para publicar en Google Play o instalar en TV.
-
-## Conect Android Device:
-
-adb connect 192.168.1.39:5555
-
-# command to install Apk Debug in device
-
-# 1) Compilar i preparar APK
-
-npm run build:apk
-
-# 2) Connectar per Wi-Fi ADB
-
-export ANDROID_IP=192.168.1.39
-npm run android:connect
-
-# 3) Instal·lar l’APK de debug
-
-npm run android:install
-
-# Comandes útils
-
-### Desinstal·lar ràpid:
-
-npm run android:uninstall
-
-### Veure logs de la WebView/Capacitor:
-
-npm run android:logs
-
-chrome://inspect/#devices
-
-# DEMO
-https://francbonet.github.io/relaxai.web.app/
-=======
-- `app-debug.apk` → for local testing  
+- `app-debug.apk` → for local testing
 - `app-release.apk` or `.aab` → for Google Play or TV installation
->>>>>>> Stashed changes
