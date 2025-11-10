@@ -3,7 +3,7 @@
  * SDK version: 5.5.5
  * CLI version: 2.14.2
  *
- * Generated: Sat, 08 Nov 2025 09:53:25 GMT
+ * Generated: Mon, 10 Nov 2025 17:43:02 GMT
  */
 
 var APP_com_domain_app_demov2 = (function () {
@@ -26420,7 +26420,7 @@ var APP_com_domain_app_demov2 = (function () {
 	  // ======== HISTORYSTATE ========
 	  historyState(params) {
 	    // if (!this.enableHistory || !this.enableFocusRecovery) return;
-	    var _a, _b;
+	    var _a, _b, _c;
 	    const content = this.tag("Viewport.Content");
 	    // POP → restaurar estado
 	    if (params) {
@@ -26445,10 +26445,7 @@ var APP_com_domain_app_demov2 = (function () {
 	        const content = this.tag("Viewport.Content");
 	        content.setSmooth("y", -params.scrollY);
 	      }
-	      // No tocar y aún; se aplica tras _computeMetrics
 	      return undefined;
-	    } else {
-	      console.log("%cf[BasePage] NO LOAD", "color:#00bfa5", params);
 	    }
 	    // PUSH → guardar snapshot
 	    const sectionToSave = !this.persistHeaderInHistory && this._section < 0 ? 0 : this._section;
@@ -26461,6 +26458,8 @@ var APP_com_domain_app_demov2 = (function () {
 	      const idx = this._getChildFocusIndex(key);
 	      if (idx !== undefined) snap.focus[key] = idx;
 	    }
+	    const active = (_c = Router.getActiveHash) === null || _c === void 0 ? void 0 : _c.call(Router);
+	    console.log("%cf[BasePage] PUSH", "color:#ff0000", snap, active);
 	    return snap;
 	  }
 	  // ======== LIFECYCLE ========
@@ -26693,7 +26692,6 @@ var APP_com_domain_app_demov2 = (function () {
 	  }
 	  // ======== NAVEGAR util ========
 	  navigate(path, params) {
-	    this._syncHistorySnapshot();
 	    const base = path.replace(/^#?\/?/, "").toLowerCase();
 	    const target = (params === null || params === void 0 ? void 0 : params.id) ? "".concat(base, "/").concat(encodeURIComponent(params.id)) : base;
 	    if ((params === null || params === void 0 ? void 0 : params.from) == "header") {
@@ -32661,6 +32659,20 @@ var APP_com_domain_app_demov2 = (function () {
 	  }
 	  pause() {
 	    VideoPlayer.pause();
+	  }
+	  _inactive() {
+	    var _a, _b;
+	    this._clearTimers();
+	    try {
+	      (_b = (_a = VideoPlayer).stop) === null || _b === void 0 ? void 0 : _b.call(_a);
+	    } catch {
+	      /* empty */
+	    }
+	    try {
+	      VideoPlayer.close();
+	    } catch {
+	      /* empty */
+	    }
 	  }
 	  _exitPlayer() {
 	    var _a, _b, _c;
