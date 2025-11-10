@@ -1,4 +1,4 @@
-# demo-v2 · com.domain.app.demov2
+# relaxai.web.app
 
 ## 🌐 Live Demo on GitHub Pages
 
