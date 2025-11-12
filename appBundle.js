@@ -3,7 +3,7 @@
  * SDK version: 5.5.5
  * CLI version: 2.14.2
  *
- * Generated: Mon, 10 Nov 2025 22:23:02 GMT
+ * Generated: Wed, 12 Nov 2025 10:56:53 GMT
  */
 
 var APP_com_domain_app_demov2 = (function () {
@@ -32626,7 +32626,9 @@ var APP_com_domain_app_demov2 = (function () {
 	    };
 	    poster.visible = !!src;
 	    setTimeout(() => {
-	      this.play("https://res.cloudinary.com/dt8savcjt/video/upload/v1761829047/clip_thcmgl.mp4");
+	      var _a;
+	      const src = ((_a = this._data) === null || _a === void 0 ? void 0 : _a.videoSrc) || "https://res.cloudinary.com/dt8savcjt/video/upload/v1761829047/clip_thcmgl.mp4";
+	      this.play(src);
 	    }, 1000);
 	  }
 	  _getFocused() {

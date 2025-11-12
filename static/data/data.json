@@ -13,7 +13,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/5-imagen.jpg",
       "posterSrc": "data/posters/5-imagen.jpg",
-      "videoSrc": "videos/video1.mp4"
+      "videoSrc": ""
     },
     {
       "id": "17",
@@ -28,7 +28,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/17-imagen.jpg",
       "posterSrc": "data/posters/17-imagen.jpg",
-      "videoSrc": "videos/video2.mp4"
+      "videoSrc": ""
     },
     {
       "id": "33",
@@ -43,7 +43,7 @@
       "maturity": "PG-13",
       "imageSrc": "data/tiles/33-imagen.jpg",
       "posterSrc": "data/posters/33-imagen.jpg",
-      "videoSrc": "videos/video3.mp4"
+      "videoSrc": ""
     },
     {
       "id": "48",
@@ -58,7 +58,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/48-imagen.jpg",
       "posterSrc": "data/posters/48-imagen.jpg",
-      "videoSrc": "videos/video4.mp4"
+      "videoSrc": ""
     },
     {
       "id": "9",
@@ -72,7 +72,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/9-imagen.jpg",
       "posterSrc": "data/posters/9-imagen.jpg",
-      "videoSrc": "videos/video5.mp4"
+      "videoSrc": ""
     },
     {
       "id": "26",
@@ -87,7 +87,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/26-imagen.jpg",
       "posterSrc": "data/posters/26-imagen.jpg",
-      "videoSrc": "videos/video6.mp4"
+      "videoSrc": ""
     },
     {
       "id": "72",
@@ -102,7 +102,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/72-imagen.jpg",
       "posterSrc": "data/posters/72-imagen.jpg",
-      "videoSrc": "videos/video7.mp4"
+      "videoSrc": ""
     },
     {
       "id": "14",
@@ -117,7 +117,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/14-imagen.jpg",
       "posterSrc": "data/posters/14-imagen.jpg",
-      "videoSrc": "videos/video8.mp4"
+      "videoSrc": ""
     },
     {
       "id": "31",
@@ -132,7 +132,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/31-imagen.jpg",
       "posterSrc": "data/posters/31-imagen.jpg",
-      "videoSrc": "videos/video9.mp4"
+      "videoSrc": ""
     },
     {
       "id": "64",
@@ -147,7 +147,7 @@
       "maturity": "PG-13",
       "imageSrc": "data/tiles/64-imagen.jpg",
       "posterSrc": "data/posters/64-imagen.jpg",
-      "videoSrc": "videos/video10.mp4"
+      "videoSrc": ""
     },
     {
       "id": "3",
@@ -162,7 +162,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/3-imagen.jpg",
       "posterSrc": "data/posters/3-imagen.jpg",
-      "videoSrc": "videos/video11.mp4"
+      "videoSrc": ""
     },
     {
       "id": "45",
@@ -177,7 +177,7 @@
       "maturity": "PG-13",
       "imageSrc": "data/tiles/45-imagen.jpg",
       "posterSrc": "data/posters/45-imagen.jpg",
-      "videoSrc": "videos/video12.mp4"
+      "videoSrc": ""
     },
     {
       "id": "19",
@@ -191,7 +191,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/19-imagen.jpg",
       "posterSrc": "data/posters/19-imagen.jpg",
-      "videoSrc": "videos/video13.mp4"
+      "videoSrc": ""
     },
     {
       "id": "28",
@@ -206,7 +206,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/28-imagen.jpg",
       "posterSrc": "data/posters/28-imagen.jpg",
-      "videoSrc": "videos/video14.mp4"
+      "videoSrc": ""
     },
     {
       "id": "9",
@@ -221,7 +221,7 @@
       "maturity": "PG-13",
       "imageSrc": "data/tiles/9-imagen.jpg",
       "posterSrc": "data/posters/9-imagen.jpg",
-      "videoSrc": "videos/video15.mp4"
+      "videoSrc": ""
     }
   ],
 
@@ -239,7 +239,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/12-imagen.jpg",
       "posterSrc": "data/posters/12-imagen.jpg",
-      "videoSrc": "videos/video16.mp4"
+      "videoSrc": ""
     },
     {
       "id": "27",
@@ -254,7 +254,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/27-imagen.jpg",
       "posterSrc": "data/posters/27-imagen.jpg",
-      "videoSrc": "videos/video17.mp4"
+      "videoSrc": ""
     },
     {
       "id": "39",
@@ -269,7 +269,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/39-imagen.jpg",
       "posterSrc": "data/posters/39-imagen.jpg",
-      "videoSrc": "videos/video18.mp4"
+      "videoSrc": ""
     },
     {
       "id": "44",
@@ -284,7 +284,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/44-imagen.jpg",
       "posterSrc": "data/posters/44-imagen.jpg",
-      "videoSrc": "videos/video19.mp4"
+      "videoSrc": ""
     },
     {
       "id": "51",
@@ -299,7 +299,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/51-imagen.jpg",
       "posterSrc": "data/posters/51-imagen.jpg",
-      "videoSrc": "videos/video20.mp4"
+      "videoSrc": ""
     },
     {
       "id": "6",
@@ -313,7 +313,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/6-imagen.jpg",
       "posterSrc": "data/posters/6-imagen.jpg",
-      "videoSrc": "videos/video21.mp4"
+      "videoSrc": ""
     },
     {
       "id": "18",
@@ -328,7 +328,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/18-imagen.jpg",
       "posterSrc": "data/posters/18-imagen.jpg",
-      "videoSrc": "videos/video22.mp4"
+      "videoSrc": ""
     },
     {
       "id": "22",
@@ -342,22 +342,22 @@
       "maturity": "G",
       "imageSrc": "data/tiles/22-imagen.jpg",
       "posterSrc": "data/posters/22-imagen.jpg",
-      "videoSrc": "videos/video23.mp4"
+      "videoSrc": ""
     },
     {
       "id": "37",
-      "title": "Creative Journaling",
-      "text": "Creative Journaling",
+      "title": "Space Missions",
+      "text": "Space Missions",
       "description":
-        "Learn how to use journaling to boost creativity and self-reflection.",
+        "Follow human and robotic missions exploring the solar system.",
       "duration": "90",
-      "year": 2021,
-      "author": "JournalLab",
-      "genres": ["Education", "Creativity"],
-      "maturity": "G",
+      "year": 2022,
+      "author": "AstroVision",
+      "genres": ["Science", "Documentary"],
+      "maturity": "PG",
       "imageSrc": "data/tiles/37-imagen.jpg",
       "posterSrc": "data/posters/37-imagen.jpg",
-      "videoSrc": "videos/video24.mp4"
+      "videoSrc": "https://res.cloudinary.com/dt8savcjt/video/upload/v1762944911/Overview_of_Space_Missions_xydsss.mp4"
     },
     {
       "id": "42",
@@ -372,7 +372,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/42-imagen.jpg",
       "posterSrc": "data/posters/42-imagen.jpg",
-      "videoSrc": "videos/video25.mp4"
+      "videoSrc": ""
     },
     {
       "id": "55",
@@ -386,7 +386,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/55-imagen.jpg",
       "posterSrc": "data/posters/55-imagen.jpg",
-      "videoSrc": "videos/video26.mp4"
+      "videoSrc": ""
     },
     {
       "id": "63",
@@ -401,7 +401,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/63-imagen.jpg",
       "posterSrc": "data/posters/63-imagen.jpg",
-      "videoSrc": "videos/video27.mp4"
+      "videoSrc": ""
     },
     {
       "id": "29",
@@ -416,7 +416,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/29-imagen.jpg",
       "posterSrc": "data/posters/29-imagen.jpg",
-      "videoSrc": "videos/video28.mp4"
+      "videoSrc": ""
     },
     {
       "id": "36",
@@ -431,7 +431,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/36-imagen.jpg",
       "posterSrc": "data/posters/36-imagen.jpg",
-      "videoSrc": "videos/video29.mp4"
+      "videoSrc": ""
     },
     {
       "id": "41",
@@ -446,7 +446,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/41-imagen.jpg",
       "posterSrc": "data/posters/41-imagen.jpg",
-      "videoSrc": "videos/video30.mp4"
+      "videoSrc": ""
     }
   ],
 
@@ -464,7 +464,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/35-imagen.jpg",
       "posterSrc": "data/posters/35-imagen.jpg",
-      "videoSrc": "videos/video31.mp4"
+      "videoSrc": ""
     },
     {
       "id": "38",
@@ -478,7 +478,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/38-imagen.jpg",
       "posterSrc": "data/posters/38-imagen.jpg",
-      "videoSrc": "videos/video32.mp4"
+      "videoSrc": ""
     },
     {
       "id": "46",
@@ -493,7 +493,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/46-imagen.jpg",
       "posterSrc": "data/posters/46-imagen.jpg",
-      "videoSrc": "videos/video33.mp4"
+      "videoSrc": ""
     },
     {
       "id": "50",
@@ -508,7 +508,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/50-imagen.jpg",
       "posterSrc": "data/posters/50-imagen.jpg",
-      "videoSrc": "videos/video34.mp4"
+      "videoSrc": ""
     },
     {
       "id": "53",
@@ -523,7 +523,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/53-imagen.jpg",
       "posterSrc": "data/posters/53-imagen.jpg",
-      "videoSrc": "videos/video35.mp4"
+      "videoSrc": ""
     },
     {
       "id": "59",
@@ -538,7 +538,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/59-imagen.jpg",
       "posterSrc": "data/posters/59-imagen.jpg",
-      "videoSrc": "videos/video36.mp4"
+      "videoSrc": ""
     },
     {
       "id": "61",
@@ -552,7 +552,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/61-imagen.jpg",
       "posterSrc": "data/posters/61-imagen.jpg",
-      "videoSrc": "videos/video37.mp4"
+      "videoSrc": ""
     },
     {
       "id": "67",
@@ -566,7 +566,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/67-imagen.jpg",
       "posterSrc": "data/posters/67-imagen.jpg",
-      "videoSrc": "videos/video38.mp4"
+      "videoSrc": ""
     },
     {
       "id": "70",
@@ -580,7 +580,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/70-imagen.jpg",
       "posterSrc": "data/posters/70-imagen.jpg",
-      "videoSrc": "videos/video39.mp4"
+      "videoSrc": ""
     },
     {
       "id": "73",
@@ -595,7 +595,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/73-imagen.jpg",
       "posterSrc": "data/posters/73-imagen.jpg",
-      "videoSrc": "videos/video40.mp4"
+      "videoSrc": ""
     },
     {
       "id": "77",
@@ -610,7 +610,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/77-imagen.jpg",
       "posterSrc": "data/posters/77-imagen.jpg",
-      "videoSrc": "videos/video41.mp4"
+      "videoSrc": ""
     },
     {
       "id": "80",
@@ -624,7 +624,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/80-imagen.jpg",
       "posterSrc": "data/posters/80-imagen.jpg",
-      "videoSrc": "videos/video42.mp4"
+      "videoSrc": ""
     },
     {
       "id": "82",
@@ -638,7 +638,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/82-imagen.jpg",
       "posterSrc": "data/posters/82-imagen.jpg",
-      "videoSrc": "videos/video43.mp4"
+      "videoSrc": ""
     },
     {
       "id": "85",
@@ -652,7 +652,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/85-imagen.jpg",
       "posterSrc": "data/posters/85-imagen.jpg",
-      "videoSrc": "videos/video44.mp4"
+      "videoSrc": ""
     },
     {
       "id": "88",
@@ -667,7 +667,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/88-imagen.jpg",
       "posterSrc": "data/posters/88-imagen.jpg",
-      "videoSrc": "videos/video45.mp4"
+      "videoSrc": ""
     }
   ],
 
@@ -685,7 +685,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/2-imagen.jpg",
       "posterSrc": "data/posters/2-imagen.jpg",
-      "videoSrc": "videos/video46.mp4"
+      "videoSrc": ""
     },
     {
       "id": "7",
@@ -700,7 +700,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/7-imagen.jpg",
       "posterSrc": "data/posters/7-imagen.jpg",
-      "videoSrc": "videos/video47.mp4"
+      "videoSrc": ""
     },
     {
       "id": "15",
@@ -714,7 +714,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/15-imagen.jpg",
       "posterSrc": "data/posters/15-imagen.jpg",
-      "videoSrc": "videos/video48.mp4"
+      "videoSrc": ""
     },
     {
       "id": "21",
@@ -729,7 +729,7 @@
       "maturity": "PG-13",
       "imageSrc": "data/tiles/21-imagen.jpg",
       "posterSrc": "data/posters/21-imagen.jpg",
-      "videoSrc": "videos/video49.mp4"
+      "videoSrc": ""
     },
     {
       "id": "34",
@@ -744,7 +744,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/34-imagen.jpg",
       "posterSrc": "data/posters/34-imagen.jpg",
-      "videoSrc": "videos/video50.mp4"
+      "videoSrc": ""
     },
     {
       "id": "40",
@@ -759,7 +759,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/40-imagen.jpg",
       "posterSrc": "data/posters/40-imagen.jpg",
-      "videoSrc": "videos/video51.mp4"
+      "videoSrc": ""
     },
     {
       "id": "47",
@@ -774,7 +774,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/47-imagen.jpg",
       "posterSrc": "data/posters/47-imagen.jpg",
-      "videoSrc": "videos/video52.mp4"
+      "videoSrc": ""
     },
     {
       "id": "53",
@@ -789,7 +789,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/53-imagen.jpg",
       "posterSrc": "data/posters/53-imagen.jpg",
-      "videoSrc": "videos/video53.mp4"
+      "videoSrc": ""
     },
     {
       "id": "60",
@@ -804,7 +804,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/60-imagen.jpg",
       "posterSrc": "data/posters/60-imagen.jpg",
-      "videoSrc": "videos/video54.mp4"
+      "videoSrc": ""
     },
     {
       "id": "65",
@@ -819,7 +819,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/65-imagen.jpg",
       "posterSrc": "data/posters/65-imagen.jpg",
-      "videoSrc": "videos/video55.mp4"
+      "videoSrc": ""
     },
     {
       "id": "68",
@@ -833,7 +833,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/68-imagen.jpg",
       "posterSrc": "data/posters/68-imagen.jpg",
-      "videoSrc": "videos/video56.mp4"
+      "videoSrc": ""
     },
     {
       "id": "74",
@@ -848,7 +848,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/74-imagen.jpg",
       "posterSrc": "data/posters/74-imagen.jpg",
-      "videoSrc": "videos/video57.mp4"
+      "videoSrc": ""
     },
     {
       "id": "79",
@@ -863,7 +863,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/79-imagen.jpg",
       "posterSrc": "data/posters/79-imagen.jpg",
-      "videoSrc": "videos/video58.mp4"
+      "videoSrc": ""
     },
     {
       "id": "84",
@@ -878,7 +878,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/84-imagen.jpg",
       "posterSrc": "data/posters/84-imagen.jpg",
-      "videoSrc": "videos/video59.mp4"
+      "videoSrc": ""
     },
     {
       "id": "91",
@@ -893,7 +893,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/91-imagen.jpg",
       "posterSrc": "data/posters/91-imagen.jpg",
-      "videoSrc": "videos/video60.mp4"
+      "videoSrc": ""
     }
   ],
 
@@ -910,7 +910,7 @@
       "maturity": "PG-13",
       "imageSrc": "data/tiles/8-imagen.jpg",
       "posterSrc": "data/posters/8-imagen.jpg",
-      "videoSrc": "videos/video61.mp4"
+      "videoSrc": ""
     },
     {
       "id": "13",
@@ -924,7 +924,7 @@
       "maturity": "PG-13",
       "imageSrc": "data/tiles/13-imagen.jpg",
       "posterSrc": "data/posters/13-imagen.jpg",
-      "videoSrc": "videos/video62.mp4"
+      "videoSrc": ""
     },
     {
       "id": "23",
@@ -938,7 +938,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/23-imagen.jpg",
       "posterSrc": "data/posters/23-imagen.jpg",
-      "videoSrc": "videos/video63.mp4"
+      "videoSrc": ""
     },
     {
       "id": "30",
@@ -952,7 +952,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/30-imagen.jpg",
       "posterSrc": "data/posters/30-imagen.jpg",
-      "videoSrc": "videos/video64.mp4"
+      "videoSrc": ""
     },
     {
       "id": "37",
@@ -967,7 +967,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/37-imagen.jpg",
       "posterSrc": "data/posters/37-imagen.jpg",
-      "videoSrc": "videos/video65.mp4"
+      "videoSrc": "https://res.cloudinary.com/dt8savcjt/video/upload/v1762944911/Overview_of_Space_Missions_xydsss.mp4"
     },
     {
       "id": "43",
@@ -982,7 +982,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/43-imagen.jpg",
       "posterSrc": "data/posters/43-imagen.jpg",
-      "videoSrc": "videos/video66.mp4"
+      "videoSrc": ""
     },
     {
       "id": "49",
@@ -996,7 +996,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/49-imagen.jpg",
       "posterSrc": "data/posters/49-imagen.jpg",
-      "videoSrc": "videos/video67.mp4"
+      "videoSrc": ""
     },
     {
       "id": "52",
@@ -1010,7 +1010,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/52-imagen.jpg",
       "posterSrc": "data/posters/52-imagen.jpg",
-      "videoSrc": "videos/video68.mp4"
+      "videoSrc": ""
     },
     {
       "id": "57",
@@ -1024,7 +1024,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/57-imagen.jpg",
       "posterSrc": "data/posters/57-imagen.jpg",
-      "videoSrc": "videos/video69.mp4"
+      "videoSrc": ""
     },
     {
       "id": "62",
@@ -1038,7 +1038,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/62-imagen.jpg",
       "posterSrc": "data/posters/62-imagen.jpg",
-      "videoSrc": "videos/video70.mp4"
+      "videoSrc": ""
     },
     {
       "id": "66",
@@ -1053,7 +1053,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/66-imagen.jpg",
       "posterSrc": "data/posters/66-imagen.jpg",
-      "videoSrc": "videos/video71.mp4"
+      "videoSrc": ""
     },
     {
       "id": "71",
@@ -1067,7 +1067,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/71-imagen.jpg",
       "posterSrc": "data/posters/71-imagen.jpg",
-      "videoSrc": "videos/video72.mp4"
+      "videoSrc": ""
     },
     {
       "id": "76",
@@ -1081,7 +1081,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/76-imagen.jpg",
       "posterSrc": "data/posters/76-imagen.jpg",
-      "videoSrc": "videos/video73.mp4"
+      "videoSrc": ""
     },
     {
       "id": "81",
@@ -1096,7 +1096,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/81-imagen.jpg",
       "posterSrc": "data/posters/81-imagen.jpg",
-      "videoSrc": "videos/video74.mp4"
+      "videoSrc": ""
     },
     {
       "id": "86",
@@ -1110,7 +1110,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/86-imagen.jpg",
       "posterSrc": "data/posters/86-imagen.jpg",
-      "videoSrc": "videos/video75.mp4"
+      "videoSrc": ""
     }
   ],
 
@@ -1127,7 +1127,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/1-imagen.jpg",
       "posterSrc": "data/posters/1-imagen.jpg",
-      "videoSrc": "videos/video76.mp4"
+      "videoSrc": ""
     },
     {
       "id": "4",
@@ -1141,7 +1141,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/4-imagen.jpg",
       "posterSrc": "data/posters/4-imagen.jpg",
-      "videoSrc": "videos/video77.mp4"
+      "videoSrc": ""
     },
     {
       "id": "10",
@@ -1155,7 +1155,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/10-imagen.jpg",
       "posterSrc": "data/posters/10-imagen.jpg",
-      "videoSrc": "videos/video78.mp4"
+      "videoSrc": ""
     },
     {
       "id": "16",
@@ -1169,7 +1169,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/16-imagen.jpg",
       "posterSrc": "data/posters/16-imagen.jpg",
-      "videoSrc": "videos/video79.mp4"
+      "videoSrc": ""
     },
     {
       "id": "20",
@@ -1183,7 +1183,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/20-imagen.jpg",
       "posterSrc": "data/posters/20-imagen.jpg",
-      "videoSrc": "videos/video80.mp4"
+      "videoSrc": ""
     },
     {
       "id": "24",
@@ -1197,7 +1197,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/24-imagen.jpg",
       "posterSrc": "data/posters/24-imagen.jpg",
-      "videoSrc": "videos/video81.mp4"
+      "videoSrc": ""
     },
     {
       "id": "32",
@@ -1212,7 +1212,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/32-imagen.jpg",
       "posterSrc": "data/posters/32-imagen.jpg",
-      "videoSrc": "videos/video82.mp4"
+      "videoSrc": ""
     },
     {
       "id": "41",
@@ -1226,7 +1226,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/41-imagen.jpg",
       "posterSrc": "data/posters/41-imagen.jpg",
-      "videoSrc": "videos/video83.mp4"
+      "videoSrc": ""
     },
     {
       "id": "55",
@@ -1240,7 +1240,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/55-imagen.jpg",
       "posterSrc": "data/posters/55-imagen.jpg",
-      "videoSrc": "videos/video84.mp4"
+      "videoSrc": ""
     },
     {
       "id": "63",
@@ -1254,7 +1254,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/63-imagen.jpg",
       "posterSrc": "data/posters/63-imagen.jpg",
-      "videoSrc": "videos/video85.mp4"
+      "videoSrc": ""
     },
     {
       "id": "69",
@@ -1268,7 +1268,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/69-imagen.jpg",
       "posterSrc": "data/posters/69-imagen.jpg",
-      "videoSrc": "videos/video86.mp4"
+      "videoSrc": ""
     },
     {
       "id": "75",
@@ -1283,7 +1283,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/75-imagen.jpg",
       "posterSrc": "data/posters/75-imagen.jpg",
-      "videoSrc": "videos/video87.mp4"
+      "videoSrc": ""
     },
     {
       "id": "83",
@@ -1297,7 +1297,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/83-imagen.jpg",
       "posterSrc": "data/posters/83-imagen.jpg",
-      "videoSrc": "videos/video88.mp4"
+      "videoSrc": ""
     },
     {
       "id": "90",
@@ -1311,7 +1311,7 @@
       "maturity": "G",
       "imageSrc": "data/tiles/90-imagen.jpg",
       "posterSrc": "data/posters/90-imagen.jpg",
-      "videoSrc": "videos/video89.mp4"
+      "videoSrc": ""
     },
     {
       "id": "95",
@@ -1325,7 +1325,7 @@
       "maturity": "PG",
       "imageSrc": "data/tiles/95-imagen.jpg",
       "posterSrc": "data/posters/95-imagen.jpg",
-      "videoSrc": "videos/video90.mp4"
+      "videoSrc": ""
     }
   ]
 }
