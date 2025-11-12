@@ -234,9 +234,10 @@ export class Player extends Lightning.Component {
     poster.visible = !!src;
 
     setTimeout(() => {
-      this.play(
-        "https://res.cloudinary.com/dt8savcjt/video/upload/v1761829047/clip_thcmgl.mp4",
-      );
+      const src =
+        this._data?.videoSrc ||
+        "https://res.cloudinary.com/dt8savcjt/video/upload/v1761829047/clip_thcmgl.mp4";
+      this.play(src);
     }, 1000);
   }
 
