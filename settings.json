@@ -10,6 +10,7 @@
     "path": "./static",
     "log": true,
     "showVersion": false,
-    "textureMode": false
+    "textureMode": false,
+    "inspector": true
   }
 }
