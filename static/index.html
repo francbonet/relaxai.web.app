@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>RelaxAI WebTV</title>
+
+  <!-- Important per a pantalles amb notch i per evitar zoom involuntari -->
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1116" />
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #0b1116;         /* mateix color que clearColor */
+      overflow: hidden;
+      overscroll-behavior: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: none;
+    }
+    /* El canvas Lightning s’enganxa a pantalla completa */
+    canvas {
+      position: fixed;
+      inset: 0;
+      display: block;
+      width: 100vw;   /* fallback si no s’aplica JS */
+      height: 100vh;
+    }
+    /* Omple safe-areas (notch) quan viewport-fit=cover */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: env(safe-area-inset-top);
+      background: #0b1116;
+      pointer-events: none;
+    }
+  </style>
+  <link rel="stylesheet" href="./static/fonts.css" />
+</head>
+<body>
+  <script src="./startApp.js"></script>
+  <script>
+    (function () {
+      const bootstrap = window.APP_RELAXAI;
+      if (typeof bootstrap !== 'function') {
+        console.error('APP_RELAXAI no disponible. Revisa paths/copy.');
+        return;
+      }
+
+      // Resolució lògica del teu app Lightning (16:9)
+      const STAGE_W = 1920;
+      const STAGE_H = 1080;
+
+      // Tria com “encaixar” el canvas a pantalla:
+      // 'stretch'  -> omple tot (pot distorsionar)
+      // 'contain'  -> letterbox (barres negres, sense retall)
+      // 'cover'    -> retalla una mica, sense barres
+      const FIT_MODE = 'contain';
+
+      const app = bootstrap(
+        { stage: { w: STAGE_W, h: STAGE_H, clearColor: 0x0b1116ff /* ARGB */ }, debug: false },
+        { esEnv: 'eS5', textureMode: true },
+        {}
+      );
+
+      const canvas = app && app.stage && app.stage.getCanvas && app.stage.getCanvas();
+      if (!canvas) return;
+
+      function fitCanvas() {
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const arWin = vw / vh;
+        const arStage = STAGE_W / STAGE_H;
+
+        let cssW, cssH, left, top;
+
+        if (FIT_MODE === 'stretch') {
+          cssW = vw; cssH = vh; left = 0; top = 0;
+        } else if (FIT_MODE === 'cover') {
+          // Omple sense barres; pot retallar
+          if (arWin > arStage) {
+            // finestra més ampla -> escala per alçada
+            cssH = vh;
+            cssW = Math.round(vh * arStage);
+          } else {
+            // finestra més alta -> escala per amplada
+            cssW = vw;
+            cssH = Math.round(vw / arStage);
+          }
+          left = Math.round((vw - cssW) / 2);
+          top  = Math.round((vh - cssH) / 2);
+        } else {
+          // 'contain' (letterbox): mostra tot, amb barres si cal
+          if (arWin > arStage) {
+            // finestra més ampla -> escala per alçada
+            cssH = vh;
+            cssW = Math.round(vh * arStage);
+          } else {
+            // finestra més alta -> escala per amplada
+            cssW = vw;
+            cssH = Math.round(vw / arStage);
+          }
+          left = Math.round((vw - cssW) / 2);
+          top  = Math.round((vh - cssH) / 2);
+        }
+
+        canvas.style.width = cssW + 'px';
+        canvas.style.height = cssH + 'px';
+        canvas.style.left = left + 'px';
+        canvas.style.top = top + 'px';
+      }
+
+      window.addEventListener('resize', fitCanvas);
+      window.addEventListener('orientationchange', fitCanvas);
+
+      // Assegura’t que el canvas és al DOM
+      if (!document.body.contains(canvas)) document.body.appendChild(canvas);
+
+      // Primer encaix
+      fitCanvas();
+    })();
+  </script>
+</body>
+</html>
