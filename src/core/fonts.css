@@ -1,0 +1,24 @@
+@font-face {
+  font-family: "RelaxAI-SoraBold";
+  src: url("../fonts/Sora-Bold.ttf") format("truetype");
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "RelaxAI-SoraRegular";
+  src: url("../fonts/Sora-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "RelaxAI-SoraMedium";
+  src: url("../fonts/Sora-Medium.ttf") format("truetype");
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "RelaxAI-SoraSemiBold";
+  src: url("../fonts/Sora-Medium.ttf") format("truetype");
+  font-weight: 500;
+}
+

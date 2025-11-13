@@ -1,4 +1,3 @@
-// src/App.ts
 import { Lightning as L, Router, Utils } from "@lightningjs/sdk";
 import { Theme } from "./core/theme";
 import HomeSection from "./pages/Home";

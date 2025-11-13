@@ -4,6 +4,7 @@ import { getActiveRouteName } from "../utils/routerUtils";
 import Grid from "../molecules/Grid";
 import { watchlistStore } from "../state/watchlist.store";
 import Lightning from "@lightningjs/core";
+import { HtmlParagraphImage } from "../atoms/HtmlParagraphImage";
 
 const HEADER_H = 200;
 
@@ -14,7 +15,7 @@ export default class WatchListSection extends BasePage {
 
   protected override get sections() {
     const items = watchlistStore.current;
-    const sections = [];
+    const sections: string[] = [];
     if (items.length > 0) {
       sections.push("WatchList");
     }
@@ -50,6 +51,13 @@ export default class WatchListSection extends BasePage {
           focusMoved: true,
         },
       },
+      EmptyMessage: {
+        x: 0,
+        y: HEADER_H + 40,
+        type: HtmlParagraphImage,
+        w: 1920,
+        visible: false,
+      },
     });
   }
 
@@ -60,6 +68,7 @@ export default class WatchListSection extends BasePage {
 
   public override focusNext() {
     if (watchlistStore.current.length === 0) {
+      // Si no hi ha items, no té sentit baixar cap al grid
       return;
     }
     const cur = (this as any)._section ?? 0;
@@ -80,13 +89,98 @@ export default class WatchListSection extends BasePage {
 
   override async _active() {
     super._active();
+
     const items = watchlistStore.current;
     const inner = "Viewport.Content.ContentInner";
-    const grid = this.tag(`${inner}.WatchList`);
-    const title =
-      items.length === 0 ? "Your watchlist is empty 😢" : "Your watchlist";
+    const grid = this.tag(`${inner}.WatchList`) as any;
+    const emptyMsg = this.tag(`${inner}.EmptyMessage`) as any;
 
-    grid?.patch({ title: title, items });
+    if (items.length === 0) {
+      // Amaguem grid i mostrem missatge buit
+      grid?.patch({ title: "", items: [], visible: false });
+
+      if (emptyMsg) {
+        emptyMsg.visible = true;
+
+        await emptyMsg.setContent?.({
+          html: `
+            <div style="
+              margin-left: 40px;
+              margin-right: 40px;
+              width:1840;
+              padding:48px;
+              background:linear-gradient(145deg, #001219, #005f73);
+              border-radius:24px;
+            ">
+
+              <p style="
+                font-family:'RelaxAI-SoraBold';
+                font-size:48px;
+                margin-bottom:32px;
+                color:white;
+              ">
+                Your watchlist is empty 😢
+              </p>
+
+              <ul style="list-style:none; padding:0; margin:0;">
+
+                <li style="
+                  display:flex;
+                  align-items:flex-start;
+                  margin-bottom:24px;
+                  font-family:'RelaxAI-SoraRegular';
+                  font-size:30px;
+                  color:#e5e5e5;
+                ">
+                  <span style="
+                    display:inline-block;
+                    margin-right:16px;
+                    color:#00d4ff;
+                    font-size:36px;
+                  ">✔</span>
+                  Add series and films you want to watch
+                </li>
+
+                <li style="display:flex; align-items:flex-start; margin-bottom:24px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;">
+                  <span style="display:inline-block; margin-right:16px; color:#00d4ff; font-size:36px;">✔</span>
+                  They will appear here to continue later
+                </li>
+
+                <li style="display:flex; align-items:flex-start; margin-bottom:24px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;">
+                  <span style="display:inline-block; margin-right:16px; color:#00d4ff; font-size:36px;">✔</span>
+                  Keep track of your favorites easily
+                </li>
+
+                <li style="display:flex; align-items:flex-start; margin-bottom:24px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;">
+                  <span style="display:inline-block; margin-right:16px; color:#00d4ff; font-size:36px;">✔</span>
+                  Start building your personalized list today
+                </li>
+
+                <li style="display:flex; align-items:flex-start; margin-bottom:24px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;">
+                  <span style="display:inline-block; margin-right:16px; color:#00d4ff; font-size:36px;">✔</span>
+                  Your next watch is just one click away
+                </li>
+
+              </ul>
+            </div>
+          `,
+          width: 1920,
+          fontFamily: "RelaxAI-SoraMedium",
+          style: {
+            fontSize: "40px",
+            lineHeight: "1.6",
+            letterSpacing: "0.02em",
+            color: "#FFFFFF",
+            textAlign: "left",
+          },
+        });
+      }
+    } else {
+      const title = "Your watchlist";
+      grid?.patch({ title, items, visible: true });
+      if (emptyMsg) emptyMsg.visible = false;
+    }
+
     this.computeAfterLayout();
   }
 
@@ -109,7 +203,7 @@ export default class WatchListSection extends BasePage {
     const rowPitch = tileH + gapY;
     const totalRows = Math.ceil(payload.itemsLen / payload.cols);
 
-    if (row < 2) {
+    if (row < 6) {
       content.setSmooth("y", 0);
       return;
     }
