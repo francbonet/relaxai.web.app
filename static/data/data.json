@@ -914,9 +914,9 @@
     },
     {
       "id": "13",
-      "title": "Historical Battles",
-      "text": "Historical Battles",
-      "description": "Detailed analyses of pivotal battles that shaped history.",
+      "title": "Live Channel",
+      "text": "Live Channel",
+      "description": "simulive-node-overlays node platform deployed at render.com",
       "duration": "90",
       "year": 2019,
       "author": "HistoryMasters",
@@ -924,7 +924,7 @@
       "maturity": "PG-13",
       "imageSrc": "data/tiles/13-imagen.jpg",
       "posterSrc": "data/posters/13-imagen.jpg",
-      "videoSrc": ""
+      "videoSrc": "https://simulive-node-overlays.onrender.com/channel/ovr.m3u8"
     },
     {
       "id": "23",
