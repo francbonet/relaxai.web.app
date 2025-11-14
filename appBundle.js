@@ -3,7 +3,7 @@
  * SDK version: 5.5.5
  * CLI version: 2.14.2
  *
- * Generated: Fri, 14 Nov 2025 09:37:04 GMT
+ * Generated: Fri, 14 Nov 2025 11:06:41 GMT
  */
 
 var APP_com_domain_app_demov2 = (function () {
@@ -39485,7 +39485,7 @@ var APP_com_domain_app_demov2 = (function () {
 	          return parseNodeTree(context, childNode, parent, root);
 	        });
 	      } else {
-	        var container = createContainer$1(context, childNode);
+	        var container = createContainer(context, childNode);
 	        if (container.styles.isVisible()) {
 	          if (createsRealStackingContext(childNode, container, root)) {
 	            container.flags |= 4 /* CREATES_REAL_STACKING_CONTEXT */;
@@ -39507,7 +39507,7 @@ var APP_com_domain_app_demov2 = (function () {
 	    }
 	  }
 	};
-	var createContainer$1 = function (context, element) {
+	var createContainer = function (context, element) {
 	  if (isImageElement(element)) {
 	    return new ImageElementContainer(context, element);
 	  }
@@ -39538,7 +39538,7 @@ var APP_com_domain_app_demov2 = (function () {
 	  return new ElementContainer(context, element);
 	};
 	var parseTree = function (context, element) {
-	  var container = createContainer$1(context, element);
+	  var container = createContainer(context, element);
 	  container.flags |= 4 /* CREATES_REAL_STACKING_CONTEXT */;
 	  parseNodeTree(context, element, container, container);
 	  return container;
@@ -42313,91 +42313,97 @@ var APP_com_domain_app_demov2 = (function () {
 	};
 
 	let fontsCssPromise = null;
+	/**
+	 * Ensures we only add the fonts stylesheet once.
+	 */
 	function ensureFontsStylesheet() {
 	  let href = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "./static/fonts.css";
+	  if (!href) return Promise.resolve();
 	  if (fontsCssPromise) return fontsCssPromise;
-	  const existing = document.querySelector('link[data-html-text-renderer-fonts="1"]');
+	  if (typeof document === "undefined") {
+	    // Server side: nothing to do.
+	    return Promise.resolve();
+	  }
+	  const existing = document.querySelector("link[data-lightning-html-fonts=\"true\"][href=\"".concat(href, "\"]"));
 	  if (existing) {
 	    fontsCssPromise = Promise.resolve();
 	    return fontsCssPromise;
 	  }
-	  fontsCssPromise = new Promise(resolve => {
+	  fontsCssPromise = new Promise((resolve, reject) => {
 	    const link = document.createElement("link");
 	    link.rel = "stylesheet";
 	    link.href = href;
-	    link.type = "text/css";
-	    link.setAttribute("data-html-text-renderer-fonts", "1");
+	    link.dataset.lightningHtmlFonts = "true";
 	    link.onload = () => resolve();
-	    link.onerror = e => {
-	      console.warn("[htmlTextRenderer] Could not load fonts.css", e);
-	      resolve();
+	    link.onerror = () => {
+	      console.warn("[htmlTextRenderer] Failed to load fonts stylesheet:", href);
+	      resolve(); // we still resolve: text will render with fallback fonts
 	    };
 	    document.head.appendChild(link);
 	  });
 	  return fontsCssPromise;
 	}
-	function createContainer() {
-	  const container = document.createElement("div");
-	  Object.assign(container.style, {
-	    position: "absolute",
-	    top: "-10000px",
-	    left: "-10000px",
-	    pointerEvents: "none",
-	    overflow: "hidden",
-	    width: "0",
-	    height: "0",
-	    zIndex: "-1"
-	  });
-	  document.body.appendChild(container);
-	  return container;
-	}
-	function nextFrame() {
-	  return new Promise(resolve => requestAnimationFrame(() => resolve()));
-	}
-	async function waitForFontFamily(family) {
-	  let fontSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "24px";
-	  if (!("fonts" in document)) {
-	    await new Promise(r => setTimeout(r, 150));
-	    return;
-	  }
-	  const fonts = document.fonts;
-	  try {
-	    await fonts.load("".concat(fontSize, " \"").concat(family, "\""));
-	    await fonts.ready;
-	  } catch (err) {
-	    console.warn("[htmlTextRenderer] Font not ready:", family, err);
-	  }
-	}
-	async function renderParagraphToDataUrl(opts) {
-	  var _a;
+	function createParagraphContainer(opts) {
 	  const {
+	    width = 800,
 	    text,
 	    html,
-	    width,
 	    fontFamily,
-	    style = {},
-	    containerStyle = {}
+	    style,
+	    containerStyle
 	  } = opts;
-	  if (fontFamily) {
-	    await ensureFontsStylesheet("./static/fonts.css");
-	    await waitForFontFamily(fontFamily, (_a = style.fontSize) !== null && _a !== void 0 ? _a : "24px");
+	  const container = document.createElement("div");
+	  container.style.position = "absolute";
+	  container.style.left = "-9999px";
+	  container.style.top = "0";
+	  container.style.pointerEvents = "none";
+	  container.style.width = "".concat(width, "px");
+	  container.style.display = "inline-block";
+	  container.style.backgroundColor = "transparent";
+	  if (containerStyle) {
+	    Object.assign(container.style, containerStyle);
 	  }
-	  const container = createContainer();
-	  Object.assign(container.style, containerStyle);
-	  const tagName = html != null ? "div" : "p";
-	  const el = document.createElement(tagName);
-	  if (html != null) el.innerHTML = html;else el.textContent = text !== null && text !== void 0 ? text : "";
-	  el.style.width = "".concat(width, "px");
-	  el.style.margin = "0";
-	  el.style.padding = "0";
-	  el.style.display = "block";
-	  el.style.whiteSpace = "normal";
-	  if (fontFamily) el.style.fontFamily = fontFamily;
-	  Object.assign(el.style, style);
-	  container.appendChild(el);
+	  const para = document.createElement("div");
+	  para.style.display = "inline-block";
+	  para.style.whiteSpace = "normal";
+	  para.style.wordWrap = "break-word";
+	  if (fontFamily) {
+	    para.style.fontFamily = fontFamily;
+	  }
+	  if (style) {
+	    Object.assign(para.style, style);
+	  }
+	  if (html) {
+	    para.innerHTML = html;
+	  } else if (typeof text === "string") {
+	    para.textContent = text;
+	  } else {
+	    para.textContent = "";
+	  }
+	  container.appendChild(para);
+	  return container;
+	}
+	/**
+	 * Renders a block of HTML/text to a PNG data URL using html2canvas.
+	 * This function must run in a browser environment (it uses `document`).
+	 */
+	async function renderParagraphToDataUrl(opts) {
+	  if (typeof document === "undefined") {
+	    throw new Error("[htmlTextRenderer] renderParagraphToDataUrl must be called in a browser environment");
+	  }
+	  if (!opts.text && !opts.html) {
+	    throw new Error("[htmlTextRenderer] You must provide either `text` or `html`");
+	  }
+	  // Make sure fonts are ready (if configured)
+	  if (opts.fontsStylesheetHref) {
+	    await ensureFontsStylesheet(opts.fontsStylesheetHref);
+	  } else {
+	    await ensureFontsStylesheet();
+	  }
+	  const container = createParagraphContainer(opts);
+	  document.body.appendChild(container);
 	  try {
-	    await nextFrame();
-	    const canvas = await html2canvas(el, {
+	    const canvas = await html2canvas(container, {
 	      backgroundColor: "transparent",
 	      scale: 1,
 	      useCORS: true
@@ -42410,97 +42416,113 @@ var APP_com_domain_app_demov2 = (function () {
 	  }
 	}
 
-	// src/atoms/HtmlParagraphImage.ts
+	// LightningJS component that uses htmlTextRenderer to create an ImageTexture
+	/**
+	 * HtmlParagraphImage
+	 *
+	 * Small helper component that turns an HTML paragraph into an ImageTexture so
+	 * you can use it like any other image inside your LightningJS app.
+	 *
+	 * Usage:
+	 *
+	 *   import { HtmlParagraphImage } from "lightningjs-html-paragraph-image";
+	 *
+	 *   this.tag("EmptyMessage").childList.a({
+	 *     type: HtmlParagraphImage,
+	 *     x: 100,
+	 *     y: 200,
+	 *     content: {
+	 *       html: "<p>Your watchlist is empty 😢</p>",
+	 *       width: 900,
+	 *       fontFamily: "RelaxAI-SoraRegular",
+	 *       style: {
+	 *         fontSize: "32px",
+	 *         lineHeight: "1.4",
+	 *         color: "#FFFFFF",
+	 *       },
+	 *     },
+	 *   });
+	 *
+	 *   // Later:
+	 *   await this.tag("EmptyMessage").setContent("New text!");
+	 */
 	class HtmlParagraphImage extends Lightning$1.Component {
 	  constructor() {
 	    super(...arguments);
-	    this._width = 800;
-	    this._lastKey = null;
+	    this._content = null;
+	    this._loading = false;
 	  }
+	  //@ts-ignore
 	  static _template() {
 	    return {
-	      Img: {
-	        x: 0,
-	        y: 0,
-	        texture: {
-	          type: Lightning$1.textures.ImageTexture,
-	          src: null
-	        }
-	      }
+	      texture: undefined
 	    };
 	  }
-	  set width(value) {
-	    this._width = value;
+	  /**
+	   * Convenience setter compatible with patch({ content })
+	   */
+	  set content(value) {
+	    if (value === this._content) return;
+	    this._content = value;
+	    // Fire and forget, caller can also await setContent()
+	    void this.setContent(value);
 	  }
+	  get content() {
+	    return this._content;
+	  }
+	  /**
+	   * Explicit async API so the caller can await until the texture is ready.
+	   */
 	  async setContent(content) {
-	    let opts;
-	    let key;
-	    if (typeof content === "string") {
-	      const font = "RelaxAI-Sora";
-	      key = "text:".concat(font, ":").concat(this._width, ":").concat(content);
-	      opts = {
-	        text: content,
-	        width: this._width,
-	        fontFamily: font,
-	        style: {
-	          fontFamily: font,
-	          fontSize: "32px",
-	          lineHeight: "1.6",
-	          letterSpacing: "0.02em",
-	          color: "#FFFFFF",
-	          textAlign: "center"
-	        }
-	      };
-	    } else {
-	      const {
-	        text,
-	        html,
-	        width,
-	        fontFamily,
-	        style,
-	        containerStyle
-	      } = content;
-	      const font = fontFamily !== null && fontFamily !== void 0 ? fontFamily : "RelaxAI-Sora";
-	      const finalWidth = width !== null && width !== void 0 ? width : this._width;
-	      key = JSON.stringify({
-	        text,
-	        html,
-	        width: finalWidth,
-	        fontFamily: font,
-	        style,
-	        containerStyle
-	      });
-	      opts = {
-	        text,
-	        html,
-	        width: finalWidth,
-	        fontFamily: font,
-	        style: {
-	          fontFamily: font,
-	          fontSize: "32px",
-	          lineHeight: "1.6",
-	          letterSpacing: "0.02em",
-	          color: "#FFFFFF",
-	          textAlign: "left",
-	          ...(style !== null && style !== void 0 ? style : {})
-	        },
-	        containerStyle
-	      };
+	    this._content = content;
+	    if (!content) {
+	      this.texture = undefined;
+	      this.w = 0;
+	      this.h = 0;
+	      return;
 	    }
-	    if (key === this._lastKey) return;
-	    this._lastKey = key;
-	    const src = await renderParagraphToDataUrl(opts);
-	    const img = this.tag("Img");
-	    img.texture = {
-	      type: Lightning$1.textures.ImageTexture,
-	      src
+	    // Normalize input
+	    const opts = typeof content === "string" ? {
+	      text: content
+	    } : {
+	      ...content
 	    };
+	    if (!opts.width) {
+	      opts.width = 800;
+	    }
+	    this._loading = true;
 	    try {
-	      await img.texture.load();
-	      this.w = img.texture.source.w;
-	      this.h = img.texture.source.h;
+	      const src = await renderParagraphToDataUrl(opts);
+	      // Texture description object (what Lightning expects)
+	      const textureOptions = {
+	        type: Lightning$1.textures.ImageTexture,
+	        src
+	      };
+	      // Try to use stage.texture if it exists (older Lightning APIs)
+	      let texture;
+	      const stage = this.stage;
+	      if (stage && typeof stage.texture === "function") {
+	        texture = stage.texture(textureOptions);
+	        if (texture && typeof texture.load === "function") {
+	          await texture.load();
+	        }
+	      } else {
+	        // Fallback: assign the texture description directly.
+	        // Lightning will create the underlying texture for you.
+	        texture = textureOptions;
+	      }
+	      this.texture = texture;
+	      // Best-effort: if the texture has a source with width/height, sync component size.
+	      const source = texture && texture.source;
+	      if (source) {
+	        this.w = source.w;
+	        this.h = source.h;
+	      }
 	    } catch (e) {
+	      // eslint-disable-next-line no-console
 	      console.warn("[HtmlParagraphImage] Error loading texture", e);
+	    } finally {
+	      this._loading = false;
 	    }
 	  }
 	}
@@ -42557,8 +42579,8 @@ var APP_com_domain_app_demov2 = (function () {
 	      EmptyMessage: {
 	        x: 0,
 	        y: HEADER_H$1 + 40,
-	        type: HtmlParagraphImage,
 	        w: 1920,
+	        type: HtmlParagraphImage,
 	        visible: false
 	      }
 	    });
@@ -42605,7 +42627,7 @@ var APP_com_domain_app_demov2 = (function () {
 	      if (emptyMsg) {
 	        emptyMsg.visible = true;
 	        await ((_a = emptyMsg.setContent) === null || _a === void 0 ? void 0 : _a.call(emptyMsg, {
-	          html: "\n            <div style=\"\n              margin-left: 40px;\n              margin-right: 40px;\n              width:1840;\n              padding:48px;\n              background:linear-gradient(145deg, #001219, #005f73);\n              border-radius:24px;\n            \">\n\n              <p style=\"\n                font-family:'RelaxAI-SoraBold';\n                font-size:48px;\n                margin-bottom:32px;\n                color:white;\n              \">\n                Your watchlist is empty \uD83D\uDE22\n              </p>\n\n              <ul style=\"list-style:none; padding:0; margin:0;\">\n\n                <li style=\"\n                  display:flex;\n                  align-items:flex-start;\n                  margin-bottom:24px;\n                  font-family:'RelaxAI-SoraRegular';\n                  font-size:30px;\n                  color:#e5e5e5;\n                \">\n                  <span style=\"\n                    display:inline-block;\n                    margin-right:16px;\n                    color:#00d4ff;\n                    font-size:36px;\n                  \">\u2714</span>\n                  Add series and films you want to watch\n                </li>\n\n                <li style=\"display:flex; align-items:flex-start; margin-bottom:24px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;\">\n                  <span style=\"display:inline-block; margin-right:16px; color:#00d4ff; font-size:36px;\">\u2714</span>\n                  They will appear here to continue later\n                </li>\n\n                <li style=\"display:flex; align-items:flex-start; margin-bottom:24px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;\">\n                  <span style=\"display:inline-block; margin-right:16px; color:#00d4ff; font-size:36px;\">\u2714</span>\n                  Keep track of your favorites easily\n                </li>\n\n                <li style=\"display:flex; align-items:flex-start; margin-bottom:24px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;\">\n                  <span style=\"display:inline-block; margin-right:16px; color:#00d4ff; font-size:36px;\">\u2714</span>\n                  Start building your personalized list today\n                </li>\n\n                <li style=\"display:flex; align-items:flex-start; margin-bottom:24px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;\">\n                  <span style=\"display:inline-block; margin-right:16px; color:#00d4ff; font-size:36px;\">\u2714</span>\n                  Your next watch is just one click away\n                </li>\n\n              </ul>\n            </div>\n          ",
+	          html: "\n            <div style=\"\n              margin-left: 40px;\n              margin-right: 40px;\n              width:1740px;\n              padding:48px;\n              background:linear-gradient(145deg, #001219, #005f73);\n              border-radius:24px;\n            \">\n\n              <p style=\"\n                font-family:'RelaxAI-SoraBold';\n                font-size:48px;\n                margin-bottom:32px;\n                color:white;\n              \">\n                Your watchlist is empty \uD83D\uDE22\n              </p>\n\n              <ul style=\"list-style:none; padding:0; margin:0;\">\n\n                <li style=\"\n                  display:flex;\n                  align-items:flex-start;\n                  margin-bottom:20px;\n                  font-family:'RelaxAI-SoraRegular';\n                  font-size:30px;\n                  color:#e5e5e5;\n                \">\n                  <span style=\"\n                    display:inline-block;\n                    margin-right:16px;\n                    color:#00d4ff;\n                    font-size:36px;\n                  \">\u2714</span>\n                  Add series and films you want to watch\n                </li>\n\n                <li style=\"display:flex; align-items:flex-start; margin-bottom:20px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;\">\n                  <span style=\"display:inline-block; margin-right:16px; color:#00d4ff; font-size:36px;\">\u2714</span>\n                  They will appear here to continue later\n                </li>\n\n                <li style=\"display:flex; align-items:flex-start; margin-bottom:20px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;\">\n                  <span style=\"display:inline-block; margin-right:16px; color:#00d4ff; font-size:36px;\">\u2714</span>\n                  Keep track of your favorites easily\n                </li>\n\n                <li style=\"display:flex; align-items:flex-start; margin-bottom:20px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;\">\n                  <span style=\"display:inline-block; margin-right:16px; color:#00d4ff; font-size:36px;\">\u2714</span>\n                  Start building your personalized list today\n                </li>\n\n                <li style=\"display:flex; align-items:flex-start; margin-bottom:20px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;\">\n                  <span style=\"display:inline-block; margin-right:16px; color:#00d4ff; font-size:36px;\">\u2714</span>\n                  Your next watch is just one click away\n                </li>\n\n              </ul>\n            </div>\n          ",
 	          width: 1920,
 	          fontFamily: "RelaxAI-SoraMedium",
 	          style: {
@@ -42686,8 +42708,8 @@ var APP_com_domain_app_demov2 = (function () {
 	      Donate: {
 	        x: 40,
 	        y: HEADER_H + 40,
-	        type: HtmlParagraphImage,
 	        w: 1920,
+	        type: HtmlParagraphImage,
 	        visible: true
 	      }
 	    });
@@ -42724,7 +42746,7 @@ var APP_com_domain_app_demov2 = (function () {
 	    const donate = this.tag("".concat(inner, ".Donate"));
 	    if (donate) {
 	      await ((_a = donate.setContent) === null || _a === void 0 ? void 0 : _a.call(donate, {
-	        html: "\n          <div style=\"\n            padding:48px;\n            background:linear-gradient(145deg, #001219, #005f73);\n            border-radius:24px;\n          \">\n\n            <div style=\"\n              display:flex;\n              flex-direction:row;\n              gap:32px;\n              align-items:flex-start;\n              justify-content:space-between;\n            \">\n              <!-- Columna text -->\n              <div style=\"flex:2; min-width:0;\">\n                <p style=\"\n                  font-family:'RelaxAI-SoraBold';\n                  font-size:48px;\n                  margin-bottom:24px;\n                  color:#ffffff;\n                \">\n                  Support RelaxAI with a Cardano donation \uD83D\uDC99\n                </p>\n\n                <p style=\"\n                  font-family:'RelaxAI-SoraRegular';\n                  font-size:30px;\n                  margin-bottom:24px;\n                  color:#e5e5e5;\n                  line-height:1.6;\n                \">\n                  RelaxAI is an experimental slow-TV and ambient platform built with love,\n                  open tools and independent infrastructure. Your donation helps us cover\n                  server costs, video encoding, storage and the creation of new relaxing channels.\n                </p>\n\n                <ul style=\"list-style:none; padding:0; margin:0;\">\n\n                  <li style=\"\n                    display:flex;\n                    align-items:flex-start;\n                    margin-bottom:18px;\n                    font-family:'RelaxAI-SoraRegular';\n                    font-size:28px;\n                    color:#e5e5e5;\n                  \">\n                    <span style=\"\n                      display:inline-block;\n                      margin-right:16px;\n                      color:#00d4ff;\n                      font-size:34px;\n                    \">\u2714</span>\n                    Help keep RelaxAI online and ad-free\n                  </li>\n\n                  <li style=\"\n                    display:flex;\n                    align-items:flex-start;\n                    margin-bottom:18px;\n                    font-family:'RelaxAI-SoraRegular';\n                    font-size:28px;\n                    color:#e5e5e5;\n                  \">\n                    <span style=\"\n                      display:inline-block;\n                      margin-right:16px;\n                      color:#00d4ff;\n                      font-size:34px;\n                    \">\u2714</span>\n                    Support new relaxing streams and content experiments\n                  </li>\n\n                  <li style=\"\n                    display:flex;\n                    align-items:flex-start;\n                    margin-bottom:18px;\n                    font-family:'RelaxAI-SoraRegular';\n                    font-size:28px;\n                    color:#e5e5e5;\n                  \">\n                    <span style=\"\n                      display:inline-block;\n                      margin-right:16px;\n                      color:#00d4ff;\n                      font-size:34px;\n                    \">\u2714</span>\n                    Back an indie project built on Cardano\n                  </li>\n                </ul>\n              </div>\n\n              <!-- Columna QR -->\n              <div style=\"\n                flex:1;\n                display:flex;\n                flex-direction:column;\n                align-items:center;\n                justify-content:flex-start;\n              \">\n                <div style=\"\n                  width:360px;\n                  height:360px;\n                  padding:12px;\n                  border-radius:24px;\n                  background:rgba(0, 0, 0, 0.35);\n                  border:1px solid rgba(0, 212, 255, 0.4);\n                  display:flex;\n                  align-items:center;\n                  justify-content:center;\n                  box-sizing:border-box;\n                \">\n                  <img\n                    src=\"static/wallet/qr.png\"\n                    alt=\"RelaxAI Cardano donation QR\"\n                    style=\"\n                      display:block;\n                      width:100%;\n                      height:100%;\n                      object-fit:contain;\n                      border-radius:20px;\n                    \"\n                  />\n                </div>\n\n                <p style=\"\n                  font-family:'RelaxAI-SoraRegular';\n                  font-size:22px;\n                  margin-top:16px;\n                  color:#e5e5e5;\n                  text-align:center;\n                  max-width:380px;\n                  line-height:1.4;\n                \">\n                  Suggested donation: <span style=\"color:#00d4ff;\">10 ADA</span><br/>\n                  Thank you for supporting RelaxAI.\n                </p>\n              </div>\n            </div>\n          </div>\n        ",
+	        html: "\n          <div style=\"\n            padding:48px;\n            width: 1640px;\n            background:linear-gradient(145deg, #001219, #005f73);\n            border-radius:24px;\n          \">\n\n            <div style=\"\n              display:flex;\n              flex-direction:row;\n              gap:32px;\n              align-items:flex-start;\n              justify-content:space-between;\n            \">\n              <!-- Columna text -->\n              <div style=\"min-width:0; max-width: auto;\">\n                <p style=\"\n                  font-family:'RelaxAI-SoraBold';\n                  font-size:48px;\n                  margin-bottom:24px;\n                  color:#ffffff;\n                \">\n                  Support RelaxAI with a Cardano donation \uD83D\uDC99\n                </p>\n\n                <p style=\"\n                  font-family:'RelaxAI-SoraRegular';\n                  font-size:30px;\n                  margin-bottom:24px;\n                  color:#e5e5e5;\n                  line-height:1.6;\n                \">\n                  RelaxAI is an experimental slow-TV and ambient platform built with love,\n                  open tools and independent infrastructure. Your donation helps us cover\n                  server costs, video encoding, storage and the creation of new relaxing channels.\n                </p>\n\n                <ul style=\"list-style:none; padding:0; margin:0;\">\n\n                  <li style=\"\n                    display:flex;\n                    align-items:flex-start;\n                    margin-bottom:18px;\n                    font-family:'RelaxAI-SoraRegular';\n                    font-size:28px;\n                    color:#e5e5e5;\n                  \">\n                    <span style=\"\n                      display:inline-block;\n                      margin-right:16px;\n                      color:#00d4ff;\n                      font-size:34px;\n                    \">\u2714</span>\n                    Help keep RelaxAI online and ad-free\n                  </li>\n\n                  <li style=\"\n                    display:flex;\n                    align-items:flex-start;\n                    margin-bottom:18px;\n                    font-family:'RelaxAI-SoraRegular';\n                    font-size:28px;\n                    color:#e5e5e5;\n                  \">\n                    <span style=\"\n                      display:inline-block;\n                      margin-right:16px;\n                      color:#00d4ff;\n                      font-size:34px;\n                    \">\u2714</span>\n                    Support new relaxing streams and content experiments\n                  </li>\n\n                  <li style=\"\n                    display:flex;\n                    align-items:flex-start;\n                    margin-bottom:18px;\n                    font-family:'RelaxAI-SoraRegular';\n                    font-size:28px;\n                    color:#e5e5e5;\n                  \">\n                    <span style=\"\n                      display:inline-block;\n                      margin-right:16px;\n                      color:#00d4ff;\n                      font-size:34px;\n                    \">\u2714</span>\n                    Back an indie project built on Cardano\n                  </li>\n                </ul>\n              </div>\n\n              <!-- Columna QR -->\n              <div style=\"\n                display:flex;\n                flex-direction:column;\n                align-items: center;\n                justify-content:flex-start;\n                width: 740px;\n              \">\n                <div style=\"\n                  width:360px;\n                  height:360px;\n                  padding:12px;\n                  border-radius:24px;\n                  background:rgba(0, 0, 0, 0.35);\n                  border:1px solid rgba(0, 212, 255, 0.4);\n                  display:flex;\n                  align-items:center;\n                  justify-content:center;\n                  box-sizing:border-box;\n                \">\n                  <img\n                    src=\"static/wallet/qr.png\"\n                    alt=\"RelaxAI Cardano donation QR\"\n                    style=\"\n                      display:block;\n                      width:100%;\n                      height:100%;\n                      object-fit:contain;\n                      border-radius:20px;\n                    \"\n                  />\n                </div>\n\n                <p style=\"\n                  font-family:'RelaxAI-SoraRegular';\n                  font-size:22px;\n                  margin-top:16px;\n                  color:#e5e5e5;\n                  text-align:center;\n                  max-width:380px;\n                  line-height:1.4;\n                \">\n                  Suggested donation: <span style=\"color:#00d4ff;\">10 ADA</span><br/>\n                  Thank you for supporting RelaxAI.\n                </p>\n              </div>\n            </div>\n          </div>\n        ",
 	        width: 1840,
 	        fontFamily: "RelaxAI-SoraMedium",
 	        style: {
