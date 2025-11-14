@@ -11,6 +11,6 @@
     "log": true,
     "showVersion": false,
     "textureMode": false,
-    "inspector": true
+    "inspector": false
   }
 }
