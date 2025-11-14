@@ -3,7 +3,7 @@
  * SDK version: 5.5.5
  * CLI version: 2.14.2
  *
- * Generated: Thu, 13 Nov 2025 15:44:10 GMT
+ * Generated: Fri, 14 Nov 2025 09:37:04 GMT
  */
 
 var APP_com_domain_app_demov2 = (function () {
@@ -26918,7 +26918,7 @@ var APP_com_domain_app_demov2 = (function () {
 	    super(...arguments);
 	    this._focusIdx = 0;
 	    this._currentIdx = 0;
-	    this._routes = ["home", "suggest", "breathe", "longform", "search", "watchlist"];
+	    this._routes = ["home", "suggest", "breathe", "longform", "search", "watchlist", "donate"];
 	    this._onHashChange = () => this._syncSelectedFromLocation();
 	  }
 	  static _template() {
@@ -26963,6 +26963,11 @@ var APP_com_domain_app_demov2 = (function () {
 	          x: _val * 5,
 	          type: NavItem,
 	          labelText: "Watchlist"
+	        },
+	        Donate: {
+	          x: _val * 6,
+	          type: NavItem,
+	          labelText: "Donate"
 	        }
 	      }
 	    };
@@ -30778,7 +30783,7 @@ var APP_com_domain_app_demov2 = (function () {
 
 	const GAP2$3 = 30;
 	const GAP$3 = 60;
-	const HEADER_H$6 = 200;
+	const HEADER_H$7 = 200;
 	const CAROUSSEL_H$3 = 600;
 	const RAIL_H$4 = 230;
 	class HomeSection extends BasePage {
@@ -30790,7 +30795,7 @@ var APP_com_domain_app_demov2 = (function () {
 	  }
 	  get defaultHeights() {
 	    return {
-	      Header: HEADER_H$6,
+	      Header: HEADER_H$7,
 	      Carussel: CAROUSSEL_H$3,
 	      TopSearches: RAIL_H$4,
 	      NextWatch: RAIL_H$4,
@@ -30801,7 +30806,7 @@ var APP_com_domain_app_demov2 = (function () {
 	    return BasePage.chrome({
 	      Header: {
 	        type: Header,
-	        h: HEADER_H$6,
+	        h: HEADER_H$7,
 	        signals: {
 	          navigate: true,
 	          focusNext: true
@@ -30809,7 +30814,7 @@ var APP_com_domain_app_demov2 = (function () {
 	      },
 	      Carussel: {
 	        x: 40,
-	        y: HEADER_H$6 + GAP2$3,
+	        y: HEADER_H$7 + GAP2$3,
 	        h: CAROUSSEL_H$3,
 	        type: CarouselComp,
 	        signals: {
@@ -30819,7 +30824,7 @@ var APP_com_domain_app_demov2 = (function () {
 	        }
 	      },
 	      TopSearches: {
-	        y: HEADER_H$6 + GAP2$3 + CAROUSSEL_H$3 + GAP2$3,
+	        y: HEADER_H$7 + GAP2$3 + CAROUSSEL_H$3 + GAP2$3,
 	        h: RAIL_H$4,
 	        type: Rail,
 	        signals: {
@@ -30829,7 +30834,7 @@ var APP_com_domain_app_demov2 = (function () {
 	        }
 	      },
 	      NextWatch: {
-	        y: HEADER_H$6 + GAP2$3 + CAROUSSEL_H$3 + GAP2$3 + RAIL_H$4 + GAP$3,
+	        y: HEADER_H$7 + GAP2$3 + CAROUSSEL_H$3 + GAP2$3 + RAIL_H$4 + GAP$3,
 	        h: RAIL_H$4,
 	        type: Rail,
 	        signals: {
@@ -30839,7 +30844,7 @@ var APP_com_domain_app_demov2 = (function () {
 	        }
 	      },
 	      Retro: {
-	        y: HEADER_H$6 + GAP2$3 + CAROUSSEL_H$3 + GAP2$3 + RAIL_H$4 + GAP$3 + RAIL_H$4 + GAP$3,
+	        y: HEADER_H$7 + GAP2$3 + CAROUSSEL_H$3 + GAP2$3 + RAIL_H$4 + GAP$3 + RAIL_H$4 + GAP$3,
 	        h: RAIL_H$4,
 	        type: Rail,
 	        signals: {
@@ -30877,7 +30882,7 @@ var APP_com_domain_app_demov2 = (function () {
 	  }
 	}
 
-	const HEADER_H$5 = 200;
+	const HEADER_H$6 = 200;
 	const CAROUSSEL_H$2 = 600;
 	const RAIL_H$3 = 230;
 	const GAP2$2 = 30;
@@ -30891,7 +30896,7 @@ var APP_com_domain_app_demov2 = (function () {
 	  }
 	  get defaultHeights() {
 	    return {
-	      Header: HEADER_H$5,
+	      Header: HEADER_H$6,
 	      Carussel: CAROUSSEL_H$2,
 	      TopSearches: RAIL_H$3,
 	      NextWatch: RAIL_H$3,
@@ -30902,7 +30907,7 @@ var APP_com_domain_app_demov2 = (function () {
 	    return BasePage.chrome({
 	      Header: {
 	        type: Header,
-	        h: HEADER_H$5,
+	        h: HEADER_H$6,
 	        signals: {
 	          navigate: true,
 	          focusNext: true
@@ -30911,7 +30916,7 @@ var APP_com_domain_app_demov2 = (function () {
 	      Carussel: {
 	        type: CarouselComp,
 	        x: 40,
-	        y: HEADER_H$5 + GAP2$2,
+	        y: HEADER_H$6 + GAP2$2,
 	        h: CAROUSSEL_H$2,
 	        signals: {
 	          focusPrev: true,
@@ -30921,7 +30926,7 @@ var APP_com_domain_app_demov2 = (function () {
 	      },
 	      TopSearches: {
 	        type: Rail,
-	        y: HEADER_H$5 + GAP2$2 + CAROUSSEL_H$2 + GAP2$2,
+	        y: HEADER_H$6 + GAP2$2 + CAROUSSEL_H$2 + GAP2$2,
 	        h: RAIL_H$3,
 	        signals: {
 	          focusPrev: true,
@@ -30931,7 +30936,7 @@ var APP_com_domain_app_demov2 = (function () {
 	      },
 	      NextWatch: {
 	        type: Rail,
-	        y: HEADER_H$5 + GAP2$2 + CAROUSSEL_H$2 + GAP2$2 + RAIL_H$3 + GAP$2,
+	        y: HEADER_H$6 + GAP2$2 + CAROUSSEL_H$2 + GAP2$2 + RAIL_H$3 + GAP$2,
 	        h: RAIL_H$3,
 	        signals: {
 	          focusPrev: true,
@@ -30941,7 +30946,7 @@ var APP_com_domain_app_demov2 = (function () {
 	      },
 	      Retro: {
 	        type: Rail,
-	        y: HEADER_H$5 + GAP2$2 + CAROUSSEL_H$2 + GAP2$2 + RAIL_H$3 + GAP$2 + RAIL_H$3 + GAP$2,
+	        y: HEADER_H$6 + GAP2$2 + CAROUSSEL_H$2 + GAP2$2 + RAIL_H$3 + GAP$2 + RAIL_H$3 + GAP$2,
 	        h: RAIL_H$3,
 	        signals: {
 	          focusPrev: true,
@@ -32091,9 +32096,9 @@ var APP_com_domain_app_demov2 = (function () {
 	  });
 	}
 
-	const HEADER_H$4 = 200;
+	const HEADER_H$5 = 200;
 	const HERO_H = 650;
-	const CONTENT_Y = HEADER_H$4;
+	const CONTENT_Y = HEADER_H$5;
 	const RAIL_H$2 = 230;
 	class Detail extends BasePage {
 	  constructor() {
@@ -32115,7 +32120,7 @@ var APP_com_domain_app_demov2 = (function () {
 	  }
 	  get defaultHeights() {
 	    return {
-	      Header: HEADER_H$4,
+	      Header: HEADER_H$5,
 	      Hero: HERO_H,
 	      TopSearches: RAIL_H$2
 	    };
@@ -32133,7 +32138,7 @@ var APP_com_domain_app_demov2 = (function () {
 	    return BasePage.chrome({
 	      Header: {
 	        type: Header,
-	        h: HEADER_H$4,
+	        h: HEADER_H$5,
 	        signals: {
 	          navigate: true,
 	          focusNext: true
@@ -33137,7 +33142,7 @@ var APP_com_domain_app_demov2 = (function () {
 
 	const GAP2$1 = 30;
 	const GAP$1 = 60;
-	const HEADER_H$3 = 200;
+	const HEADER_H$4 = 200;
 	const CAROUSSEL_H$1 = 600;
 	const RAIL_H$1 = 230;
 	class BreatheSection extends BasePage {
@@ -33149,7 +33154,7 @@ var APP_com_domain_app_demov2 = (function () {
 	  }
 	  get defaultHeights() {
 	    return {
-	      Header: HEADER_H$3,
+	      Header: HEADER_H$4,
 	      Carussel: CAROUSSEL_H$1,
 	      TopSearches: RAIL_H$1,
 	      NextWatch: RAIL_H$1,
@@ -33160,14 +33165,14 @@ var APP_com_domain_app_demov2 = (function () {
 	    return BasePage.chrome({
 	      Header: {
 	        type: Header,
-	        h: HEADER_H$3,
+	        h: HEADER_H$4,
 	        signals: {
 	          navigate: true,
 	          focusNext: true
 	        }
 	      },
 	      Carussel: {
-	        y: HEADER_H$3 + GAP2$1,
+	        y: HEADER_H$4 + GAP2$1,
 	        h: CAROUSSEL_H$1,
 	        x: 40,
 	        type: CarouselComp,
@@ -33178,7 +33183,7 @@ var APP_com_domain_app_demov2 = (function () {
 	        }
 	      },
 	      TopSearches: {
-	        y: HEADER_H$3 + GAP2$1 + CAROUSSEL_H$1 + GAP2$1,
+	        y: HEADER_H$4 + GAP2$1 + CAROUSSEL_H$1 + GAP2$1,
 	        h: RAIL_H$1,
 	        type: Rail,
 	        signals: {
@@ -33188,7 +33193,7 @@ var APP_com_domain_app_demov2 = (function () {
 	        }
 	      },
 	      NextWatch: {
-	        y: HEADER_H$3 + GAP2$1 + CAROUSSEL_H$1 + GAP2$1 + RAIL_H$1 + GAP$1,
+	        y: HEADER_H$4 + GAP2$1 + CAROUSSEL_H$1 + GAP2$1 + RAIL_H$1 + GAP$1,
 	        h: RAIL_H$1,
 	        type: Rail,
 	        signals: {
@@ -33198,7 +33203,7 @@ var APP_com_domain_app_demov2 = (function () {
 	        }
 	      },
 	      Retro: {
-	        y: HEADER_H$3 + GAP2$1 + CAROUSSEL_H$1 + GAP2$1 + RAIL_H$1 + GAP$1 + RAIL_H$1 + GAP$1,
+	        y: HEADER_H$4 + GAP2$1 + CAROUSSEL_H$1 + GAP2$1 + RAIL_H$1 + GAP$1 + RAIL_H$1 + GAP$1,
 	        h: RAIL_H$1,
 	        type: Rail,
 	        signals: {
@@ -33238,7 +33243,7 @@ var APP_com_domain_app_demov2 = (function () {
 
 	const GAP2 = 30;
 	const GAP = 60;
-	const HEADER_H$2 = 200;
+	const HEADER_H$3 = 200;
 	const CAROUSSEL_H = 600;
 	const RAIL_H = 230;
 	class LongformSection extends BasePage {
@@ -33250,7 +33255,7 @@ var APP_com_domain_app_demov2 = (function () {
 	  }
 	  get defaultHeights() {
 	    return {
-	      Header: HEADER_H$2,
+	      Header: HEADER_H$3,
 	      Carussel: CAROUSSEL_H,
 	      TopSearches: RAIL_H,
 	      NextWatch: RAIL_H,
@@ -33261,7 +33266,7 @@ var APP_com_domain_app_demov2 = (function () {
 	    return BasePage.chrome({
 	      Header: {
 	        type: Header,
-	        h: HEADER_H$2,
+	        h: HEADER_H$3,
 	        signals: {
 	          navigate: true,
 	          focusNext: true
@@ -33269,7 +33274,7 @@ var APP_com_domain_app_demov2 = (function () {
 	      },
 	      Carussel: {
 	        x: 40,
-	        y: HEADER_H$2 + GAP2,
+	        y: HEADER_H$3 + GAP2,
 	        h: CAROUSSEL_H,
 	        type: CarouselComp,
 	        signals: {
@@ -33279,7 +33284,7 @@ var APP_com_domain_app_demov2 = (function () {
 	        }
 	      },
 	      TopSearches: {
-	        y: HEADER_H$2 + GAP2 + CAROUSSEL_H + GAP2,
+	        y: HEADER_H$3 + GAP2 + CAROUSSEL_H + GAP2,
 	        h: RAIL_H,
 	        type: Rail,
 	        signals: {
@@ -33289,7 +33294,7 @@ var APP_com_domain_app_demov2 = (function () {
 	        }
 	      },
 	      NextWatch: {
-	        y: HEADER_H$2 + GAP2 + CAROUSSEL_H + GAP2 + RAIL_H + GAP,
+	        y: HEADER_H$3 + GAP2 + CAROUSSEL_H + GAP2 + RAIL_H + GAP,
 	        h: RAIL_H,
 	        type: Rail,
 	        signals: {
@@ -33299,7 +33304,7 @@ var APP_com_domain_app_demov2 = (function () {
 	        }
 	      },
 	      Retro: {
-	        y: HEADER_H$2 + GAP2 + CAROUSSEL_H + GAP2 + RAIL_H + GAP + RAIL_H + GAP,
+	        y: HEADER_H$3 + GAP2 + CAROUSSEL_H + GAP2 + RAIL_H + GAP + RAIL_H + GAP,
 	        h: RAIL_H,
 	        type: Rail,
 	        signals: {
@@ -33745,7 +33750,7 @@ var APP_com_domain_app_demov2 = (function () {
 	  }
 	};
 
-	const HEADER_H$1 = 200;
+	const HEADER_H$2 = 200;
 	const GAP_H = 40;
 	const GAP_W = 40;
 	class SearchSection extends BasePage {
@@ -33766,7 +33771,7 @@ var APP_com_domain_app_demov2 = (function () {
 	  }
 	  get defaultHeights() {
 	    return {
-	      Header: HEADER_H$1,
+	      Header: HEADER_H$2,
 	      SearchInput: 80
 	    };
 	  }
@@ -33777,7 +33782,7 @@ var APP_com_domain_app_demov2 = (function () {
 	    return BasePage.chrome({
 	      Header: {
 	        type: Header,
-	        h: HEADER_H$1,
+	        h: HEADER_H$2,
 	        signals: {
 	          navigate: true,
 	          focusNext: true
@@ -33785,7 +33790,7 @@ var APP_com_domain_app_demov2 = (function () {
 	      },
 	      SearchInput: {
 	        x: GAP_W,
-	        y: HEADER_H$1 + GAP_H,
+	        y: HEADER_H$2 + GAP_H,
 	        w: Theme.w - GAP_W * 2,
 	        h: 80,
 	        type: SearchInput,
@@ -33795,7 +33800,7 @@ var APP_com_domain_app_demov2 = (function () {
 	        }
 	      },
 	      KeyboardWrap: {
-	        y: HEADER_H$1 + GAP_H + 120,
+	        y: HEADER_H$2 + GAP_H + 120,
 	        x: GAP_W,
 	        Keyboard: {
 	          type: Keyboard,
@@ -33809,7 +33814,7 @@ var APP_com_domain_app_demov2 = (function () {
 	        }
 	      },
 	      NotFound: {
-	        y: HEADER_H$1 + GAP_H + 140,
+	        y: HEADER_H$2 + GAP_H + 140,
 	        x: GAP_W,
 	        alpha: 0,
 	        visible: false,
@@ -33821,7 +33826,7 @@ var APP_com_domain_app_demov2 = (function () {
 	        }
 	      },
 	      Results: {
-	        y: HEADER_H$1 + GAP_H + 140,
+	        y: HEADER_H$2 + GAP_H + 140,
 	        type: Grid,
 	        config: {
 	          cols: 5,
@@ -33985,7 +33990,7 @@ var APP_com_domain_app_demov2 = (function () {
 	    const content = this.tag("Viewport.Content");
 	    const viewport = this.tag("Viewport");
 	    const grid = this.tag("ResultsGrid");
-	    const baseOffset = HEADER_H$1 + GAP_H + 140;
+	    const baseOffset = HEADER_H$2 + GAP_H + 140;
 	    const EXTRA_BOTTOM = -100;
 	    const CENTER_BIAS = 0;
 	    const cols = Math.max(1, payload.cols | 0);
@@ -42307,19 +42312,10 @@ var APP_com_domain_app_demov2 = (function () {
 	  return element === ownerDocument.documentElement ? isTransparent(documentBackgroundColor) ? isTransparent(bodyBackgroundColor) ? defaultBackgroundColor : bodyBackgroundColor : documentBackgroundColor : defaultBackgroundColor;
 	};
 
-	// src/utils/htmlTextRenderer.ts
-	/* -------------------------------------------------------------------------- */
-	/*  SAFE FONT STYLESHEET INJECTION                                            */
-	/* -------------------------------------------------------------------------- */
 	let fontsCssPromise = null;
-	/**
-	 * Injecta fonts.css al <head> si no existeix.
-	 * Idempotent: només s'executa una vegada.
-	 */
 	function ensureFontsStylesheet() {
 	  let href = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "./static/fonts.css";
 	  if (fontsCssPromise) return fontsCssPromise;
-	  // Si ja existeix in situ, no cal afegir-lo.
 	  const existing = document.querySelector('link[data-html-text-renderer-fonts="1"]');
 	  if (existing) {
 	    fontsCssPromise = Promise.resolve();
@@ -42334,16 +42330,12 @@ var APP_com_domain_app_demov2 = (function () {
 	    link.onload = () => resolve();
 	    link.onerror = e => {
 	      console.warn("[htmlTextRenderer] Could not load fonts.css", e);
-	      resolve(); // no fem reject → el renderer igualment pot funcionar
+	      resolve();
 	    };
 	    document.head.appendChild(link);
 	  });
 	  return fontsCssPromise;
 	}
-	/* -------------------------------------------------------------------------- */
-	/*  HELPERS                                                                    */
-	/* -------------------------------------------------------------------------- */
-	/** Crea un contenidor offscreen temporal */
 	function createContainer() {
 	  const container = document.createElement("div");
 	  Object.assign(container.style, {
@@ -42359,18 +42351,12 @@ var APP_com_domain_app_demov2 = (function () {
 	  document.body.appendChild(container);
 	  return container;
 	}
-	/** Espera un frame */
 	function nextFrame() {
 	  return new Promise(resolve => requestAnimationFrame(() => resolve()));
 	}
-	/**
-	 * Espera a que una font estigui carregada.
-	 * En navegadors antics (Android 6) es fa un fallback a un simple delay.
-	 */
 	async function waitForFontFamily(family) {
 	  let fontSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "24px";
 	  if (!("fonts" in document)) {
-	    // WebView antic: esperem una mica perquè la font carregui.
 	    await new Promise(r => setTimeout(r, 150));
 	    return;
 	  }
@@ -42382,12 +42368,6 @@ var APP_com_domain_app_demov2 = (function () {
 	    console.warn("[htmlTextRenderer] Font not ready:", family, err);
 	  }
 	}
-	/* -------------------------------------------------------------------------- */
-	/*  MAIN RENDERER                                                              */
-	/* -------------------------------------------------------------------------- */
-	/**
-	 * Renderitza text o HTML i retorna un dataURL PNG amb html2canvas.
-	 */
 	async function renderParagraphToDataUrl(opts) {
 	  var _a;
 	  const {
@@ -42398,15 +42378,12 @@ var APP_com_domain_app_demov2 = (function () {
 	    style = {},
 	    containerStyle = {}
 	  } = opts;
-	  // 1) Assegurem fonts.css
 	  if (fontFamily) {
 	    await ensureFontsStylesheet("./static/fonts.css");
 	    await waitForFontFamily(fontFamily, (_a = style.fontSize) !== null && _a !== void 0 ? _a : "24px");
 	  }
-	  // 2) Preparem contenidor offscreen
 	  const container = createContainer();
 	  Object.assign(container.style, containerStyle);
-	  // 3) Preparem el node on pintarem HTML o text
 	  const tagName = html != null ? "div" : "p";
 	  const el = document.createElement(tagName);
 	  if (html != null) el.innerHTML = html;else el.textContent = text !== null && text !== void 0 ? text : "";
@@ -42419,7 +42396,6 @@ var APP_com_domain_app_demov2 = (function () {
 	  Object.assign(el.style, style);
 	  container.appendChild(el);
 	  try {
-	    // Deixem que el navegador faci layout + fonts
 	    await nextFrame();
 	    const canvas = await html2canvas(el, {
 	      backgroundColor: "transparent",
@@ -42456,13 +42432,6 @@ var APP_com_domain_app_demov2 = (function () {
 	  set width(value) {
 	    this._width = value;
 	  }
-	  /**
-	   * Renderitza text/HTML via DOM → canvas → dataURL → ImageTexture.
-	   *
-	   * Accepta:
-	   *  - string simple: setContent("Text pla")
-	   *  - objecte: setContent({ html, width, fontFamily, style, ... })
-	   */
 	  async setContent(content) {
 	    let opts;
 	    let key;
@@ -42518,7 +42487,6 @@ var APP_com_domain_app_demov2 = (function () {
 	        containerStyle
 	      };
 	    }
-	    // Evitem recomputar si el contingut no canvia
 	    if (key === this._lastKey) return;
 	    this._lastKey = key;
 	    const src = await renderParagraphToDataUrl(opts);
@@ -42537,7 +42505,7 @@ var APP_com_domain_app_demov2 = (function () {
 	  }
 	}
 
-	const HEADER_H = 200;
+	const HEADER_H$1 = 200;
 	class WatchListSection extends BasePage {
 	  get hasHeader() {
 	    return true;
@@ -42555,21 +42523,21 @@ var APP_com_domain_app_demov2 = (function () {
 	  }
 	  get defaultHeights() {
 	    return {
-	      Header: HEADER_H
+	      Header: HEADER_H$1
 	    };
 	  }
 	  static _template() {
 	    return BasePage.chrome({
 	      Header: {
 	        type: Header,
-	        h: HEADER_H,
+	        h: HEADER_H$1,
 	        signals: {
 	          navigate: true,
 	          focusNext: true
 	        }
 	      },
 	      WatchList: {
-	        y: HEADER_H + 40,
+	        y: HEADER_H$1 + 40,
 	        type: Grid,
 	        title: "List",
 	        config: {
@@ -42588,7 +42556,7 @@ var APP_com_domain_app_demov2 = (function () {
 	      },
 	      EmptyMessage: {
 	        x: 0,
-	        y: HEADER_H + 40,
+	        y: HEADER_H$1 + 40,
 	        type: HtmlParagraphImage,
 	        w: 1920,
 	        visible: false
@@ -42665,7 +42633,7 @@ var APP_com_domain_app_demov2 = (function () {
 	    const content = this.tag("Viewport.Content");
 	    const viewport = this.tag("Viewport");
 	    const grid = this.tag("WatchList");
-	    const HEADER_OFFSET = HEADER_H + 40;
+	    const HEADER_OFFSET = HEADER_H$1 + 40;
 	    const EXTRA_BOTTOM = -100;
 	    const row = (_a = payload.row) !== null && _a !== void 0 ? _a : 0;
 	    const tileH = (_b = payload.rowH) !== null && _b !== void 0 ? _b : 230;
@@ -42685,6 +42653,107 @@ var APP_com_domain_app_demov2 = (function () {
 	    if (content.h < neededH) content.h = neededH;
 	    console.log("[focusMoved] row", row, "targetY", targetY, "totalRows", totalRows);
 	    content.setSmooth("y", targetY);
+	  }
+	}
+
+	const HEADER_H = 200;
+	const DONATION_URI = "web+cardano:addr1q8rvamkvuew7x5ge6zzwngs4k5tcu6eglfjx7tl0d4zsz9zhrpmrytlfvujda02q5aq00c5q7gpdej04wyaap5kw7neq7gwmym?amount=10000000&message=Donation%20to%20the%20RelaxAI%20platform";
+	class DonateSection extends BasePage {
+	  get hasHeader() {
+	    return true;
+	  }
+	  get sections() {
+	    return [];
+	  }
+	  get enableScrollSnap() {
+	    return false;
+	  }
+	  get defaultHeights() {
+	    return {
+	      Header: HEADER_H
+	    };
+	  }
+	  static _template() {
+	    return BasePage.chrome({
+	      Header: {
+	        type: Header,
+	        h: HEADER_H,
+	        signals: {
+	          navigate: true,
+	          focusNext: true
+	        }
+	      },
+	      Donate: {
+	        x: 40,
+	        y: HEADER_H + 40,
+	        type: HtmlParagraphImage,
+	        w: 1920,
+	        visible: true
+	      }
+	    });
+	  }
+	  _focus() {
+	    var _a, _b;
+	    const name = getActiveRouteName();
+	    (_b = (_a = this.tag("Viewport.Content.ContentInner.Header")) === null || _a === void 0 ? void 0 : _a.setCurrentByRoute) === null || _b === void 0 ? void 0 : _b.call(_a, name);
+	  }
+	  _getFocused() {
+	    return this.tag("Viewport.Content.ContentInner.Header");
+	  }
+	  focusNext() {
+	    var _a, _b;
+	    const cur = (_a = this._section) !== null && _a !== void 0 ? _a : -1;
+	    const max = 0;
+	    this._section = Math.min(max, cur + 1);
+	    (_b = this._applyScrollForSection) === null || _b === void 0 ? void 0 : _b.call(this, this._section);
+	    this._syncHistorySnapshot();
+	    this._refocus();
+	  }
+	  focusPrev() {
+	    var _a;
+	    const min = this.hasHeader ? -1 : 0;
+	    this._section = Math.max(this._section - 1, min);
+	    (_a = this._applyScrollForSection) === null || _a === void 0 ? void 0 : _a.call(this, this._section);
+	    this._syncHistorySnapshot();
+	    this._refocus();
+	  }
+	  async _active() {
+	    var _a;
+	    super._active();
+	    const inner = "Viewport.Content.ContentInner";
+	    const donate = this.tag("".concat(inner, ".Donate"));
+	    if (donate) {
+	      await ((_a = donate.setContent) === null || _a === void 0 ? void 0 : _a.call(donate, {
+	        html: "\n          <div style=\"\n            padding:48px;\n            background:linear-gradient(145deg, #001219, #005f73);\n            border-radius:24px;\n          \">\n\n            <div style=\"\n              display:flex;\n              flex-direction:row;\n              gap:32px;\n              align-items:flex-start;\n              justify-content:space-between;\n            \">\n              <!-- Columna text -->\n              <div style=\"flex:2; min-width:0;\">\n                <p style=\"\n                  font-family:'RelaxAI-SoraBold';\n                  font-size:48px;\n                  margin-bottom:24px;\n                  color:#ffffff;\n                \">\n                  Support RelaxAI with a Cardano donation \uD83D\uDC99\n                </p>\n\n                <p style=\"\n                  font-family:'RelaxAI-SoraRegular';\n                  font-size:30px;\n                  margin-bottom:24px;\n                  color:#e5e5e5;\n                  line-height:1.6;\n                \">\n                  RelaxAI is an experimental slow-TV and ambient platform built with love,\n                  open tools and independent infrastructure. Your donation helps us cover\n                  server costs, video encoding, storage and the creation of new relaxing channels.\n                </p>\n\n                <ul style=\"list-style:none; padding:0; margin:0;\">\n\n                  <li style=\"\n                    display:flex;\n                    align-items:flex-start;\n                    margin-bottom:18px;\n                    font-family:'RelaxAI-SoraRegular';\n                    font-size:28px;\n                    color:#e5e5e5;\n                  \">\n                    <span style=\"\n                      display:inline-block;\n                      margin-right:16px;\n                      color:#00d4ff;\n                      font-size:34px;\n                    \">\u2714</span>\n                    Help keep RelaxAI online and ad-free\n                  </li>\n\n                  <li style=\"\n                    display:flex;\n                    align-items:flex-start;\n                    margin-bottom:18px;\n                    font-family:'RelaxAI-SoraRegular';\n                    font-size:28px;\n                    color:#e5e5e5;\n                  \">\n                    <span style=\"\n                      display:inline-block;\n                      margin-right:16px;\n                      color:#00d4ff;\n                      font-size:34px;\n                    \">\u2714</span>\n                    Support new relaxing streams and content experiments\n                  </li>\n\n                  <li style=\"\n                    display:flex;\n                    align-items:flex-start;\n                    margin-bottom:18px;\n                    font-family:'RelaxAI-SoraRegular';\n                    font-size:28px;\n                    color:#e5e5e5;\n                  \">\n                    <span style=\"\n                      display:inline-block;\n                      margin-right:16px;\n                      color:#00d4ff;\n                      font-size:34px;\n                    \">\u2714</span>\n                    Back an indie project built on Cardano\n                  </li>\n                </ul>\n              </div>\n\n              <!-- Columna QR -->\n              <div style=\"\n                flex:1;\n                display:flex;\n                flex-direction:column;\n                align-items:center;\n                justify-content:flex-start;\n              \">\n                <div style=\"\n                  width:360px;\n                  height:360px;\n                  padding:12px;\n                  border-radius:24px;\n                  background:rgba(0, 0, 0, 0.35);\n                  border:1px solid rgba(0, 212, 255, 0.4);\n                  display:flex;\n                  align-items:center;\n                  justify-content:center;\n                  box-sizing:border-box;\n                \">\n                  <img\n                    src=\"static/wallet/qr.png\"\n                    alt=\"RelaxAI Cardano donation QR\"\n                    style=\"\n                      display:block;\n                      width:100%;\n                      height:100%;\n                      object-fit:contain;\n                      border-radius:20px;\n                    \"\n                  />\n                </div>\n\n                <p style=\"\n                  font-family:'RelaxAI-SoraRegular';\n                  font-size:22px;\n                  margin-top:16px;\n                  color:#e5e5e5;\n                  text-align:center;\n                  max-width:380px;\n                  line-height:1.4;\n                \">\n                  Suggested donation: <span style=\"color:#00d4ff;\">10 ADA</span><br/>\n                  Thank you for supporting RelaxAI.\n                </p>\n              </div>\n            </div>\n          </div>\n        ",
+	        width: 1840,
+	        fontFamily: "RelaxAI-SoraMedium",
+	        style: {
+	          fontSize: "40px",
+	          lineHeight: "1.6",
+	          letterSpacing: "0.02em",
+	          color: "#FFFFFF",
+	          textAlign: "left"
+	        }
+	      }));
+	    }
+	    this.computeAfterLayout();
+	  }
+	  // Quan el botó dispari el senyal "press"
+	  donatePressed() {
+	    // Només funcionarà en entorns on hi hagi window (WebView / browser)
+	    try {
+	      if (typeof window !== "undefined") {
+	        window.location.href = DONATION_URI;
+	      } else {
+	        // En entorns sense window (p.ex. STB pur), com a mínim log.
+	        // Es podria integrar amb un deep-linking nadiu si tens bridge.
+	        // eslint-disable-next-line no-console
+	        console.log("[DonateSection] Cannot open donation URI: window is undefined");
+	      }
+	    } catch (e) {
+	      // eslint-disable-next-line no-console
+	      console.log("[DonateSection] Error opening donation URI", e);
+	    }
 	  }
 	}
 
@@ -42813,6 +42882,12 @@ var APP_com_domain_app_demov2 = (function () {
 	      }, {
 	        path: "watchlist/detail/:id",
 	        component: Detail,
+	        options: {
+	          preventStorage: false
+	        }
+	      }, {
+	        path: "donate",
+	        component: DonateSection,
 	        options: {
 	          preventStorage: false
 	        }
