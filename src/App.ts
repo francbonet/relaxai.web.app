@@ -10,6 +10,7 @@ import Longform from "./pages/Longform";
 import SearchSection from "./pages/Search";
 import { App as CapApp } from "@capacitor/app";
 import WatchListSection from "./pages/Watchlist";
+import DonateSection from "./pages/DonateSection";
 
 export default class App extends (Router as any).App {
   static _template(): L.Component.Template<any> {
@@ -136,6 +137,11 @@ export default class App extends (Router as any).App {
         {
           path: "watchlist/detail/:id",
           component: Detail,
+          options: { preventStorage: false },
+        },
+        {
+          path: "donate",
+          component: DonateSection,
           options: { preventStorage: false },
         },
         { path: "*", redirect: "home" },

@@ -34,13 +34,6 @@ export class HtmlParagraphImage extends Lightning.Component {
     this._width = value;
   }
 
-  /**
-   * Renderitza text/HTML via DOM → canvas → dataURL → ImageTexture.
-   *
-   * Accepta:
-   *  - string simple: setContent("Text pla")
-   *  - objecte: setContent({ html, width, fontFamily, style, ... })
-   */
   async setContent(content: HtmlContentInput) {
     let opts: {
       text?: string;
@@ -103,7 +96,6 @@ export class HtmlParagraphImage extends Lightning.Component {
       };
     }
 
-    // Evitem recomputar si el contingut no canvia
     if (key === this._lastKey) return;
     this._lastKey = key;
 

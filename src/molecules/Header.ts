@@ -14,6 +14,7 @@ export default class Header extends L.Component {
     "longform",
     "search",
     "watchlist",
+    "donate",
   ];
   private _onHashChange = () => this._syncSelectedFromLocation();
 
@@ -32,6 +33,7 @@ export default class Header extends L.Component {
         Series: { x: _val * 3, type: NavItem, labelText: "Longform" },
         Search: { x: _val * 4, type: NavItem, labelText: "Search" },
         Watchlist: { x: _val * 5, type: NavItem, labelText: "Watchlist" },
+        Donate: { x: _val * 6, type: NavItem, labelText: "Donate" },
       },
     };
   }
