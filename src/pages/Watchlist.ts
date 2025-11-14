@@ -4,7 +4,7 @@ import { getActiveRouteName } from "../utils/routerUtils";
 import Grid from "../molecules/Grid";
 import { watchlistStore } from "../state/watchlist.store";
 import Lightning from "@lightningjs/core";
-import { HtmlParagraphImage } from "../atoms/HtmlParagraphImage";
+import { HtmlParagraphImage } from "@francbonet/lightningjs-html-paragraph-image";
 
 const HEADER_H = 200;
 
@@ -54,8 +54,8 @@ export default class WatchListSection extends BasePage {
       EmptyMessage: {
         x: 0,
         y: HEADER_H + 40,
-        type: HtmlParagraphImage,
         w: 1920,
+        type: HtmlParagraphImage,
         visible: false,
       },
     });
@@ -107,7 +107,7 @@ export default class WatchListSection extends BasePage {
             <div style="
               margin-left: 40px;
               margin-right: 40px;
-              width:1840;
+              width:1740px;
               padding:48px;
               background:linear-gradient(145deg, #001219, #005f73);
               border-radius:24px;
@@ -127,7 +127,7 @@ export default class WatchListSection extends BasePage {
                 <li style="
                   display:flex;
                   align-items:flex-start;
-                  margin-bottom:24px;
+                  margin-bottom:20px;
                   font-family:'RelaxAI-SoraRegular';
                   font-size:30px;
                   color:#e5e5e5;
@@ -141,22 +141,22 @@ export default class WatchListSection extends BasePage {
                   Add series and films you want to watch
                 </li>
 
-                <li style="display:flex; align-items:flex-start; margin-bottom:24px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;">
+                <li style="display:flex; align-items:flex-start; margin-bottom:20px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;">
                   <span style="display:inline-block; margin-right:16px; color:#00d4ff; font-size:36px;">✔</span>
                   They will appear here to continue later
                 </li>
 
-                <li style="display:flex; align-items:flex-start; margin-bottom:24px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;">
+                <li style="display:flex; align-items:flex-start; margin-bottom:20px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;">
                   <span style="display:inline-block; margin-right:16px; color:#00d4ff; font-size:36px;">✔</span>
                   Keep track of your favorites easily
                 </li>
 
-                <li style="display:flex; align-items:flex-start; margin-bottom:24px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;">
+                <li style="display:flex; align-items:flex-start; margin-bottom:20px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;">
                   <span style="display:inline-block; margin-right:16px; color:#00d4ff; font-size:36px;">✔</span>
                   Start building your personalized list today
                 </li>
 
-                <li style="display:flex; align-items:flex-start; margin-bottom:24px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;">
+                <li style="display:flex; align-items:flex-start; margin-bottom:20px; font-family:'RelaxAI-SoraRegular'; font-size:30px; color:#e5e5e5;">
                   <span style="display:inline-block; margin-right:16px; color:#00d4ff; font-size:36px;">✔</span>
                   Your next watch is just one click away
                 </li>

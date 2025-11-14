@@ -1,7 +1,7 @@
 import { BasePage } from "./base/BasePage";
 import Header from "../molecules/Header";
 import { getActiveRouteName } from "../utils/routerUtils";
-import { HtmlParagraphImage } from "../atoms/HtmlParagraphImage";
+import { HtmlParagraphImage } from "@francbonet/lightningjs-html-paragraph-image";
 
 const HEADER_H = 200;
 
@@ -37,8 +37,8 @@ export default class DonateSection extends BasePage {
       Donate: {
         x: 40,
         y: HEADER_H + 40,
-        type: HtmlParagraphImage,
         w: 1920,
+        type: HtmlParagraphImage,
         visible: true,
       },
     });
@@ -81,6 +81,7 @@ export default class DonateSection extends BasePage {
         html: `
           <div style="
             padding:48px;
+            width: 1640px;
             background:linear-gradient(145deg, #001219, #005f73);
             border-radius:24px;
           ">
@@ -93,7 +94,7 @@ export default class DonateSection extends BasePage {
               justify-content:space-between;
             ">
               <!-- Columna text -->
-              <div style="flex:2; min-width:0;">
+              <div style="min-width:0; max-width: auto;">
                 <p style="
                   font-family:'RelaxAI-SoraBold';
                   font-size:48px;
@@ -172,11 +173,11 @@ export default class DonateSection extends BasePage {
 
               <!-- Columna QR -->
               <div style="
-                flex:1;
                 display:flex;
                 flex-direction:column;
-                align-items:center;
+                align-items: center;
                 justify-content:flex-start;
+                width: 740px;
               ">
                 <div style="
                   width:360px;
