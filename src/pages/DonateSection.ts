@@ -37,7 +37,7 @@ export default class DonateSection extends BasePage {
       Donate: {
         x: 40,
         y: HEADER_H + 40,
-        w: 1920,
+        w: 1840,
         type: HtmlParagraphImage,
         visible: true,
       },
@@ -81,9 +81,9 @@ export default class DonateSection extends BasePage {
         html: `
           <div style="
             padding:48px;
-            width: 1640px;
             background:linear-gradient(145deg, #001219, #005f73);
             border-radius:24px;
+            box-sizing:border-box;
           ">
 
             <div style="

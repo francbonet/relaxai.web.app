@@ -52,9 +52,9 @@ export default class WatchListSection extends BasePage {
         },
       },
       EmptyMessage: {
-        x: 0,
+        x: 40,
         y: HEADER_H + 40,
-        w: 1920,
+        w: 1840,
         type: HtmlParagraphImage,
         visible: false,
       },
@@ -105,12 +105,11 @@ export default class WatchListSection extends BasePage {
         await emptyMsg.setContent?.({
           html: `
             <div style="
-              margin-left: 40px;
-              margin-right: 40px;
-              width:1740px;
+              width: 1920px;
               padding:48px;
               background:linear-gradient(145deg, #001219, #005f73);
               border-radius:24px;
+              box-sizing:border-box;
             ">
 
               <p style="
