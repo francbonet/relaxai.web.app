@@ -272,6 +272,11 @@ export default class SearchSection extends BasePage {
     const neededH = baseOffset + lastRowBottom + EXTRA_BOTTOM;
     if ((content as any).h < neededH) (content as any).h = neededH;
 
+    if (row < 2) {
+      content.setSmooth("y", 0);
+      return;
+    }
+
     content.setSmooth("y", targetY);
   }
 }
