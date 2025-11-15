@@ -3,7 +3,7 @@
  * SDK version: 5.5.5
  * CLI version: 2.14.2
  *
- * Generated: Sat, 15 Nov 2025 17:29:16 GMT
+ * Generated: Sat, 15 Nov 2025 17:46:07 GMT
  */
 
 var APP_com_domain_app_demov2 = (function () {
@@ -34007,6 +34007,10 @@ var APP_com_domain_app_demov2 = (function () {
 	    const targetY = -(baseOffset + anchorPx) + CENTER_BIAS;
 	    const neededH = baseOffset + lastRowBottom + EXTRA_BOTTOM;
 	    if (content.h < neededH) content.h = neededH;
+	    if (row < 2) {
+	      content.setSmooth("y", 0);
+	      return;
+	    }
 	    content.setSmooth("y", targetY);
 	  }
 	}
