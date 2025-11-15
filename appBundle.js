@@ -3,7 +3,7 @@
  * SDK version: 5.5.5
  * CLI version: 2.14.2
  *
- * Generated: Sat, 15 Nov 2025 17:06:06 GMT
+ * Generated: Sat, 15 Nov 2025 17:07:02 GMT
  */
 
 var APP_com_domain_app_demov2 = (function (lightningjsHtmlParagraphImage) {
