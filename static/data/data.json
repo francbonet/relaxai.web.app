@@ -147,7 +147,7 @@
       "maturity": "PG-13",
       "imageSrc": "data/tiles/64-imagen.jpg",
       "posterSrc": "data/posters/64-imagen.jpg",
-      "videoSrc": ""
+      "videoSrc": "https://res.cloudinary.com/dt8savcjt/video/upload/v1763226095/scene1_odhnhs.mp4"
     },
     {
       "id": "3",
