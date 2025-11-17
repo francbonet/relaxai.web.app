@@ -1201,18 +1201,17 @@
     },
     {
       "id": "32",
-      "title": "Science & Technology",
-      "text": "Science & Technology",
-      "description":
-        "Exploring breakthroughs and innovations in science and tech.",
+      "title": "Neon Atmospheres",
+      "text": "Cyberpunk Atmosphere",
+      "description": "Un viatge visual immersiu a través de paisatges futuristes foscos, neons vibrants, pluja constant i boira profunda. Un film ambient inspirat en l’estètica Blade Runner, creat per submergir-te en una atmosfera lenta, hipnòtica i contemplativa.",
       "duration": "90",
-      "year": 2021,
-      "author": "TechMedia",
-      "genres": ["Science", "Technology"],
+      "year": 2025,
+      "author": "RelaxAI",
+      "genres": ["Ambient", "Sci-Fi", "Cyberpunk"],
       "maturity": "PG",
       "imageSrc": "data/tiles/32-imagen.jpg",
       "posterSrc": "data/posters/32-imagen.jpg",
-      "videoSrc": ""
+      "videoSrc": "https://res.cloudinary.com/dt8savcjt/video/upload/v1763418299/bladerunner-2_lp9cnx.mp4"
     },
     {
       "id": "41",
